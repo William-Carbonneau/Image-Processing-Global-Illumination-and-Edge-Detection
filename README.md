@@ -22,4 +22,4 @@ Their name, a reflection of their craft, shifting hues in a ceaseless draft, fro
 
 So let us hail the Chroma Chameleons, in their quest, their journey unfolds, for in the realm of image and light, they reign supreme, a beacon bright.
 
-They may get hurt along the way, for their project is like a dragon, but in the end, they come om the other side, as victorious as a salmon.
+They may get hurt along the way, for their project is like a dragon, but in the end, they come on the other side, as victorious as a salmon.
