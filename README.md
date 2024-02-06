@@ -21,3 +21,5 @@ With whispers of algorithms and algorithms deep, they navigate the digital keep,
 Their name, a reflection of their craft, shifting hues in a ceaseless draft, from vibrant reds to tranquil blues, they paint the world, an ever-changing muse.
 
 So let us hail the Chroma Chameleons, in their quest, their journey unfolds, for in the realm of image and light, they reign supreme, a beacon bright.
+
+They will may get hurt along the way, for their project is like a dragon, but in the end, they come om the other side, as victorious as a salmon.
