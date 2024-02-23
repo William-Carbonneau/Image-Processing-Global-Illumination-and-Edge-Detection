@@ -19,9 +19,9 @@ public class FXMLMainAppController {
     @FXML
     public void initialize() {
         logger.info("Initializing MainAppController...");
-        btnClickMe.setOnAction((event) -> {
-            handleClickMe();
-        });
+//        btnClickMe.setOnAction((event) -> {
+//            handleClickMe();
+//        });
     }
 
     private void handleClickMe() {
