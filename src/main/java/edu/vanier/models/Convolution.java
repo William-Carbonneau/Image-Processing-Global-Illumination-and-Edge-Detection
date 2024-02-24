@@ -91,7 +91,7 @@ public class Convolution {
                 else if(counterC+c>((in[0].length-1)/2)+1){
                 }
                 else
-                    result = result+in[r+counterR/2][c+counterC/2]*rules[counterR][counterC];
+                    result = result+in[counterR+r-rules.length/2][counterC+c-rules[0].length/2]*rules[counterR][counterC];
             }
         }
         return result;
