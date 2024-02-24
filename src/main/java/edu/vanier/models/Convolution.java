@@ -80,15 +80,18 @@ public class Convolution {
         float result=0;
         for(int counterR=0; counterR<in.length; counterR++){
             for(int counterC=0; counterC<in[0].length; counterC++){
-                if(counterR+r<((rules.length-1)/2)+1){
+                if(counterR+r<((in.length-1)/2)+1){
                     totalWeight = totalWeight/rules[counterR][counterC];
                 }
-                else if(counterC+c<((rules[0].length-1)/2)+1){
+                else if(counterC+c<((in[0].length-1)/2)+1){
                     totalWeight = totalWeight/rules[counterR][counterC];
                 }
-                else if(counterR+r<((rules.length-1)/2)+1){
+                else if(counterR+r>((in.length-1)/2)+1){
                 }
-                result = result+in[counterR][counterC];
+                else if(counterC+c>((in[0].length-1)/2)+1){
+                }
+                else
+                    result = result+in[r+counterR/2][c+counterC/2]*rules[counterR][counterC];
             }
         }
         return result;
