@@ -14,7 +14,7 @@ public class Convolution {
     int numOfCol;
     float totalWeight=0;
     
-    Convolution(String name, float[][] rules){
+    public Convolution(String name, float[][] rules){
         
         //name of the convolution
         this.name = name;
@@ -41,7 +41,7 @@ public class Convolution {
         }
         System.out.println("]");
     }
-    public static void print2DArray(int[][] array){
+    public static void print2DArray(float[][] array){
         for (int i=0; i<array.length; i++){
             System.out.print("[");
             for (int j=0; j<array[0].length; j++){
