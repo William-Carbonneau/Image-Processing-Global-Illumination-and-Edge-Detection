@@ -14,9 +14,9 @@ public class ConvolutionTest {
         };
         Convolution gaussian = new Convolution("gaussian",gauss);
         float[][] matrix={
-            {1,1,1},
             {1,2,1},
-            {1,1,1}
+            {1,1,5},
+            {1,1,0}
         };
         float[][] result = gaussian.performConvolutionOnImage(matrix);
         Convolution.print2DArray(result);
