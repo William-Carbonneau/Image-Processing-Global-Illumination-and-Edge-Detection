@@ -86,15 +86,18 @@ public class Convolution {
                 //To perform a convolution, we need to determine if the pixels around the central one exist
                 //If they exist, we add them according to their weight
                 //counterR+r gives the absolute index in terms of rows, and counterC+c
-                if(counterR+r-1>=0&&counterR+r<in.length&&counterC+c-1>=0&&counterC+c<in[0].length){
+                if((counterR+r-1>=0)&&(counterR+r<=in.length)&&(counterC+c-1>=0)&&(counterC+c<=in[0].length)){
+                    //System.out.println("in->"+in[counterR+r-1][counterC+c-1]);
                     result = result+in[counterR+r-1][counterC+c-1]*rules[counterR][counterC];
                 }
                 //If they do not exist, we divide the totalWeight by the value from rules at that relative location
                 else{
-                    temp = temp/rules[counterR][counterC];
+                    //System.out.println("out->"+rules[counterR][counterC]);
+                    temp = temp-rules[counterR][counterC];
                 }
             }
         }
+        //System.out.println("========================");
         result = result/temp;
         return result;
     }
