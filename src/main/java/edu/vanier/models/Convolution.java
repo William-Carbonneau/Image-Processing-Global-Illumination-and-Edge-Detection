@@ -67,7 +67,7 @@ public class Convolution {
      * Performs convolution based on the rules
      */
     public float[][] performConvolutionOnImage(float[][] in){
-        float[][] result = new float[numOfRows][numOfCol];
+        float[][] result = new float[in.length][in[0].length];
         for(int counterR=0; counterR<in.length; counterR++){
             for(int counterC=0; counterC<in[0].length; counterC++){
                 result[counterR][counterC] = performConvolutionOnPix(in, counterR, counterC);
@@ -81,8 +81,8 @@ public class Convolution {
     public float performConvolutionOnPix(float[][] in, int r, int c){
         float result=0;
         float temp = totalWeight;
-        for(int counterR=0; counterR<in.length; counterR++){
-            for(int counterC=0; counterC<in[0].length; counterC++){
+        for(int counterR=0; counterR<rules.length; counterR++){
+            for(int counterC=0; counterC<rules[0].length; counterC++){
                 //To perform a convolution, we need to determine if the pixels around the central one exist
                 //If they exist, we add them according to their weight
                 //counterR+r gives the absolute index in terms of rows, and counterC+c
