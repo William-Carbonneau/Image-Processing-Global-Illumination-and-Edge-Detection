@@ -12,13 +12,12 @@ public class ConvolutionTest {
             {2,4,2},
             {1,2,1}
         };
-        Convolution gaussian = new Convolution("gaussian",gauss);
         float[][] matrix={
-            {1,2,1,0},
-            {1,1,5,0},
-            {1,1,0,0}
+            {1,2,1,0,1,1,1},
+            {1,1,5,0,1,1,1},
+            {1,1,0,0,1,1,1}
         };
-        float[][] result = gaussian.performConvolutionOnImage(matrix);
+        float[][] result = Convolution.performConvolutionOnImage(gauss, matrix);
         Convolution.print2DArray(result);
     }
 }

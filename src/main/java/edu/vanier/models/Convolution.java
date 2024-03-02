@@ -63,10 +63,45 @@ public class Convolution {
         }
         return arrayOut;
     }
-    /**
-     * Performs convolution based on the rules
-     */
-    public float[][] performConvolutionOnImage(float[][] in){
+    
+    public static float[][] performConvolutionOnImage(float[][] rulesModel, float[][] in){
+        float[][] result = new float[in.length][in[0].length];
+        float weightRules=0;
+        for(int r=0; r<rulesModel.length; r++){
+            for(int c=0; c<rulesModel[0].length; c++){
+                weightRules = weightRules+rulesModel[r][c];
+            }
+        }
+        for(int counterR=0; counterR<in.length; counterR++){
+            for(int counterC=0; counterC<in[0].length; counterC++){
+                result[counterR][counterC] = performConvolutionOnPix(rulesModel, weightRules, in, counterR, counterC);
+            }
+        }
+        return result;
+    }
+    
+    public static float performConvolutionOnPix(float[][] rulesModel, float weightRules, float[][] in, int r, int c){
+        float result = 0;
+        //Need to loop over each value around the central pixel
+        for(int counterR=0; counterR<rulesModel.length; counterR++){
+            for(int counterC=0; counterC<rulesModel[0].length; counterC++){
+                //To computer the corners and edges, we need to keep in mind that some values around the central onemay not exist
+                //We need to determine if these values exist or not
+                // If they exist
+                if((counterR+r-(rulesModel.length/2)>=0)&&(counterR+r<=in.length)&&(counterC+c-(rulesModel[0].length/2)>=0)&&(counterC+c<=in[0].length)){
+                    result = result+in[counterR+r-(rulesModel.length/2)][counterC+c-(rulesModel[0].length/2)]*rulesModel[counterR][counterC];
+                }
+                //If they do not exist
+                else{
+                    weightRules = weightRules-rulesModel[counterR][counterC];
+                }
+            }
+        }
+        result = result/weightRules;
+        return result;
+    }
+    /*
+    public float[][] performConvolutionOnImageObject(float[][] in){
         float[][] result = new float[in.length][in[0].length];
         for(int counterR=0; counterR<in.length; counterR++){
             for(int counterC=0; counterC<in[0].length; counterC++){
@@ -76,8 +111,9 @@ public class Convolution {
         return result;
     }
     /**
-     * Most complicated method of the class. Is what needs to be implemented for the code to work correctly.
+     * This method performs a convolution of pixel, based on the values around it. It has been designed such that the convolution can also be done on the edges.
      */
+    /*
     public float performConvolutionOnPix(float[][] in, int r, int c){
         float result=0;
         float temp = totalWeight;
@@ -101,4 +137,5 @@ public class Convolution {
         result = result/temp;
         return result;
     }
+    */
 }
