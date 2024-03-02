@@ -1,6 +1,6 @@
-package tests;
+package edu.vanier.Global_Illumination_Image_Processing.tests;
 
-import edu.vanier.models.Convolution;
+import edu.vanier.Global_Illumination_Image_Processing.models.Convolution;
 
 /**
  * Test Class for Convolution
