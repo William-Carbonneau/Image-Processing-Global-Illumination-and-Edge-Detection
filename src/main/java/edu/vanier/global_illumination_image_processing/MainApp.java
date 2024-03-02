@@ -1,4 +1,4 @@
-package edu.vanier.global_illumination_image_processing;
+package edu.vanier.global_illumination_image_processin;
 
 import edu.vanier.global_illumination_image_processing.controllers.FXMLMainAppController;
 import java.io.IOException;
