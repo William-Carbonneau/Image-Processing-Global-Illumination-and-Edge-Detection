@@ -1,14 +1,14 @@
 package edu.vanier.global_illumination_image_processing.rendering;
 
 /**
- *
+ * Store the intersection of a ray and an object
  * @author William Carbonneau
  */
 public class Intersection {
     public static final double INF = 1e9;
     public static final double EPS = 1e-6;
-    private final double intersectDistance;
-    private final SceneObject object;
+    private double intersectDistance;
+    private SceneObject object;
     public Intersection() {
         this.intersectDistance = INF;
         this.object = null;
@@ -17,7 +17,7 @@ public class Intersection {
         this.intersectDistance = dist;
         this.object = object;
     }
-    public boolean bool() {
+    public boolean containsObjectBool() {
         return object != null;
     }
 
@@ -28,4 +28,13 @@ public class Intersection {
     public SceneObject getObject() {
         return object;
     }
+
+    public void setIntersectDistance(double intersectDistance) {
+        this.intersectDistance = intersectDistance;
+    }
+
+    public void setObject(SceneObject object) {
+        this.object = object;
+    }
+    
 }
