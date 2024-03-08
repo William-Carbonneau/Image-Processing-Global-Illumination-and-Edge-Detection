@@ -21,6 +21,26 @@ public class Convolution {
         }
         System.out.println();
     }
+    public static void print2DArray(byte[][] array){
+        for (int i=0; i<array.length; i++){
+            System.out.print("[");
+            for (int j=0; j<array[0].length; j++){
+                System.out.print(array[i][j]+" ");
+            }
+            System.out.println("]");
+        }
+        System.out.println();
+    }
+    public static void print2DArray(int[][] array){
+        for (int i=0; i<array.length; i++){
+            System.out.print("[");
+            for (int j=0; j<array[0].length; j++){
+                System.out.print(array[i][j]+" ");
+            }
+            System.out.println("]");
+        }
+        System.out.println();
+    }
     /**
      * This function takes a 1-dimensional array and converts it to a 2-dimensional array
      */
