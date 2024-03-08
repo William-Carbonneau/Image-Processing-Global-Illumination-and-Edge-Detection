@@ -94,6 +94,8 @@ public class RenderingEquation {
             );
             ray.setDirection(rotatedDirection);
             double cosineDirection = ray.getDirection().dot(normal);
+            
+            // create temporary color for recursive call-back
             DiffuseColor tempColor = new DiffuseColor(0,0,0);
             
             // call recursive trace
@@ -108,6 +110,8 @@ public class RenderingEquation {
         if (intersect.getObject().getType() == 2) {
             double cosineDirection = ray.getDirection().dot(normal);
             ray.setDirection(ray.getDirection().subtract(normal.multiply(cosineDirection*2)).norm());
+            
+            // create temporary color for recursive call-back
             DiffuseColor tempColor = new DiffuseColor(0,0,0);
             
             // call recursive trace
@@ -131,8 +135,29 @@ public class RenderingEquation {
                 normal = normal.multiply(-1);
                 rIndex = 1/rIndex;
             }
+
             rIndex = 1/rIndex;
             
+            double cosineDirection1 = -1 * normal.dot(ray.getDirection());
+            double cosineDirection2 = 1.0 - rIndex*rIndex*(1.0-cosineDirection1*cosineDirection1);
+            // Schlick approximation
+            double fresnelFactorProbability = ratio + (1.0-ratio)* Math.pow(1.0-cosineDirection1, 5.0);
+            // calculate refraction direction
+            if (cosineDirection2 > 0 && uniformRand2() > fresnelFactorProbability) {
+                ray.setDirection(ray.getDirection().multiply(rIndex).add(normal.multiply(rIndex*cosineDirection1-Math.sqrt(cosineDirection2))).norm());
+            }else {
+                // otherwise get the reflection index
+                ray.setDirection(ray.getDirection().add(normal.multiply(cosineDirection1*2)).norm());
+            }
+            
+            // create temporary color for recursive call-back
+            DiffuseColor tempColor = new DiffuseColor(0,0,0);
+            
+            // call recursive trace
+            trace(ray,scene,recursionDepth+1,tempColor,parameterList,halton1,halton2);
+            
+            // recursive collection/aggregation
+            color = color.add(tempColor.multiply(1.15*rouletteFactor));
         }
         
     }
