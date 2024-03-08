@@ -1,17 +1,18 @@
 package edu.vanier.global_illumination_image_processing.rendering;
 
 /**
- * Halton series for Quasi Monte Carlo integration.
- * Halton series is generated using a sequence of prime numbers as a base
+ * Halton sequence for Quasi Monte Carlo integration.
+ * Generates Quasi-random sequence to use a base for the Monte Carlo integration 
+ * Halton sequence is generated using a sequence of prime numbers as a base
  * 
  * TODO add credit for Halton algorithm
  * 
  * @author William Carbonneau <2265724 at edu.vaniercollege.ca>
  */
-public class HaltonSim {
+public class Halton {
     private double currentSequenceValue, inverseBase;
 
-    public HaltonSim() {
+    public Halton() {
     }
     
     //  Iteratively calculate Halton sequence value using provided index and base
