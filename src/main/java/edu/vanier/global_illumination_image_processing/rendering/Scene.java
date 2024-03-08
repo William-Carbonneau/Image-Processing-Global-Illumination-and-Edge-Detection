@@ -20,6 +20,7 @@ public class Scene {
     public Intersection intersect(Ray ray) {
         Intersection closestIntersection = new Intersection();
         
+        // for all objects test intersection for nearest
         for (int i = 0; i < objects.size(); i++) {
             double temp = objects.get(i).intersect(ray);
             if ( temp < closestIntersection.getIntersectDistance() && temp > Intersection.EPS) {

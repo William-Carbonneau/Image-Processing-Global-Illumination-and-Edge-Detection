@@ -4,7 +4,7 @@ import edu.vanier.global_illumination_image_processing.rendering.Intersection;
 import edu.vanier.global_illumination_image_processing.rendering.Ray;
 import edu.vanier.global_illumination_image_processing.rendering.SceneObject;
 import edu.vanier.global_illumination_image_processing.rendering.Vec3D;
-import edu.vanier.global_illumination_image_processing.rendering.diffuseColor;
+import edu.vanier.global_illumination_image_processing.rendering.DiffuseColor;
 
 /**
  * Sphere SceneObject represented mathematically
@@ -28,7 +28,7 @@ public class Sphere extends SceneObject {
         this.radius = radius;
     }
 
-    public void setColor(diffuseColor color) {
+    public void setColor(DiffuseColor color) {
         this.color = color;
     }
 
@@ -40,7 +40,7 @@ public class Sphere extends SceneObject {
         this.type = type;
     }
 
-    public diffuseColor getColor() {
+    public DiffuseColor getColor() {
         return color;
     }
 

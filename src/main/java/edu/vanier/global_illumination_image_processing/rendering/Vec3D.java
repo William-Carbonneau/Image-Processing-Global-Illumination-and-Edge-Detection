@@ -188,24 +188,20 @@ public class Vec3D {
      * @param v1 A normalized vector.
      * @param v2 Another vector.
      * @param v3 Another vector.
-     * @return An array containing the orthonormal system of vectors (v1, v2, v3).
      */
-    public Vec3D[] orthonormalSystem(Vec3D v1, Vec3D v2, Vec3D v3) {
-        Vec3D[] vecList = { v1, new Vec3D(1, 1, 1), new Vec3D(1, 1, 1) };
+    public static void orthonormalSystem(Vec3D v1, Vec3D v2, Vec3D v3) {
 
         if (Math.abs(v1.getX()) > Math.abs(v1.getY())) {
             double targetLength = 1 / Math.sqrt(v1.getX() * v1.getX() + v1.getZ() * v1.getZ());
-            vecList[1].setX(-v1.getZ() * targetLength);
-            vecList[1].setY(0.0);
-            vecList[1].setY(v1.getX() * targetLength);
+            v2.setX(-v1.getZ() * targetLength);
+            v2.setY(0.0);
+            v2.setY(v1.getX() * targetLength);
         } else {
             double targetLength = 1 / Math.sqrt(v1.getY() * v1.getY() + v1.getZ() * v1.getZ());
-            vecList[1].setX(0.0);
-            vecList[1].setY(v1.getZ() * targetLength);
-            vecList[1].setY(-v1.getY() * targetLength);
+            v2.setX(0.0);
+            v2.setY(v1.getZ() * targetLength);
+            v2.setY(-v1.getY() * targetLength);
         }
-        vecList[2] = vecList[0].cross(vecList[1]);
-
-        return vecList;
+        v3 = v1.cross(v2);
     }
 }

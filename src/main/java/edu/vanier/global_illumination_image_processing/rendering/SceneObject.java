@@ -8,7 +8,7 @@ package edu.vanier.global_illumination_image_processing.rendering;
  * @author William Carbonneau
  */
 public abstract class SceneObject {
-    public diffuseColor color; // Color of the object
+    public DiffuseColor color; // Color of the object
     public double emission; // Emission value of the object
     public int type; // Type of the object (diffuse, specular, refractive)
 
@@ -19,7 +19,7 @@ public abstract class SceneObject {
      * @param emission The emission value of the object.
      * @param type The type of the object.
      */
-    public void setMaterial(diffuseColor color, double emission, int type) {
+    public void setMaterial(DiffuseColor color, double emission, int type) {
         this.color = color;
         this.emission = emission;
         this.type = type;
@@ -40,4 +40,16 @@ public abstract class SceneObject {
      * @return The surface normal vector at the given point.
      */
     public abstract Vec3D normal(Vec3D intersectPoint);
+
+    public DiffuseColor getColor() {
+        return color;
+    }
+
+    public double getEmission() {
+        return emission;
+    }
+
+    public int getType() {
+        return type;
+    }
 }

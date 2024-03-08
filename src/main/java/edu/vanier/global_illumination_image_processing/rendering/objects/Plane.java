@@ -4,7 +4,7 @@ import edu.vanier.global_illumination_image_processing.rendering.Intersection;
 import edu.vanier.global_illumination_image_processing.rendering.Ray;
 import edu.vanier.global_illumination_image_processing.rendering.SceneObject;
 import edu.vanier.global_illumination_image_processing.rendering.Vec3D;
-import edu.vanier.global_illumination_image_processing.rendering.diffuseColor;
+import edu.vanier.global_illumination_image_processing.rendering.DiffuseColor;
 
 /**
  * Plane SceneObject represented mathematically
@@ -20,7 +20,7 @@ public class Plane extends SceneObject{
         return n;
     }
 
-    public void setColor(diffuseColor color) {
+    public void setColor(DiffuseColor color) {
         this.color = color;
     }
 
@@ -32,7 +32,7 @@ public class Plane extends SceneObject{
         this.type = type;
     }
 
-    public diffuseColor getColor() {
+    public DiffuseColor getColor() {
         return color;
     }
 
