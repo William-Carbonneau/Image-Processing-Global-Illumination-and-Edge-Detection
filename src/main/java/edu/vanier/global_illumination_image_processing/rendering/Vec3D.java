@@ -195,12 +195,12 @@ public class Vec3D {
             double targetLength = 1 / Math.sqrt(v1.getX() * v1.getX() + v1.getZ() * v1.getZ());
             v2.setX(-v1.getZ() * targetLength);
             v2.setY(0.0);
-            v2.setY(v1.getX() * targetLength);
+            v2.setZ(v1.getX() * targetLength);
         } else {
             double targetLength = 1 / Math.sqrt(v1.getY() * v1.getY() + v1.getZ() * v1.getZ());
             v2.setX(0.0);
             v2.setY(v1.getZ() * targetLength);
-            v2.setY(-v1.getY() * targetLength);
+            v2.setZ(-v1.getY() * targetLength);
         }
         v3 = v1.cross(v2);
     }

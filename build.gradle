@@ -28,8 +28,6 @@ dependencies {
     compileOnly  "org.openjfx:javafx-controls:$javafxVersion:sources"
     compileOnly  "org.openjfx:javafx-fxml:$javafxVersion:sources"
     compileOnly  "org.openjfx:javafx-graphics:$javafxVersion:sources"
-
-    compileOnly  "org.apache.commons:commons-math3:3.6.1"
     
     // Load the Javadoc for the specified JavaFX modules.
     compileOnly  "org.openjfx:javafx-base:$javafxVersion:javadoc"
@@ -41,10 +39,12 @@ dependencies {
     // Link Logback to the project: @see: https://logback.qos.ch/ 
     implementation "ch.qos.logback:logback-classic:$logbackVersion"
     implementation "ch.qos.logback:logback-core:$logbackVersion"
+    implementation 'org.apache.commons:commons-math3:3.6.1'
 }
 
 application {       
    // TODO: Specify the fully-qualified name of the class 
    //       that contains the main method to be executed.
-   mainClass = 'edu.vanier.Global_Illumination_Image_Processing.tests.PPMProcessingTest'
+   // mainClass = 'edu.vanier.Global_Illumination_Image_Processing.tests.PPMProcessingTest'
+   mainClass = 'edu.vanier.Global_Illumination_Image_Processing.tests.RenderTest'
 }

@@ -11,6 +11,7 @@ public abstract class SceneObject {
     public DiffuseColor color; // Color of the object
     public double emission; // Emission value of the object
     public int type; // Type of the object (diffuse, specular, refractive)
+    public double refractiveIndex; // TODO modify for refractive index per object likely this line: double rIndex = parameterList.get("refractiveIndex");
 
     /**
      * Sets the material properties of the object.

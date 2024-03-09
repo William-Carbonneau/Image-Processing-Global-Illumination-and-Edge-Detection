@@ -5,6 +5,7 @@ build/
 **/build/
 **/**/build/
 log/
+ray.ppm
 
 # Ignore Gradle GUI config
 gradle-app.setting

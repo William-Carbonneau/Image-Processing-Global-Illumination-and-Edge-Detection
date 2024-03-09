@@ -11,13 +11,14 @@ import edu.vanier.global_illumination_image_processing.rendering.DiffuseColor;
  * @author William Carbonneau
  */
 public class Plane extends SceneObject{
-    private Vec3D n;
-    private double d;
+    private Vec3D normal;
+    private double distanceOrigin;
+    private int type;
 
     // getters and setters
     
     public Vec3D getN() {
-        return n;
+        return normal;
     }
 
     public void setColor(DiffuseColor color) {
@@ -45,21 +46,36 @@ public class Plane extends SceneObject{
     }
 
     public double getD() {
-        return d;
+        return distanceOrigin;
     }
 
     public void setN(Vec3D n) {
-        this.n = n;
+        this.normal = n;
     }
 
     public void setD(double d) {
-        this.d = d;
+        this.distanceOrigin = d;
     }
 
-    /**Constructor*/
-    public Plane(Vec3D n, double d) {
-        this.n = n;
-        this.d = d;
+    /**General Constructor
+     * @param normal
+     * @param distanceOrigin*/
+    public Plane(Vec3D normal, double distanceOrigin) {
+        this.normal = normal;
+        this.distanceOrigin = distanceOrigin;
+    }
+    
+    /**Material Constructor
+     * @param normal
+     * @param distanceOrigin
+     * @param color
+     * @param emission
+     * @param type*/
+    public Plane(Vec3D normal, double distanceOrigin, DiffuseColor color, double emission, int type) {
+        this.normal = normal;
+        this.distanceOrigin = distanceOrigin;
+        this.type = type;
+        setMaterial(color, emission, type);
     }
     
     // math methods
@@ -77,7 +93,7 @@ public class Plane extends SceneObject{
 
     @Override
     public Vec3D normal(Vec3D intersectPoint) {
-        return n;
+        return normal;
     }
     
 }

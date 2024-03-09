@@ -7,7 +7,8 @@ import edu.vanier.global_illumination_image_processing.rendering.Vec3D;
 import edu.vanier.global_illumination_image_processing.rendering.DiffuseColor;
 
 /**
- * Sphere SceneObject represented mathematically
+ * Sphere SceneObject represented mathematically 
+ * TODO docs
  * @author William Carbonneau
  */
 public class Sphere extends SceneObject {
@@ -56,22 +57,38 @@ public class Sphere extends SceneObject {
         return radius;
     }
 
-    /**Constructor*/
+    /**General Constructor
+     * @param origin Vec3D
+     * @param radius double
+     */
     public Sphere(Vec3D origin, double radius) {
         this.origin = origin;
         this.radius = radius;
+    }
+    
+    /**Material Constructor
+     * @param origin Vec3D
+     * @param radius double
+     * @param color DiffuseColor
+     * @param emission double
+     * @param type int
+     */
+    public Sphere(Vec3D origin, double radius, DiffuseColor color, double emission, int type) {
+        this.origin = origin;
+        this.radius = radius;
+        setMaterial(color, emission,type);
     }
 
     // math methods
     
     @Override
     public double intersect(Ray intersectRay) {
-        Vec3D ray0MinusOrigin = (intersectRay.getOrigin().subtract(getOrigin()));
+        Vec3D ray0MinusOrigin = (intersectRay.getOrigin().subtract(this.getOrigin()));
         
-        double sphereComponent = (ray0MinusOrigin.multiply(2)).dot(intersectRay.getDirection());
-        double originNew = ray0MinusOrigin.dot(ray0MinusOrigin) - (getRadius()*getRadius());
+        double sphereComponent = ray0MinusOrigin.multiply(2).dot(intersectRay.getDirection());
+        double originNew = ray0MinusOrigin.dot(ray0MinusOrigin) - (this.getRadius()*this.getRadius());
         double disc = sphereComponent*sphereComponent - 4*originNew;
-        if (disc > 0) return 0;
+        if (disc < 0) return 0;
         else disc = Math.sqrt(disc);
         double soll = -sphereComponent + disc;
         double sol2 = -sphereComponent - disc;

@@ -8,7 +8,12 @@ import java.util.ArrayList;
  */
 public class Scene {
     // TODO potentially change this to a hashset to only have unique elements and easy deletion
-    private ArrayList<SceneObject> objects = new ArrayList<>();
+    private ArrayList<SceneObject> objects;
+
+    public Scene() {
+        this.objects = new ArrayList<>();
+    }
+    
     public void  addObj(SceneObject object) {
         objects.add(object);
     }

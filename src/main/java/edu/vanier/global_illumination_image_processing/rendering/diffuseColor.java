@@ -25,6 +25,16 @@ public class DiffuseColor {
     }
 
     /**
+     * General constructor
+     */
+    public DiffuseColor() {
+        this.r = 0;
+        this.g = 0;
+        this.b = 0;
+    }
+    
+
+    /**
      * Retrieves the red component of the color.
      * 
      * @return The red component of the color (0-255).
@@ -84,8 +94,22 @@ public class DiffuseColor {
     }
     
     // TODO docs
+    public void addToObject(DiffuseColor color) {
+        this.r += color.getR(); 
+        this.g += color.getG(); 
+        this.b += color.getB();
+    }
+    
+    // TODO docs
     public DiffuseColor multiply(double val) {
         return new DiffuseColor(this.r * val, this.g * val, this.b * val);
+    }
+    
+// TODO docs
+    public void multiplyToObject(double val) {
+        this.r *= val;
+        this.g *= val;
+        this.b *= val;
     }
 
     // TODO docs

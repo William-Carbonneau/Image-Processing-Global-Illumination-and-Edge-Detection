@@ -12,6 +12,9 @@ package edu.vanier.global_illumination_image_processing.rendering;
 public class Halton {
     private double currentSequenceValue, inverseBase;
 
+    /**
+     * Default constructor
+     */
     public Halton() {
     }
     
