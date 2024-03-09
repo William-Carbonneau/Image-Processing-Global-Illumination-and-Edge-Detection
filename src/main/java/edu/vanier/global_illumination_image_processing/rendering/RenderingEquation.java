@@ -78,7 +78,7 @@ public class RenderingEquation {
     }
     
     /**
-     * Get the coordinates on the camera plane
+     * Get the coordinates on the perspective camera plane
      * 
      * @param x
      * @param y
@@ -95,7 +95,7 @@ public class RenderingEquation {
     }
     
     /**
-    * Generates a stratified sample point on a hemisphere. TODO citation
+    * Generates a stratified sample point on a hemisphere for diffuse objects. TODO citation
     * 
     * This method implements stratified sampling of a hemisphere based on the algorithm provided by  http://www.rorydriscoll.com/2009/01/07/better-sampling/
     * It takes random radius and angle as parameters, ensuring an even ray distribution from the hemisphere to reduce noise in Monte Carlo simulations.
@@ -158,11 +158,14 @@ public class RenderingEquation {
             // create an orthonormal system from the surface normal
             Vec3D rotationX = new Vec3D(0,0,0), rotationY = new Vec3D(0,0,0);
             Vec3D.orthonormalSystem(normal, rotationX, rotationY);
-                        
+            
+            // increment halton series
+            halton1.next();            
+            halton2.next();            
             // get new direction from hemisphere sampler
             Vec3D sampleDirection = Hemisphere(uniformRand2(),uniformRand2());
             
-            // gte new rotated ray direction from orthonormal system
+            // get new rotated ray direction from orthonormal system
             Vec3D rotatedDirection = new Vec3D(
                 new Vec3D(rotationX.getX(), rotationY.getX(), normal.getX()).dot(sampleDirection),
                 new Vec3D(rotationX.getY(), rotationY.getY(), normal.getY()).dot(sampleDirection),
@@ -172,7 +175,7 @@ public class RenderingEquation {
             double cosineDirection = ray.getDirection().dot(normal);
             
             // create temporary color for recursive call-back
-            DiffuseColor tempColor = new DiffuseColor(1,1,1);
+            DiffuseColor tempColor = new DiffuseColor(0,0,0);
 
             // call recursive trace
             trace(ray,scene,recursionDepth+1,tempColor,parameterList,halton1,halton2);
@@ -189,7 +192,7 @@ public class RenderingEquation {
             ray.setDirection(ray.getDirection().subtract(normal.multiply(cosineDirection*2)).norm());
             
             // create temporary color for recursive call-back
-            DiffuseColor tempColor = new DiffuseColor(1,1,1);
+            DiffuseColor tempColor = new DiffuseColor(0,0,0);
             
             // call recursive trace
             trace(ray,scene,recursionDepth+1,tempColor,parameterList,halton1,halton2);
@@ -217,8 +220,8 @@ public class RenderingEquation {
 
             rIndex = 1/rIndex;
             
-            double cosineDirection1 = -1 * normal.dot(ray.getDirection());
-            double cosineDirection2 = 1.0 - rIndex*rIndex*(1.0-cosineDirection1*cosineDirection1);
+            double cosineDirection1 = -1.0 * normal.dot(ray.getDirection());
+            double cosineDirection2 = 1.0 - (rIndex*rIndex*(1.0-cosineDirection1*cosineDirection1));
             // Schlick approximation
             double fresnelFactorProbability = ratio + (1.0-ratio)* Math.pow(1.0-cosineDirection1, 5.0);
             // calculate refraction direction
@@ -230,7 +233,7 @@ public class RenderingEquation {
             }
             
             // create temporary color for recursive call-back
-            DiffuseColor tempColor = new DiffuseColor(1,1,1); // TODO assume I need 1 here
+            DiffuseColor tempColor = new DiffuseColor(0,0,0); // TODO assume I need 1 here
             
             // call recursive trace
             trace(ray,scene,recursionDepth+1,tempColor,parameterList,halton1,halton2);
@@ -248,7 +251,7 @@ public class RenderingEquation {
         
         // set parameters of the simulation
         parameterList.put("refractiveIndex", 1.5); // set refractive index
-        parameterList.put("spp", 32.0); // set samples per pixel
+        parameterList.put("spp", 256.0); // set samples per pixel
         
         double SPP = parameterList.get("spp");
         
@@ -292,14 +295,14 @@ public class RenderingEquation {
             for (int row = 0; row < width; row++) {
                 // loop over samples per pixel
                 for (int samples = 0; samples < SPP; samples++) {
-                    DiffuseColor colorMaster = new DiffuseColor();
+                    DiffuseColor colorMaster = new DiffuseColor(0,0,0);
                     
                     // create camera plane coordinates
                     Vec3D camera = CamPlaneCoordinate(column, row);
                     // anti-aliasing of the camera coordinates
                     camera.setX(camera.getX() + uniformRand()/700);
                     camera.setY(camera.getY() + uniformRand()/700);
-                    // ray with direction from the origin to the camera plane
+                    // ray with direction from the origin to the camera plane (Where the camera is placed relative to its plane or lens)
                     Ray ray = new Ray(new Vec3D(0,0,0), camera.subtract(new Vec3D(0,0,0)).norm());
                     
                     // trace the ray recursively

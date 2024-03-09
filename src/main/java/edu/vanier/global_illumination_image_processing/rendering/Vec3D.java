@@ -145,9 +145,10 @@ public class Vec3D {
      * @return The normalized version of this vector.
      */
     public Vec3D norm() {
+        double length = this.length();
         // Handle case where the vector may be zero to avoid null or divide by zero error
-        if (this.x == 0.0 && this.y == 0.0 && this.z == 0.0) return this;
-        return this.multiply(1 / this.length());
+        if (length == 0) return this;
+        return this.multiply(1 / length);
     }
 
     /**
@@ -192,16 +193,19 @@ public class Vec3D {
     public static void orthonormalSystem(Vec3D v1, Vec3D v2, Vec3D v3) {
 
         if (Math.abs(v1.getX()) > Math.abs(v1.getY())) {
-            double targetLength = 1 / Math.sqrt(v1.getX() * v1.getX() + v1.getZ() * v1.getZ());
+            double targetLength = 1.0 / Math.sqrt((v1.getX() * v1.getX()) + (v1.getZ() * v1.getZ()));
             v2.setX(-v1.getZ() * targetLength);
             v2.setY(0.0);
             v2.setZ(v1.getX() * targetLength);
         } else {
-            double targetLength = 1 / Math.sqrt(v1.getY() * v1.getY() + v1.getZ() * v1.getZ());
+            double targetLength = 1.0 / Math.sqrt((v1.getY() * v1.getY()) + (v1.getZ() * v1.getZ()));
             v2.setX(0.0);
             v2.setY(v1.getZ() * targetLength);
             v2.setZ(-v1.getY() * targetLength);
         }
-        v3 = v1.cross(v2);
+        Vec3D v3temp = v1.cross(v2);
+        v3.setX(v3temp.getX());
+        v3.setY(v3temp.getY());
+        v3.setZ(v3temp.getZ());
     }
 }

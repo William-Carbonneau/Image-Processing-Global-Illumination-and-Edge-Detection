@@ -84,15 +84,15 @@ public class Sphere extends SceneObject {
     @Override
     public double intersect(Ray intersectRay) {
         Vec3D ray0MinusOrigin = (intersectRay.getOrigin().subtract(this.getOrigin()));
-        
+        // solving quadratic formula
         double sphereComponent = ray0MinusOrigin.multiply(2).dot(intersectRay.getDirection());
         double originNew = ray0MinusOrigin.dot(ray0MinusOrigin) - (this.getRadius()*this.getRadius());
         double disc = sphereComponent*sphereComponent - 4*originNew;
-        if (disc < 0) return 0;
+        if (disc < 0) return 0; // check if discriminant is less then 0, return 0 is no relevant hits
         else disc = Math.sqrt(disc);
-        double soll = -sphereComponent + disc;
-        double sol2 = -sphereComponent - disc;
-        return (sol2>Intersection.EPS) ? sol2/2 : ((soll>Intersection.EPS) ? soll/2 : 0);
+        double solutionl = -sphereComponent + disc;
+        double solution2 = -sphereComponent - disc;
+        return (solution2>Intersection.EPS) ? solution2/2 : ((solutionl>Intersection.EPS) ? solutionl/2 : 0);
     }
 
     @Override
