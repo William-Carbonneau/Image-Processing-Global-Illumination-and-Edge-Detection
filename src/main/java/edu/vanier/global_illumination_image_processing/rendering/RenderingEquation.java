@@ -93,7 +93,7 @@ public class RenderingEquation {
     }
     
     /**
-    * Generates a stratified sample point on a hemisphere for diffuse objects. TODO citation
+    * Generates a stratified (or not) sample point on a hemisphere for diffuse objects. TODO citation
     * 
     * This method implements stratified sampling of a hemisphere based on the algorithm provided by  http://www.rorydriscoll.com/2009/01/07/better-sampling/
     * It takes random radius and angle as parameters, ensuring an even ray distribution from the hemisphere to reduce noise in Monte Carlo simulations.
@@ -119,7 +119,18 @@ public class RenderingEquation {
         
     }
     
-    // TODO docs
+    /**
+    * Traces a ray through the scene, calculating the color contribution of each intersected object recursively.
+    * Traces rays from the camera's viewpoint and calculates how they interact with objects in the scene.
+    * 
+    * @param ray             The ray to be traced.
+    * @param scene           The scene containing the objects to be intersected by the ray.
+    * @param recursionDepth  The current recursion depth, the number of recursive calls made by the method.
+    * @param color           The color of the ray, which accumulates contributions from intersected objects.
+    * @param parameterList   A HashMap containing additional parameters needed for certain calculations.
+    * @param halton1         The first Halton sequence generator used for random number generation.
+    * @param halton2         The second Halton sequence generator used for random number generation.
+    */
     private static void trace(Ray ray, Scene scene, int recursionDepth, DiffuseColor color, HashMap<String, Double> parameterList, Halton halton1, Halton halton2) {
 //        if (color.getR() > 0 || color.getG() > 0 || color.getB() > 0) System.out.printf("%f, %f, %f%n", color.getR(),color.getG(),color.getB());
         
@@ -260,6 +271,11 @@ public class RenderingEquation {
         }
     }
     
+    /**
+     * Run the path tracer with parameters
+     * Uses the trace() method
+     * This also outputs the file as a ppm
+     */
     public static int run() {
         HashMap<String, Double> parameterList = new HashMap<>(); 
         Scene scene = new Scene();

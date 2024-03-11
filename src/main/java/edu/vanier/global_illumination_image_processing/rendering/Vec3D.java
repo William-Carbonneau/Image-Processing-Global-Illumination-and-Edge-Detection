@@ -185,6 +185,7 @@ public class Vec3D {
     
     /**
      * Creates an orthonormal system of vectors, assuming v1 is already normalized.
+     * Recommended that v2 and v3 are empty
      * 
      * @param v1 A normalized vector.
      * @param v2 Another vector.

@@ -49,9 +49,9 @@ application {
 
    // mainClass = 'edu.vanier.Global_Illumination_Image_Processing.tests.PPMProcessingTest'
    // mainClass = 'edu.vanier.Global_Illumination_Image_Processing.tests.RenderTest'
-//   mainClass = 'edu.vanier.Global_Illumination_Image_Processing.tests.testVec3D'
+   // mainClass = 'edu.vanier.Global_Illumination_Image_Processing.tests.testVec3D'
 
 
-   mainClass = 'edu.vanier.Global_Illumination_Image_Processing.tests.ImageProcessingTest'
+    mainClass = 'edu.vanier.Global_Illumination_Image_Processing.tests.ImageProcessingTest'
 
 }
