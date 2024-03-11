@@ -97,7 +97,7 @@ public class Sphere extends SceneObject {
 
     @Override
     public Vec3D normal(Vec3D intersectPoint) {
-        return (intersectPoint.subtract(getOrigin()).norm());
+        return intersectPoint.subtract(this.getOrigin()).multiply(1.0/radius); // normalize by radius to avoid square root
     }
     
 }
