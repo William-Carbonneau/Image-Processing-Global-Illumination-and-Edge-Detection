@@ -21,6 +21,9 @@ public class Convolution {
         }
         System.out.println();
     }
+    /**
+     * This method prints a 2-d array
+     */
     public static void print2DArray(byte[][] array){
         for (int i=0; i<array.length; i++){
             System.out.print("[");
