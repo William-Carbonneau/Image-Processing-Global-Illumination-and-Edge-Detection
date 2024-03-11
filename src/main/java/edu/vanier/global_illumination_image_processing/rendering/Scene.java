@@ -28,7 +28,7 @@ public class Scene {
         // for all objects test intersection for nearest
         for (int i = 0; i < objects.size(); i++) {
             double temp = objects.get(i).intersect(ray);
-            if ( temp < closestIntersection.getIntersectDistance() && temp > Intersection.EPS) {
+            if (temp < closestIntersection.getIntersectDistance() && temp > Intersection.EPS) {
                 closestIntersection.setIntersectDistance(temp);
                 closestIntersection.setObject(objects.get(i));
             }

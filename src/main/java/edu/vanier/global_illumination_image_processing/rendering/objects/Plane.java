@@ -17,7 +17,7 @@ public class Plane extends SceneObject{
 
     // getters and setters
     
-    public Vec3D getN() {
+    public Vec3D getNormal() {
         return normal;
     }
 
@@ -45,15 +45,15 @@ public class Plane extends SceneObject{
         return type;
     }
 
-    public double getD() {
+    public double getDistance() {
         return distanceOrigin;
     }
 
-    public void setN(Vec3D n) {
+    public void setNormal(Vec3D n) {
         this.normal = n;
     }
 
-    public void setD(double d) {
+    public void setDirection(double d) {
         this.distanceOrigin = d;
     }
 
@@ -82,9 +82,9 @@ public class Plane extends SceneObject{
     
     @Override
     public double intersect(Ray intersectRay) {
-        double d0 = getN().dot(intersectRay.getDirection());
+        double d0 = getNormal().dot(intersectRay.getDirection());
         if (d0 != 0) {
-            double temp = -1 * (((getN().dot(intersectRay.getOrigin()))+getD()) / d0);
+            double temp = -1 * (((getNormal().dot(intersectRay.getOrigin()))+getDistance()) / d0);
             return (temp > Intersection.EPS) ? temp : 0;
         }else {
             return 0;

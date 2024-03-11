@@ -1,7 +1,6 @@
 package edu.vanier.global_illumination_image_processing.rendering;
 import edu.vanier.global_illumination_image_processing.rendering.objects.Plane;
 import edu.vanier.global_illumination_image_processing.rendering.objects.Sphere;
-import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -19,7 +18,6 @@ public class RenderingEquation {
     // create uniform random numbers
     private static final MersenneTwister twister = new MersenneTwister();
     private static final UniformRealDistribution uniRealDist = new UniformRealDistribution(twister, 0.0, 1.0);
-    static int counter = 0;
     // width and height of render image/camera in pixels, cannot be static for dynamic adjustment TODO, add getters and setters
     private static int width = 800, height = 800;
 
@@ -44,19 +42,19 @@ public class RenderingEquation {
     /**
      * Sets the width of the camera's viewport.
      * 
-     * @param width The width to be set for the camera's viewport.
+     * @param widthParam The width to be set for the camera's viewport.
      */
-    public void setWidth(int width) {
-        this.width = width;
+    public void setWidth(int widthParam) {
+        width = widthParam;
     }
 
     /**
      * Sets the height of the camera's viewport.
      * 
-     * @param height The height to be set for the camera's viewport.
+     * @param heightParam The height to be set for the camera's viewport.
      */
-    public void setHeight(int height) {
-        this.height = height;
+    public void setHeight(int heightParam) {
+        height = heightParam;
     }
     
     /**
@@ -100,14 +98,25 @@ public class RenderingEquation {
     * This method implements stratified sampling of a hemisphere based on the algorithm provided by  http://www.rorydriscoll.com/2009/01/07/better-sampling/
     * It takes random radius and angle as parameters, ensuring an even ray distribution from the hemisphere to reduce noise in Monte Carlo simulations.
     * 
-    * @param randRadius The random radius parameter used for sampling the hemisphere.
-    * @param randAngle  The random angle parameter used for sampling the hemisphere.
+    * @param uniform1 The random radius parameter used for sampling the hemisphere.
+    * @param uniform2  The random angle parameter used for sampling the hemisphere.
     * @return Vec3D representing the stratified sample point on the hemisphere.
     */
-    private static Vec3D Hemisphere(double randRadius, double randAngle) {
-        double radius = Math.sqrt(1.0 - (randRadius * randAngle));
-        double angle = 2 * Math.PI * randAngle;
-        return new Vec3D(Math.cos(angle) * radius, Math.sin(angle) * radius, randRadius);
+    private static Vec3D Hemisphere(double uniform1, double uniform2) {
+/* // non-stratified sampler
+        double radius = Math.sqrt(1.0 - (uniform1 * uniform1));
+        double angle = 2 * Math.PI * uniform2;
+        return new Vec3D(Math.cos(angle) * radius, Math.sin(angle) * radius, uniform1);
+*/
+
+        // stratified sampling, constly square roots, but improved sampling performance
+        double radius = Math.sqrt(uniform1);
+        double angle = 2*Math.PI*uniform2;
+        double xPos = radius*Math.cos(angle);
+        double yPos = radius*Math.sin(angle);
+        
+        return new Vec3D(xPos,yPos, Math.sqrt(Double.max(0.0, 1.0-uniform1)));
+        
     }
     
     // TODO docs
@@ -128,8 +137,8 @@ public class RenderingEquation {
             rouletteFactor = 1.0 / (1.0 - rouletteStopProbability);
         }
         
-        Intersection intersect = scene.intersect(ray); //TODO REMOVE THIS WORKS
-        // check in interscetion exists, otherwise return
+        Intersection intersect = scene.intersect(ray);
+        // check if interscetion exists, otherwise return
         if(!intersect.containsObjectBool()) return;
         // at this point we are sure to have an intersection
                 
@@ -139,39 +148,48 @@ public class RenderingEquation {
         // get the object normal at the intersection point
         Vec3D normal = intersect.getObject().normal(hitPoint);
                 
-        // set the ray otigin to the hitpoint for the next iteration outward
+        // set the ray origin to the hitpoint for the next iteration outward
         ray.setOrigin(hitPoint);
 
         
         // next handle emission from rendering equation [Le(x,w)], weighted by the roulette probability weight
         double emission = intersect.getObject().getEmission();
-        
-//        if (emission > 0) System.out.println(emission);
-        
-        color.addToObject(new DiffuseColor(emission, emission, emission).multiply(rouletteFactor));
-        
-//        System.out.printf("%f, %f, %f%n", color.getR(),color.getG(),color.getB());
+        DiffuseColor emissionColor = new DiffuseColor(emission, emission, emission);
+        color.addToObject(emissionColor.multiply(rouletteFactor));
         
         // calculate the diffuse color by the hemisphere sampler
-        // type 1 is diffuse material
+        // type 1 is diffuse material TODO, DETERMINED THAT DIFFUSE IS THE CAUSE OF THE SHADOW PROBLEMS
         if(intersect.getObject().getType() == 1) {
             // create an orthonormal system from the surface normal
-            Vec3D rotationX = new Vec3D(0,0,0), rotationY = new Vec3D(0,0,0);
+            Vec3D rotationX = new Vec3D(0,0,0);
+            Vec3D rotationY = new Vec3D(0,0,0);
             Vec3D.orthonormalSystem(normal, rotationX, rotationY);
             
-            // increment halton series
-            halton1.next();            
-            halton2.next();            
+            halton1.next();
+            halton2.next();
+            
+            // intentional bug for line effect (reduce orthonormal system)
+//            rotationY = new Vec3D(0,0,0);
+            
             // get new direction from hemisphere sampler
             Vec3D sampleDirection = Hemisphere(uniformRand2(),uniformRand2());
             
+            // intentional bug for swirl effect
+//            Vec3D sampleDirection = Hemisphere(halton1.get(),halton2.get());
+            
             // get new rotated ray direction from orthonormal system
-            Vec3D rotatedDirection = new Vec3D(
-                new Vec3D(rotationX.getX(), rotationY.getX(), normal.getX()).dot(sampleDirection),
-                new Vec3D(rotationX.getY(), rotationY.getY(), normal.getY()).dot(sampleDirection),
-                new Vec3D(rotationX.getZ(), rotationY.getZ(), normal.getZ()).dot(sampleDirection)
-            );
-            ray.setDirection(rotatedDirection);
+            Vec3D rotatedDirection = new Vec3D(0,0,0);
+            
+            rotatedDirection.setX(new Vec3D(rotationX.getX(), rotationY.getX(), normal.getX()).dot(sampleDirection));
+            rotatedDirection.setY(new Vec3D(rotationX.getY(), rotationY.getY(), normal.getY()).dot(sampleDirection));
+            rotatedDirection.setZ(new Vec3D(rotationX.getZ(), rotationY.getZ(), normal.getZ()).dot(sampleDirection));
+            
+
+            ray.setDirection(rotatedDirection.norm()); // TODO costly normalize
+            
+            // intentional bug for psychedelic effect
+//            ray.setDirection(normal);
+
             double cosineDirection = ray.getDirection().dot(normal);
             
             // create temporary color for recursive call-back
@@ -182,7 +200,6 @@ public class RenderingEquation {
             
             // recursive collection/aggregation
             color.addToObject(tempColor.multiplyColor(intersect.getObject().getColor()).multiply(cosineDirection * 0.1 * rouletteFactor));
-//            System.out.printf("%f, %f, %f%n", color.getR(),color.getG(),color.getB());
         }
         
         // calculate the specular component of the rendering, handle uniquely because specular has a perfect bounce.
@@ -199,7 +216,6 @@ public class RenderingEquation {
             
             // recursive collection/aggregation
             color.addToObject(tempColor.multiply(rouletteFactor));
-//            System.out.printf("%f, %f, %f%n", color.getR(),color.getG(),color.getB());
 
         }
         
@@ -221,7 +237,7 @@ public class RenderingEquation {
             rIndex = 1/rIndex;
             
             double cosineDirection1 = -1.0 * normal.dot(ray.getDirection());
-            double cosineDirection2 = 1.0 - (rIndex*rIndex*(1.0-cosineDirection1*cosineDirection1));
+            double cosineDirection2 = 1.0 - (rIndex*rIndex*(1.0-(cosineDirection1*cosineDirection1)));
             // Schlick approximation
             double fresnelFactorProbability = ratio + (1.0-ratio)* Math.pow(1.0-cosineDirection1, 5.0);
             // calculate refraction direction
@@ -240,7 +256,6 @@ public class RenderingEquation {
             
             // recursive collection/aggregation
             color.addToObject(tempColor.multiply(1.15*rouletteFactor));
-//            System.out.printf("%f, %f, %f%n", color.getR(),color.getG(),color.getB());
 
         }
     }
@@ -251,7 +266,7 @@ public class RenderingEquation {
         
         // set parameters of the simulation
         parameterList.put("refractiveIndex", 1.5); // set refractive index
-        parameterList.put("spp", 256.0); // set samples per pixel
+        parameterList.put("spp", 16.0); // set samples per pixel
         
         double SPP = parameterList.get("spp");
         
@@ -316,13 +331,6 @@ public class RenderingEquation {
                 }
             }
         }
-        System.out.println("Tracing finished");
-        
-//        for (int row=0;row<height;row++) {
-//            for (int col=0;col<width;col++) {
-//                System.out.printf("%d %d %d ", Math.min((int)pixels[col][row].getR(),255), Math.min((int)pixels[col][row].getG(),255), Math.min((int)pixels[col][row].getB(),255));
-//            }
-//	}
         
         System.out.println("Render finished");
         
