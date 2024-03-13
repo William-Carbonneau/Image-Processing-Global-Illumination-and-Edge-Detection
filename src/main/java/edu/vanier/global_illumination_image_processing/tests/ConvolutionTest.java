@@ -22,11 +22,9 @@ public class ConvolutionTest extends Application{
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/FXMLConvolutionsScene.fxml"));
         loader.setController(new FXMLConvolutionController(primaryStage));
         Pane root = loader.load();
-        //-- 2) Create and set the scene to the stage.
         Scene scene = new Scene(root, 1000, 700);
         primaryStage.setScene(scene);
         primaryStage.sizeToScene();
-        // We just need to bring the main window to front.
         primaryStage.setAlwaysOnTop(true);            
         primaryStage.show();
     }

@@ -1,25 +1,21 @@
 package edu.vanier.Global_Illumination_Image_Processing.tests;
 
+import edu.vanier.Global_Illumination_Image_Processing.models.Convolution;
 import java.awt.Color;
 import java.awt.image.BufferedImage;
-import java.io.DataInputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
-import java.util.Scanner;
 import javax.imageio.ImageIO;
-import static javax.swing.Spring.height;
-import static javax.swing.Spring.width;
 
 /**
  * 
  */
 public class ImageProcessingTest {
     public static void main(String[] args) throws FileNotFoundException, IOException {
-        //BufferedImage bi = new BufferedImage();
-        BufferedImage img = createBI("src\\main\\resources\\images\\landscape.bmp");
-        createImage(getRGBFromBI(img), "src\\main\\resources\\images\\landscape2.bmp");
+        float[][] rules = {{1,2,1},{2,4,2},{1,2,1}};
+        Convolution.performConvolution("src\\main\\resources\\images\\landscape.bmp", "src\\main\\resources\\images\\landscape12.bmp", rules);
+        
         
     }
     public static BufferedImage createBI(String fileName) throws IOException{

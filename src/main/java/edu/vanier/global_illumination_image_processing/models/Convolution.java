@@ -1,5 +1,11 @@
 package edu.vanier.Global_Illumination_Image_Processing.models;
 
+import java.awt.Color;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+import javax.imageio.ImageIO;
+
 /**
  * This class is a collection of static methods that are useful for convolutions.
  */
@@ -56,8 +62,78 @@ public class Convolution {
         }
         return arrayOut;
     }
-    
-    public static float[][] performConvolutionOnImage(float[][] rulesModel, float[][] in){
+    public static void performConvolution(String fileNameIn, String fileNameOut, float[][] rulesModel) throws IOException{
+        BufferedImage BI = createBI(fileNameIn);
+        float[][] r = new float[BI.getWidth()][BI.getHeight()];
+        float[][] g = new float[BI.getWidth()][BI.getHeight()];
+        float[][] b = new float[BI.getWidth()][BI.getHeight()];
+        //Initialize the values of r, g, and b
+        Color color;
+        for(int w=0; w<BI.getWidth(); w++){
+            for(int h=0; h<BI.getHeight(); h++){
+                color = new Color(BI.getRGB(w, h));
+                r[w][h] = color.getRed();
+                g[w][h] = color.getGreen();
+                b[w][h] = color.getBlue();
+            }
+        }
+        //Perform the convolution on the colours array individually
+        float[][] rFinal = performConvolutionOnArray(rulesModel, r);
+        float[][] gFinal = performConvolutionOnArray(rulesModel, g);
+        float[][] bFinal = performConvolutionOnArray(rulesModel, b);
+        //Combine the colours to make a new image
+        BufferedImage finalImage = new BufferedImage(r.length, r[0].length, BufferedImage.TYPE_INT_RGB);
+        for(int w=0; w<BI.getWidth(); w++){
+            for(int h=0; h<BI.getHeight(); h++){
+                color = new Color(r[w][h]/256, g[w][h]/256, b[w][h]/256);
+                finalImage.setRGB(w, h, color.getRGB());
+                
+            }
+        }
+        File file = new File(fileNameOut);
+        ImageIO.write(finalImage, "png", file);
+    }
+        public static BufferedImage createBI(String fileName) throws IOException{
+        File file = new File(fileName);
+        return ImageIO.read(new File(file.getAbsolutePath()));
+    }
+    /**
+     * 0=RED
+     * 1=GREEN
+     * 2=BLUE
+     * Idea of having a third dimension storing each value of the RGB + Code very similar to: https://ramok.tech/2018/09/27/convolution-in-java/
+     */
+    public static float[][][] getRGBFromBI(BufferedImage img){
+        float[][][] rgb = new float[img.getWidth()][img.getHeight()][3];
+        Color color;
+        for(int w=0; w<img.getWidth(); w++){
+            for(int h=0; h<img.getHeight(); h++){
+                color = new Color(img.getRGB(w, h));
+                rgb[w][h][0] = color.getRed();
+                rgb[w][h][1] = color.getGreen();
+                rgb[w][h][2] = color.getBlue();
+            }
+        }
+        return rgb;
+    }
+    /**
+     * https://ramok.tech/2018/09/27/convolution-in-java/
+     */
+    public static File createImage(float[][][] rgb, String fileName) throws IOException{
+        BufferedImage finalImage = new BufferedImage(rgb.length, rgb[0].length, BufferedImage.TYPE_INT_RGB);
+        for(int w=0; w<rgb.length; w++){
+            for(int h=0; h<rgb[0].length; h++){
+                finalImage.setRGB(w, h, (int) (rgb[w][h][0]+rgb[w][h][1]+rgb[w][h][2]));
+            }
+        }
+        File file = new File(fileName);
+        ImageIO.write(finalImage, "png", file);
+        return file;
+    }
+    /**
+     * This method performs a convolution on 2D-array of float values
+     */
+    public static float[][] performConvolutionOnArray(float[][] rulesModel, float[][] in){
         float[][] result = new float[in.length][in[0].length];
         float weightRules=0;
         for(int r=0; r<rulesModel.length; r++){
