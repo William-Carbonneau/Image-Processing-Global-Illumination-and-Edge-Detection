@@ -4,7 +4,7 @@ package edu.vanier.global_illumination_image_processing.rendering;
  * Superclass for all objects in the 3D scene.
  * Objects in the scene have properties such as color, emission, and type (diffuse, specular, refractive).
  * All objects should be intersectable and able to compute their surface normals.
- * 
+ * TODO docs
  * @author William Carbonneau
  */
 public abstract class SceneObject {

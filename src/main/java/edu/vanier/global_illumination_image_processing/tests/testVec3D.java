@@ -3,7 +3,7 @@ package edu.vanier.Global_Illumination_Image_Processing.tests;
 import edu.vanier.global_illumination_image_processing.rendering.Vec3D;
 
 /**
- * Test the Vec3D class, TODO, update the tests to make more verbose
+ * Test the Vec3D class
  * @author William Carbonneau
  */
 public class testVec3D {
