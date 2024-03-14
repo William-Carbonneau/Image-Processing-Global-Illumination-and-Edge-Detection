@@ -131,8 +131,8 @@
                                     <Line endX="50.0" startX="-50.0" />
                                     <HBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0">
                                        <children>
-                                          <ChoiceBox prefWidth="150.0" />
-                                          <Button mnemonicParsing="false" text="Convolve" />
+                                          <ChoiceBox fx:id="convolutionCB" prefWidth="150.0" />
+                                          <Button fx:id="convolveBtn" mnemonicParsing="false" text="Convolve" />
                                        </children>
                                     </HBox>
                                     <HBox alignment="CENTER_LEFT" layoutX="10.0" layoutY="36.0" prefHeight="45.0" prefWidth="266.0">
@@ -210,15 +210,15 @@
                                               <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                             </rowConstraints>
                                              <children>
-                                                <TextField />
-                                                <TextField GridPane.columnIndex="1" />
-                                                <TextField GridPane.columnIndex="2" />
-                                                <TextField GridPane.rowIndex="1" />
-                                                <TextField GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                                                <TextField GridPane.columnIndex="2" GridPane.rowIndex="1" />
-                                                <TextField GridPane.rowIndex="2" />
-                                                <TextField GridPane.columnIndex="1" GridPane.rowIndex="2" />
-                                                <TextField prefHeight="68.0" prefWidth="82.0" GridPane.columnIndex="2" GridPane.rowIndex="2" />
+                                                <TextField fx:id="txt11" />
+                                                <TextField fx:id="txt12" GridPane.columnIndex="1" />
+                                                <TextField fx:id="txt13" GridPane.columnIndex="2" />
+                                                <TextField fx:id="txt21" GridPane.rowIndex="1" />
+                                                <TextField fx:id="txt22" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                                                <TextField fx:id="txt23" GridPane.columnIndex="2" GridPane.rowIndex="1" />
+                                                <TextField fx:id="txt31" GridPane.rowIndex="2" />
+                                                <TextField fx:id="txt32" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                                                <TextField fx:id="txt33" prefHeight="68.0" prefWidth="82.0" GridPane.columnIndex="2" GridPane.rowIndex="2" />
                                              </children>
                                           </GridPane>
                                        </children>
@@ -293,5 +293,6 @@
         </ScrollPane>
       </items>
     </SplitPane>
+      <ChoiceBox prefWidth="150.0" />
   </children>
 </VBox>

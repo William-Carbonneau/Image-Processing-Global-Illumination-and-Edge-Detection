@@ -12,8 +12,8 @@ import javax.imageio.ImageIO;
  */
 public class ImageProcessingTest {
     public static void main(String[] args) throws FileNotFoundException, IOException {
-        float[][] rules = {{4,2,4},{2,1,2},{4,2,4}};
-        performConvolution("src\\main\\resources\\images\\landscape.bmp", "src\\main\\resources\\images\\landscape21.bmp", rules);
+        float[][] rules = {{1,4,7,4,1},{4,16,26,16,4},{7,26,41,26,7},{4,16,26,16,4},{1,4,7,4,1}};
+        performConvolution("src\\main\\resources\\images\\landscape.bmp", "src\\main\\resources\\images\\landscapeGauss55.bmp", rules);
         
         
     }
