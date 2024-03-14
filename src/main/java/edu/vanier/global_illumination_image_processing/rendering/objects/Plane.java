@@ -8,13 +8,13 @@ import edu.vanier.global_illumination_image_processing.rendering.DiffuseColor;
 
 /**
  * Plane SceneObject represented mathematically
+ * TODO docs
  * @author William Carbonneau
  */
 public class Plane extends SceneObject{
     private Vec3D normal;
     private double distanceOrigin;
-    private int type;
-
+    
     // getters and setters
     
     public Vec3D getNormal() {

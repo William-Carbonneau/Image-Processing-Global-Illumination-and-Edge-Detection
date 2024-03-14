@@ -18,7 +18,7 @@ public class RenderingEquation {
     // create uniform random numbers
     private static final MersenneTwister twister = new MersenneTwister();
     private static final UniformRealDistribution uniRealDist = new UniformRealDistribution(twister, 0.0, 1.0);
-    // width and height of render image/camera in pixels, cannot be static for dynamic adjustment TODO, add getters and setters
+    // width and height of render image/camera in pixels, cannot be static for dynamic adjustment
     private static int width = 800, height = 800;
 
     /**
@@ -109,7 +109,7 @@ public class RenderingEquation {
         return new Vec3D(Math.cos(angle) * radius, Math.sin(angle) * radius, uniform1);
 */
 
-        // stratified sampling, constly square roots, but improved sampling performance
+        // stratified sampling, costly square roots, but improved sampling performance
         double radius = Math.sqrt(uniform1);
         double angle = 2*Math.PI*uniform2;
         double xPos = radius*Math.cos(angle);
@@ -132,7 +132,6 @@ public class RenderingEquation {
     * @param halton2         The second Halton sequence generator used for random number generation.
     */
     private static void trace(Ray ray, Scene scene, int recursionDepth, DiffuseColor color, HashMap<String, Double> parameterList, Halton halton1, Halton halton2) {
-//        if (color.getR() > 0 || color.getG() > 0 || color.getB() > 0) System.out.printf("%f, %f, %f%n", color.getR(),color.getG(),color.getB());
         
         // russian roulette recursion
         double rouletteFactor = 1.0;
@@ -169,7 +168,7 @@ public class RenderingEquation {
         color.addToObject(emissionColor.multiply(rouletteFactor));
         
         // calculate the diffuse color by the hemisphere sampler
-        // type 1 is diffuse material TODO, DETERMINED THAT DIFFUSE IS THE CAUSE OF THE SHADOW PROBLEMS
+        // type 1 is diffuse material
         if(intersect.getObject().getType() == 1) {
             // create an orthonormal system from the surface normal
             Vec3D rotationX = new Vec3D(0,0,0);
@@ -196,7 +195,7 @@ public class RenderingEquation {
             rotatedDirection.setZ(new Vec3D(rotationX.getZ(), rotationY.getZ(), normal.getZ()).dot(sampleDirection));
             
 
-            ray.setDirection(rotatedDirection.norm()); // TODO costly normalize
+            ray.setDirection(rotatedDirection); // already normalized, no need for costly operation
             
             // intentional bug for psychedelic effect
 //            ray.setDirection(normal);
@@ -260,7 +259,7 @@ public class RenderingEquation {
             }
             
             // create temporary color for recursive call-back
-            DiffuseColor tempColor = new DiffuseColor(0,0,0); // TODO assume I need 1 here
+            DiffuseColor tempColor = new DiffuseColor(0,0,0);
             
             // call recursive trace
             trace(ray,scene,recursionDepth+1,tempColor,parameterList,halton1,halton2);

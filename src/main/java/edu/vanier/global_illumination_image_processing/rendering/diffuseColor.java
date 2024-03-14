@@ -88,31 +88,54 @@ public class DiffuseColor {
         this.b = b;
     }
     
-    // TODO docs
+    /**
+     * Adds one DiffuseColor object to the current one and returns a new version.
+     * 
+     * @param color The new DiffuseColor to be added to the current one.
+     * @return new DiffuseColor
+     */
     public DiffuseColor add(DiffuseColor color) {
         return new DiffuseColor(this.r + color.getR(), this.g + color.getG(), this.b + color.getB());
     }
     
-    // TODO docs
+    /**
+     * Adds one DiffuseColor object to the current one and modifies the object directly.
+     * 
+     * @param color The new DiffuseColor to be added to the current one.
+     */
     public void addToObject(DiffuseColor color) {
         this.r += color.getR(); 
         this.g += color.getG(); 
         this.b += color.getB();
     }
     
-    // TODO docs
+    /**
+     * Multiplies a scalar number by the current object and returns a new version.
+     * 
+     * @param val The new DiffuseColor to be multiplied by the current object.
+     * @return new DiffuseColor
+     */
     public DiffuseColor multiply(double val) {
         return new DiffuseColor(this.r * val, this.g * val, this.b * val);
     }
     
-// TODO docs
+    /**
+     * Multiplies a scalar number by the current object and modifies the object directly.
+     * 
+     * @param val The new DiffuseColor to be multiplied by the current object.
+     */
     public void multiplyToObject(double val) {
         this.r *= val;
         this.g *= val;
         this.b *= val;
     }
 
-    // TODO docs
+    /**
+     * Multiplies one DiffuseColor object by the current one and modifies the object directly.
+     * 
+     * @param color The new DiffuseColor to be multiplied by the current one.
+     * @return new DiffuseColor
+     */
     public DiffuseColor multiplyColor(DiffuseColor color) {
         return new DiffuseColor(this.r * color.getR(), this.g * color.getG(), this.b * color.getB());
     }
