@@ -1,6 +1,7 @@
 package edu.vanier.global_illumination_image_processing;
 
 import edu.vanier.global_illumination_image_processing.controllers.FXMLMainAppController;
+import edu.vanier.global_illumination_image_processing.controllers.FXMLTitleSceneController;
 import java.io.IOException;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
@@ -28,8 +29,8 @@ public class MainApp extends Application {
             logger.info("Bootstrapping the application...");
             //-- 1) Load the scene graph from the specified FXML file and 
             // associate it with its FXML controller.
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/FXMLRenderScene.fxml"));
-            loader.setController(new FXMLMainAppController());
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/FXMLTitleScene.fxml"));
+            loader.setController(new FXMLTitleSceneController());
             Pane root = loader.load();
             //-- 2) Create and set the scene to the stage.
             Scene scene = new Scene(root, 1000, 700);

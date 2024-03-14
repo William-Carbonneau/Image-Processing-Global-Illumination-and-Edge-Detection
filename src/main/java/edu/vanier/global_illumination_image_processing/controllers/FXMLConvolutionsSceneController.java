@@ -16,15 +16,19 @@ import javafx.stage.Stage;
  * @Loovdrish Sujore
  * 
  */
-public class FXMLConvolutionController {
+public class FXMLConvolutionsSceneController {
     @FXML
     ImageView imageImgView;
     @FXML
     Button getFromFileBtn;
     Stage primaryStage;
 
-    public FXMLConvolutionController(Stage primaryStage) {
+    public FXMLConvolutionsSceneController(Stage primaryStage) {
         this.primaryStage = primaryStage;
+    }
+
+    FXMLConvolutionsSceneController() {
+        
     }
     
     @FXML

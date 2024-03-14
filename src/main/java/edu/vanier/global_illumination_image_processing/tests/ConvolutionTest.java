@@ -1,6 +1,6 @@
 package edu.vanier.Global_Illumination_Image_Processing.tests;
 
-import edu.vanier.global_illumination_image_processing.controllers.FXMLConvolutionController;
+import edu.vanier.global_illumination_image_processing.controllers.FXMLConvolutionsSceneController;
 import edu.vanier.global_illumination_image_processing.controllers.FXMLMainAppController;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
@@ -20,7 +20,7 @@ public class ConvolutionTest extends Application{
     @Override
     public void start(Stage primaryStage) throws Exception {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/FXMLConvolutionsScene.fxml"));
-        loader.setController(new FXMLConvolutionController(primaryStage));
+        loader.setController(new FXMLConvolutionsSceneController(primaryStage));
         Pane root = loader.load();
         Scene scene = new Scene(root, 1000, 700);
         primaryStage.setScene(scene);
