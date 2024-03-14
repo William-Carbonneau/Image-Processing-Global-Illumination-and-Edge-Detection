@@ -21,7 +21,7 @@ import javax.imageio.ImageIO;
  *
  * @Loovdrish Sujore
  */
-public class FXMLConvolutionController {
+public class FXMLConvolutionsSceneController {
     @FXML
     ImageView imageImgView;
     @FXML
@@ -36,8 +36,12 @@ public class FXMLConvolutionController {
     File inputFile;
     String nameFileOut;
 
-    public FXMLConvolutionController(Stage primaryStage) {
+    public FXMLConvolutionsSceneController(Stage primaryStage) {
         this.primaryStage = primaryStage;
+        
+    }
+
+    FXMLConvolutionsSceneController() {
         
     }
     
