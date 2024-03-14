@@ -32,6 +32,9 @@ public class FXMLConvolutionsSceneController {
     ChoiceBox convolutionCB;
     @FXML
     TextField txt11,txt12,txt13,txt21,txt22,txt23,txt31,txt32,txt33;
+    float[][] rulesGaussian = {{1,2,1},{2,4,2},{1,2,1}};
+    //https://pro.arcgis.com/en/pro-app/latest/help/analysis/raster-functions/convolution-function.htm#:~:text=The%20Convolution%20function%20performs%20filtering,or%20other%20kernel%2Dbased%20enhancements.
+    float[][] rulesSharp1 = {{0f,-0.25f,0f},{-0.25f,2f,-0.25f},{0f,-0.25f,0f}};
     Stage primaryStage;
     File inputFile;
     String nameFileOut;
@@ -47,7 +50,7 @@ public class FXMLConvolutionsSceneController {
     
     @FXML
     public void initialize(){
-        convolutionCB.getItems().addAll("Custom Kernel", "Gaussian Blur");
+        convolutionCB.getItems().addAll("Custom Kernel", "Gaussian Blur", "Sharpening","Grayscale");
         convolutionCB.setOnAction((event)->{
             //Get the value of the convolution
             String choice = convolutionCB.getValue().toString();
@@ -96,7 +99,6 @@ public class FXMLConvolutionsSceneController {
             }
             else if(choice.equals("Gaussian Blur")){
                 System.out.println("Gaussian Blur Clicked");
-                float[][] rulesGaussian = {{1,2,1},{2,4,2},{1,2,1}};
                 //Get the image the user wants to convolve
                 if(inputFile==null){
                     this.inputFile = getFileFromFChooser();
@@ -118,6 +120,60 @@ public class FXMLConvolutionsSceneController {
                     // Create a file with the name
                     fileOut = new File(dc.getInitialDirectory()+"\\"+nameFileOut+".bmp");
                     performConvolution(this.inputFile.getAbsolutePath(), fileOut.getAbsolutePath(), rulesGaussian);
+                } catch (IOException | NullPointerException ex) {
+                    System.out.println("Error caught");
+                }
+            }
+            else if(choice.equals("Sharpening")){
+                System.out.println("Sharpening Clicked");
+                //Get the image the user wants to convolve
+                if(inputFile==null){
+                    this.inputFile = getFileFromFChooser();
+                }
+                // Let the user choose a directory to create the image
+                // Choose the directory in which the user wants to save the settings
+                Stage stage = new Stage();
+                DirectoryChooser dc = new DirectoryChooser();
+                primaryStage.setAlwaysOnTop(false);
+                stage.setAlwaysOnTop(true);
+                dc.setInitialDirectory(dc.showDialog(stage));
+                stage.setAlwaysOnTop(false);
+                primaryStage.setAlwaysOnTop(true);
+                File fileOut;
+                try {
+                    dc.getInitialDirectory().createNewFile();
+                    // Make a dialog appear for the user to choose a name for the file
+                    String nameFileOut = chooseNameDialog();
+                    // Create a file with the name
+                    fileOut = new File(dc.getInitialDirectory()+"\\"+nameFileOut+".bmp");
+                    performConvolution(this.inputFile.getAbsolutePath(), fileOut.getAbsolutePath(), rulesSharp1);
+                } catch (IOException | NullPointerException ex) {
+                    System.out.println("Error caught");
+                }
+            }
+            else if(choice.equals("Grayscale")){
+                System.out.println("Sharpening Clicked");
+                //Get the image the user wants to convolve
+                if(inputFile==null){
+                    this.inputFile = getFileFromFChooser();
+                }
+                // Let the user choose a directory to create the image
+                // Choose the directory in which the user wants to save the settings
+                Stage stage = new Stage();
+                DirectoryChooser dc = new DirectoryChooser();
+                primaryStage.setAlwaysOnTop(false);
+                stage.setAlwaysOnTop(true);
+                dc.setInitialDirectory(dc.showDialog(stage));
+                stage.setAlwaysOnTop(false);
+                primaryStage.setAlwaysOnTop(true);
+                File fileOut;
+                try {
+                    dc.getInitialDirectory().createNewFile();
+                    // Make a dialog appear for the user to choose a name for the file
+                    String nameFileOut = chooseNameDialog();
+                    // Create a file with the name
+                    fileOut = new File(dc.getInitialDirectory()+"\\"+nameFileOut+".bmp");
+                    performGrayscale(this.inputFile.getAbsolutePath(), fileOut.getAbsolutePath());
                 } catch (IOException | NullPointerException ex) {
                     System.out.println("Error caught");
                 }
@@ -245,5 +301,33 @@ public class FXMLConvolutionsSceneController {
         stage.setScene(scene);
         stage.showAndWait();
         return nameFileOut;
+    }
+
+    private void performGrayscale(String fileNameIn, String fileNameOut) throws IOException {
+        
+        BufferedImage BI = createBI(fileNameIn);
+        
+        BufferedImage finalImage = new BufferedImage(BI.getWidth(), BI.getHeight(), BufferedImage.TYPE_BYTE_GRAY);
+        //Initialize the values of r, g, and b
+        //Snippet of code taken from https://www.youtube.com/watch?v=zSo3QZTleqA
+        int p,a,r,g,b,avg;
+        for(int w=0; w<BI.getWidth(); w++){
+            for(int h=0; h<BI.getHeight(); h++){
+                p = BI.getRGB(w, h);
+                a = (p>>24)&0xff;
+                r = (p>>16)&0xff;
+                g = (p>>8)&0xff;
+                b = p&0xff;
+                avg = (r+g+b)/3;
+                p=(a<<24)|(avg<<16)|(avg<<8)|avg;
+                finalImage.setRGB(w, h, p);
+                
+                
+                
+            }
+        }
+        File file = new File(fileNameOut);
+        ImageIO.write(finalImage, "png", file);
+        
     }
 }

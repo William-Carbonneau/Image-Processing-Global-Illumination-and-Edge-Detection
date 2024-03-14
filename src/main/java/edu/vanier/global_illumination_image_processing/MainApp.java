@@ -1,6 +1,6 @@
 package edu.vanier.global_illumination_image_processing;
 
-import edu.vanier.global_illumination_image_processing.controllers.FXMLConvolutionController;
+import edu.vanier.global_illumination_image_processing.controllers.FXMLConvolutionsSceneController;
 import edu.vanier.global_illumination_image_processing.controllers.FXMLMainAppController;
 import java.io.IOException;
 import javafx.application.Application;
@@ -36,7 +36,7 @@ public class MainApp extends Application {
             
             //Convolution
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/FXMLConvolutionsScene.fxml"));
-            loader.setController(new FXMLConvolutionController(primaryStage));
+            loader.setController(new FXMLConvolutionsSceneController(primaryStage));
             
             Pane root = loader.load();
             //-- 2) Create and set the scene to the stage.
