@@ -35,9 +35,11 @@ public class FXMLConvolutionsSceneController {
     float[][] rulesGaussian = {{1,2,1},{2,4,2},{1,2,1}};
     //https://pro.arcgis.com/en/pro-app/latest/help/analysis/raster-functions/convolution-function.htm#:~:text=The%20Convolution%20function%20performs%20filtering,or%20other%20kernel%2Dbased%20enhancements.
     float[][] rulesSharp1 = {{0f,-0.25f,0f},{-0.25f,2f,-0.25f},{0f,-0.25f,0f}};
+    float[][] rulesSobelX = {{-1,0,1},{-2,0,2},{-1,0,1}};
     Stage primaryStage;
     File inputFile;
     String nameFileOut;
+    float threshold = 100;
 
     public FXMLConvolutionsSceneController(Stage primaryStage) {
         this.primaryStage = primaryStage;
@@ -50,7 +52,7 @@ public class FXMLConvolutionsSceneController {
     
     @FXML
     public void initialize(){
-        convolutionCB.getItems().addAll("Custom Kernel", "Gaussian Blur", "Sharpening","Grayscale");
+        convolutionCB.getItems().addAll("Custom Kernel", "Gaussian Blur", "Sharpening","Grayscale", "Sobel X", "Sobel Y");
         convolutionCB.setOnAction((event)->{
             //Get the value of the convolution
             String choice = convolutionCB.getValue().toString();
@@ -178,6 +180,39 @@ public class FXMLConvolutionsSceneController {
                     System.out.println("Error caught");
                 }
             }
+            else if(choice.equals("Sobel X")){
+                System.out.println("Sobel X clicked");
+                //Get the image the user wants to convolve
+                if(inputFile==null){
+                    this.inputFile = getFileFromFChooser();
+                }
+                // Let the user choose a directory to create the image
+                // Choose the directory in which the user wants to save the settings
+                Stage stage = new Stage();
+                DirectoryChooser dc = new DirectoryChooser();
+                primaryStage.setAlwaysOnTop(false);
+                stage.setAlwaysOnTop(true);
+                dc.setInitialDirectory(dc.showDialog(stage));
+                stage.setAlwaysOnTop(false);
+                primaryStage.setAlwaysOnTop(true);
+                File fileOut;
+                try {
+                    dc.getInitialDirectory().createNewFile();
+                    // Make a dialog appear for the user to choose a name for the file
+                    String nameFileOut = chooseNameDialog();
+                    // Create a file with the name
+                    fileOut = new File(dc.getInitialDirectory()+"\\"+nameFileOut+".bmp");
+                    performConvolution(this.inputFile.getAbsolutePath(), fileOut.getAbsolutePath(), rulesGaussian);
+                    performGrayscale(fileOut.getAbsolutePath(), fileOut.getAbsolutePath());
+                    performSobelX(fileOut.getAbsolutePath(),fileOut.getAbsolutePath());
+                } catch (IOException | NullPointerException ex) {
+                    System.out.println("Error caught");
+                }
+                
+            }
+            else if(choice.equals("Sobel Y")){
+                System.out.println("Sobel Y clicked");
+            }
             else{
                 System.out.println("Else");
             }
@@ -271,7 +306,8 @@ public class FXMLConvolutionsSceneController {
                 }
             }
         }
-        result = result/weightRules;
+        if(weightRules!=0)
+            result = result/weightRules;
         return result;
     }
     public static BufferedImage createBI(String fileName) throws IOException{
@@ -321,6 +357,7 @@ public class FXMLConvolutionsSceneController {
                 avg = (r+g+b)/3;
                 p=(a<<24)|(avg<<16)|(avg<<8)|avg;
                 finalImage.setRGB(w, h, p);
+                Color colorTest = new Color(finalImage.getRGB(w, h));
                 
                 
                 
@@ -329,5 +366,36 @@ public class FXMLConvolutionsSceneController {
         File file = new File(fileNameOut);
         ImageIO.write(finalImage, "png", file);
         
+    }
+
+    private void performSobelX(String fileNameIn, String fileNameOut) throws IOException {
+        BufferedImage BI = createBI(fileNameIn);
+        float[][] g = new float[BI.getWidth()][BI.getHeight()];
+        //Initialize the values of r, g, and b
+        Color color;
+        for(int w=0; w<BI.getWidth(); w++){
+            for(int h=0; h<BI.getHeight(); h++){
+                color = new Color(BI.getRGB(w, h));
+                g[w][h] = color.getGreen();
+            }
+        }
+        //Perform the convolution on the colours array individually
+        float[][] gFinal = performConvolutionOnArray(rulesSobelX, g);
+        //Combine the colours to make a new image
+        BufferedImage finalImage = new BufferedImage(g.length, g[0].length, BufferedImage.TYPE_INT_RGB);
+        for(int w=0; w<BI.getWidth(); w++){
+            for(int h=0; h<BI.getHeight(); h++){
+                if(gFinal[w][h]>threshold){
+                    color =new Color(255,255,255);
+                }
+                else{
+                    color = new Color(0,0,0);
+                    System.out.println(gFinal[w][h]);
+                }
+                finalImage.setRGB(w, h, color.getRGB());
+            }
+        }
+        File file = new File(fileNameOut);
+        ImageIO.write(finalImage, "png", file);
     }
 }
