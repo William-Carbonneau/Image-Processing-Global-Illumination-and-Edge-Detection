@@ -42,14 +42,33 @@ public abstract class SceneObject {
      */
     public abstract Vec3D normal(Vec3D intersectPoint);
 
+    /**
+     * get the color of this object
+     * 
+     * @return The color (DiffuseColor)
+     */
     public DiffuseColor getColor() {
         return color;
     }
 
+    /**
+     * get the emission value of this object
+     * This is the amount of light the object emits
+     * 
+     * @return The emissivity (double)
+     */
     public double getEmission() {
         return emission;
     }
 
+    /**
+     * get the material type of this object
+     * 1 Diffuse
+     * 2 Specular
+     * 3 Refractive
+     * 
+     * @return The type (int)
+     */
     public int getType() {
         return type;
     }

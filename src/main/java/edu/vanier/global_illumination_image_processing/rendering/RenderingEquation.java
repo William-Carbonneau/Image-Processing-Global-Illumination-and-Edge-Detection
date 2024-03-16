@@ -11,7 +11,7 @@ import org.apache.commons.math3.random.MersenneTwister;
 import org.apache.commons.math3.distribution.UniformRealDistribution;
 
 /**
- * The main algorithm
+ * The main algorithm for 3D Global illumination rendering
  * @author William Carbonneau
  */
 public class RenderingEquation {

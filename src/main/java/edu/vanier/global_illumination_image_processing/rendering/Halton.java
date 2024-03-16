@@ -18,7 +18,11 @@ public class Halton {
     public Halton() {
     }
     
-    //  Iteratively calculate Halton sequence value using provided index and base
+    /**
+     * Iteratively calculate Halton sequence value using provided index and base
+     * @param index int
+     * @param base  int
+     */
     public void number(int index, int base) {
         double tempInverseBase = inverseBase = 1.0/base;
         currentSequenceValue = 0.0;
@@ -34,7 +38,9 @@ public class Halton {
         }
     }
     
-    // get the next value of the Halton sequence by incrementing the current value of the sequence
+    /**
+     * set the next value of the Halton sequence by incrementing the current value of the sequence
+     */
     public void next() {
         // calculate space remaining between the current value and the unit interval [0,1]
         double remainingSpace = 1.0 - currentSequenceValue - 0.0000001;
@@ -56,7 +62,10 @@ public class Halton {
         }
     }
     
-    // get the value of the Halton Sequence
+    /**
+     * get the value of the Halton Sequence
+     * @return value type: double
+     */
     public double get() {
         return currentSequenceValue;
     }
