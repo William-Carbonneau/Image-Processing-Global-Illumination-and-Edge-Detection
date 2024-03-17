@@ -369,7 +369,7 @@ public class RenderingEquation {
         
         int maxThreads = Runtime.getRuntime().availableProcessors();
         boolean useMaxThreads = false;
-        int threadCount = useMaxThreads ? maxThreads : 4;
+        int threadCount = useMaxThreads ? maxThreads-1 : 4; // use max threads-1 to leave some room for other processes
         
         int pieceSize = (int) width/threadCount;
         int lastPieceSize = width-(pieceSize*threadCount) + pieceSize;
@@ -379,20 +379,21 @@ public class RenderingEquation {
             // print progress \r does not work in netbeans for some reason
 //            System.out.printf("\rRendering: %1.0f samples per pixel  %8.2f%%", SPP, ((double) column)/width * 100);
 
+
             // Un-Parallelized loop broken into columns using number of chosen threads
             for (int col = 0; col < threadCount; col++) {
                 int myStart = col*pieceSize;
                 int myEnd = myStart+((col != threadCount-1) ? pieceSize : lastPieceSize);
-                
-                System.out.println("Start: "+ myStart+", End: "+ (myEnd-1));
-                
-                for (int column = myStart; column < myEnd; column++) {
-                    for (int row = 0; row < height; row++) {    
-                    simulatePerPixel(column, row, SPP, halton1, halton2, scene, pixels);
-                }
-                }
-            }
 
+                    System.out.println("Start: "+ myStart+", End: "+ (myEnd-1));
+
+                    for (int column = myStart; column < myEnd; column++) {
+                        for (int row = 0; row < height; row++) {    
+                            simulatePerPixel(column, row, SPP, halton1, halton2, scene, pixels);
+                        }
+                    }
+                
+            }
                   
 //        }
         
