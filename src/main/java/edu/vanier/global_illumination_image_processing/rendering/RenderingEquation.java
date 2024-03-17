@@ -371,8 +371,8 @@ public class RenderingEquation {
         boolean useMaxThreads = false;
         int threadCount = useMaxThreads ? maxThreads-1 : 4; // use max threads-1 to leave some room for other processes
         
-        int pieceSize = (int) width/threadCount;
-        int lastPieceSize = width-(pieceSize*threadCount) + pieceSize;
+        int pieceSize = (int) height/threadCount;
+        int lastPieceSize = height-(pieceSize*threadCount) + pieceSize;
             
 //            System.out.println("Progress: " + ((double) column)/width * 100); // no longer works due to parallel execution
 
@@ -381,17 +381,15 @@ public class RenderingEquation {
 
 
             // Un-Parallelized loop broken into columns using number of chosen threads
-            for (int col = 0; col < threadCount; col++) {
-                int myStart = col*pieceSize;
-                int myEnd = myStart+((col != threadCount-1) ? pieceSize : lastPieceSize);
+            for (int rowPiece = 0; rowPiece < threadCount; rowPiece++) {
+                int myStart = rowPiece*pieceSize;
+                int myEnd = myStart+((rowPiece != threadCount-1) ? pieceSize : lastPieceSize);
 
-                    System.out.println("Start: "+ myStart+", End: "+ (myEnd-1));
-
-                    for (int column = myStart; column < myEnd; column++) {
-                        for (int row = 0; row < height; row++) {    
-                            simulatePerPixel(column, row, SPP, halton1, halton2, scene, pixels);
-                        }
+                for (int row = myStart; row < myEnd; row++) {
+                    for (int column = 0; column < width; column++) {    
+                        simulatePerPixel(column, row, SPP, halton1, halton2, scene, pixels);
                     }
+                }
                 
             }
                   
