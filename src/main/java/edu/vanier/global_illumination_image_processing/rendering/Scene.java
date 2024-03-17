@@ -1,6 +1,6 @@
 package edu.vanier.global_illumination_image_processing.rendering;
 
-import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  * A Scene for the object to live in 
@@ -8,29 +8,43 @@ import java.util.ArrayList;
  */
 public class Scene {
     // TODO potentially change this to a hashset to only have unique elements and easy deletion
-    private ArrayList<SceneObject> objects;
+    private HashMap<String, SceneObject> objects;
 
     /**
      * Constructor to create the list of objects in the scene
      */
     public Scene() {
-        this.objects = new ArrayList<>();
+        this.objects = new HashMap<>();
     }
     
     /**
      * Adds an object (shape) to the scene's list of objects
      * @param object type: SceneObject
      */
-    public void  addObj(SceneObject object) {
-        objects.add(object);
+    public void  addObj(String objName, SceneObject object) {
+        objects.put(objName, object);
     }
     
     /**
      * Removes an object (shape) from the scene's list of objects
-     * @param object type: SceneObject
+     * @param objName object name: String
+     * @return return 1 if the key exists and no object was added, else 0 for success
      */
-    public void removeObj(SceneObject object) {
-        objects.remove(object);
+    public int removeObj(String objName) {
+        if (objects.containsKey(objName)) {
+            return 1;
+        }
+        objects.remove(objName);
+        return 0;
+    }
+    
+    /**
+     * Get an object in the scene by name
+     * @param objName name of object as key type: String
+     * @return the object found or null
+     */
+    public SceneObject getObjectByName(String objName) {
+        return objects.get(objName);
     }
     
     /**
@@ -43,11 +57,11 @@ public class Scene {
         Intersection closestIntersection = new Intersection();
         
         // for all objects test intersection for nearest
-        for (int i = 0; i < objects.size(); i++) {
-            double temp = objects.get(i).intersect(ray);
-            if (temp < closestIntersection.getIntersectDistance() && temp > Intersection.EPS) {
+        for (String key:objects.keySet()) {
+             double temp = objects.get(key).intersect(ray);
+             if (temp < closestIntersection.getIntersectDistance() && temp > Intersection.EPS) {
                 closestIntersection.setIntersectDistance(temp);
-                closestIntersection.setObject(objects.get(i));
+                closestIntersection.setObject(objects.get(key));
             }
         }
         return closestIntersection;

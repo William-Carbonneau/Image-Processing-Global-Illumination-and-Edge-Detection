@@ -9,6 +9,6 @@ import edu.vanier.global_illumination_image_processing.rendering.Vec3D;
  */
 public class RenderTest {
     public static void main(String[] args) {
-        RenderingEquation.run();
+        RenderingEquation.run(16.0);
     }
 }

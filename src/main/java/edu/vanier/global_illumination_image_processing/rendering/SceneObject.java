@@ -8,13 +8,23 @@ package edu.vanier.global_illumination_image_processing.rendering;
  * @author William Carbonneau
  */
 public abstract class SceneObject {
-    public DiffuseColor color; // Color of the object
-    public double emission; // Emission value of the object
-    public int type; // Type of the object (diffuse, specular, refractive)
+    
+    /** Color of the object */
+    public DiffuseColor color;
+    
+    /** Emission value of the object */
+    public double emission;
+    
+    /** Type of the object (diffuse, specular, refractive) */
+    public int type;
+    
+    /** The refractive index for Snell's law, for refractive objects (type 3)*/
     public double refractiveIndex; // TODO modify for refractive index per object likely this line: double rIndex = parameterList.get("refractiveIndex");
 
     /**
      * Sets the material properties of the object.
+     * 
+     * sets the refractive index default to 1.5 (glass)
      * 
      * @param color The color of the object.
      * @param emission The emission value of the object.
@@ -24,6 +34,7 @@ public abstract class SceneObject {
         this.color = color;
         this.emission = emission;
         this.type = type;
+        this.refractiveIndex = 1.5;
     }
 
     /**
@@ -72,4 +83,26 @@ public abstract class SceneObject {
     public int getType() {
         return type;
     }
+
+    /**
+     * Sets the refractive index property of the object.
+     * 
+     * @param refractiveIndex double
+     */
+    public void setRefractiveIndex(double refractiveIndex) {
+        this.refractiveIndex = refractiveIndex;
+    }
+
+    /**
+     * get the refractive index value of this object
+     * This is the index by which the material refracts light
+     * It is only relevant for type 3 objects
+     * 
+     * @return The emissivity (double)
+     */
+    public double getRefractiveIndex() {
+        return refractiveIndex;
+    }
+    
+    
 }
