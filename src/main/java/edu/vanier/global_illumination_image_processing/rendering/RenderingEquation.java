@@ -1,6 +1,9 @@
 package edu.vanier.global_illumination_image_processing.rendering;
 import edu.vanier.global_illumination_image_processing.rendering.objects.Plane;
 import edu.vanier.global_illumination_image_processing.rendering.objects.Sphere;
+import java.awt.Color;
+import java.awt.image.BufferedImage;
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -16,6 +19,7 @@ import java.util.concurrent.Future;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.IntStream;
+import javax.imageio.ImageIO;
 import org.apache.commons.math3.random.MersenneTwister;
 import org.apache.commons.math3.distribution.UniformRealDistribution;
 
@@ -289,15 +293,15 @@ public class RenderingEquation {
      * @param scene the scene containing simulation, type Scene
      * @param pixels array of image pixels, type: DiffuseColor[][]
      */
-    private static void simulatePerPixel(int column, int row, double SPP, Halton halton1, Halton halton2, Scene scene, DiffuseColor[][] pixels) {
+    private static void simulatePerPixel(int column, int rowCam, int rowAdjusted, double SPP, Halton halton1, Halton halton2, Scene scene, DiffuseColor[][] pixels) {
         
-//        System.out.print("row: " + row + ", ");
+//        System.out.print("rowAdjusted: " + rowAdjusted + ", ");
         // loop over samples per pixel
         for (int samples = 0; samples < SPP; samples++) {
             DiffuseColor colorMaster = new DiffuseColor(0,0,0);
 
             // create camera plane coordinates
-            Vec3D camera = CamPlaneCoordinate(column, row);
+            Vec3D camera = CamPlaneCoordinate(column, rowCam);
             // anti-aliasing of the camera coordinates
             camera.setX(camera.getX() + uniformRand()/700);
             camera.setY(camera.getY() + uniformRand()/700);
@@ -308,7 +312,7 @@ public class RenderingEquation {
             trace(ray, scene, 0,colorMaster, halton1, halton2);
 
             // set the appropriate pixel
-            pixels[column][row] = pixels[column][row].add(colorMaster.multiply(1/SPP));
+            pixels[column][rowAdjusted] = pixels[column][rowAdjusted].add(colorMaster.multiply(1/SPP));
         }
     }
     
@@ -330,15 +334,6 @@ public class RenderingEquation {
         final Halton halton2 = new Halton();
         halton1.number(0,2);
         halton2.number(0,2);
-        
-        final DiffuseColor[][] pixels = new DiffuseColor[width][height];
-        
-        // Instantiate each DiffuseColor object
-        for (int i = 0; i < width; i++) {
-            for (int j = 0; j < height; j++) {
-                pixels[i][j] = new DiffuseColor();
-            }
-        }
 
         // add objects
         // Sphere: origin, radius, color, emission, type 
@@ -367,56 +362,88 @@ public class RenderingEquation {
         
         // TODO parallelize the coming loop
         
-        int maxThreads = Runtime.getRuntime().availableProcessors();
-        boolean useMaxThreads = false;
-        int threadCount = useMaxThreads ? maxThreads-1 : 4; // use max threads-1 to leave some room for other processes
+        // deal with many processor types
+        int maxThreads = Runtime.getRuntime().availableProcessors() - 1; // use max threads-1 to leave some room for other processes
+        maxThreads = Integer.max(maxThreads, 1);
+        boolean useMaxThreads = false; // enable for using more than 1 thread
+        int threadCount = (useMaxThreads && maxThreads > 1) ? maxThreads : 1;
+
         
-        int pieceSize = (int) height/threadCount;
-        int lastPieceSize = height-(pieceSize*threadCount) + pieceSize;
-            
-//            System.out.println("Progress: " + ((double) column)/width * 100); // no longer works due to parallel execution
-
-            // print progress \r does not work in netbeans for some reason
-//            System.out.printf("\rRendering: %1.0f samples per pixel  %8.2f%%", SPP, ((double) column)/width * 100);
-
-
-            // Un-Parallelized loop broken into columns using number of chosen threads
-            for (int rowPiece = 0; rowPiece < threadCount; rowPiece++) {
-                int myStart = rowPiece*pieceSize;
-                int myEnd = myStart+((rowPiece != threadCount-1) ? pieceSize : lastPieceSize);
-
-                for (int row = myStart; row < myEnd; row++) {
-                    for (int column = 0; column < width; column++) {    
-                        simulatePerPixel(column, row, SPP, halton1, halton2, scene, pixels);
-                    }
+        final int pieceSize = (int) height/threadCount;
+        final int lastPieceSize = height-(pieceSize*threadCount) + pieceSize;
+        
+        System.out.println("Piece Size: "+ pieceSize);
+        
+        // create arrays for each thread
+        final DiffuseColor[][][] rowArray = new DiffuseColor[threadCount][][];
+        
+        // for each sub-array
+        for (int thread = 0; thread < threadCount; thread++) {
+            rowArray[thread] = new DiffuseColor[width][((thread != threadCount-1) ? pieceSize : lastPieceSize)];
+            // Instantiate each DiffuseColor object
+            for (int i = 0; i < width; i++) {
+                for (int j = 0; j < ((thread != threadCount-1) ? pieceSize : lastPieceSize); j++) {
+                    rowArray[thread][i][j] = new DiffuseColor();
                 }
-                
             }
-                  
+        }
+
+        System.out.println("Start Multithreading");
+        
+        ExecutorService execServ = Executors.newFixedThreadPool(threadCount);
+        ArrayList<CompletableFuture<Void>> tasks = new ArrayList<>();
+        // Un-Parallelized loop broken into columns using number of chosen threads
+        for (int rowPiece = 0; rowPiece < threadCount; rowPiece++) {
+            final int rowPieceFinal = rowPiece;
+            final int myStart = rowPiece*pieceSize;
+            final int myEnd = myStart+((rowPiece != threadCount-1) ? pieceSize : lastPieceSize);
+            
+            CompletableFuture<Void> task = CompletableFuture.runAsync(() -> {
+            System.out.println("Start executor "+rowPieceFinal);
+            
+            for (int row = myStart; row < myEnd; row++) {
+                for (int column = 0; column < width; column++) {
+
+                    simulatePerPixel(column, row, row - myStart, SPP, halton1, halton2, scene, rowArray[rowPieceFinal]);
+                }
+            }
+                System.out.println("Finish executor "+rowPieceFinal);
+            }, execServ);
+            tasks.add(task);
+        }
+        CompletableFuture.allOf(tasks.toArray(new CompletableFuture[0])).join();
+        execServ.shutdown();
+            
+     
 //        }
         
         
         System.out.println("Render finished");
         System.out.println("Final time (milliseconnds): " + (System.currentTimeMillis() - startTime));
         
-        try {
-            FileWriter fileWriter = new FileWriter("ray.ppm");
-            PrintWriter printWriter = new PrintWriter(fileWriter);
-            
-            printWriter.printf("P3\n%d %d\n%d\n ",width,height,255);
-            
-            for (int row=0;row<height;row++) {
-		for (int col=0;col<width;col++) {
-			printWriter.printf("%d %d %d ", Math.min((int)pixels[col][row].getR(),255), Math.min((int)pixels[col][row].getG(),255), Math.min((int)pixels[col][row].getB(),255));
-		}
-		printWriter.printf("\n");
-	}
-            
-        } catch (IOException ex) {
-            Logger.getLogger(RenderingEquation.class.getName()).log(Level.SEVERE, null, ex);
-        }
-	
+        File saveFile = new File("ray.bmp");
         
+        // create buffered image
+        BufferedImage output = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
+
+        for (int i = 0; i < threadCount; i++) {
+            
+            int myStart = i*pieceSize;
+            int myEnd = myStart+((i != threadCount-1) ? pieceSize : lastPieceSize);
+            
+            for (int row = myStart; row < myEnd; row++) {
+                for (int column = 0; column < width; column++) {
+                    output.setRGB(column, row, new Color(Integer.min((int)rowArray[i][column][row].getR(),255), Integer.min((int)rowArray[i][column][row].getG(),255), Integer.min((int)rowArray[i][column][row].getB(),255)).getRGB());
+                }
+            }
+        }
+        
+        try {
+            ImageIO.write(output, "bmp", saveFile);
+        }catch(Exception e) {
+            e.printStackTrace();
+        }
+  
         return 0;
     }
 }
