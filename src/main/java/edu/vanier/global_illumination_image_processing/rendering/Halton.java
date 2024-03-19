@@ -1,5 +1,8 @@
 package edu.vanier.global_illumination_image_processing.rendering;
 
+import org.apache.commons.math3.distribution.UniformRealDistribution;
+import org.apache.commons.math3.random.MersenneTwister;
+
 /**
  * Halton sequence for Quasi Monte Carlo integration.
  * Generates Quasi-random sequence to use a base for the Monte Carlo integration 
@@ -11,6 +14,7 @@ package edu.vanier.global_illumination_image_processing.rendering;
  */
 public class Halton {
     private double currentSequenceValue, inverseBase;
+   
 
     /**
      * Default constructor

@@ -436,7 +436,7 @@ public class RenderingEquation {
                 if (row % 10 == 0) System.out.println(row);
 
                 for (int column = 0; column < width; column++) {
-                    simulatePerPixel(column, row, row - height/threadCount, SPP2, halton12, halton22, scene2, rowArray2);
+                    simulatePerPixel(column, row, row - height/threadCount, SPP1, halton12, halton22, scene1, rowArray2);
                 }
             }
         }, execServ);
