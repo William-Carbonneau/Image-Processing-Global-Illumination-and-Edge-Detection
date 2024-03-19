@@ -325,34 +325,53 @@ public class RenderingEquation {
      * @return int run status non-zero is error
      */
     public static int run(double samples) {
-        final Scene scene = new Scene();
+        final Scene scene1 = new Scene();
         
-        // set samples per pixels
-        final double SPP = samples;
-        
-        final Halton halton1 = new Halton();
-        final Halton halton2 = new Halton();
-        halton1.number(0,2);
-        halton2.number(0,2);
+
 
         // add objects
         // Sphere: origin, radius, color, emission, type 
-        scene.addObj("Metal sphere 1", new Sphere(new Vec3D(-0.75,-1.45,-4.4), 1.05, new DiffuseColor(4, 8, 4), 0,2));
-        scene.addObj("Glass sphere 1", new Sphere(new Vec3D(2.0,-2.05,-3.7), 0.5, new DiffuseColor(10, 10, 1), 0,3));
-        scene.addObj("Diffuse sphere 1", new Sphere(new Vec3D(-1.75,-1.95,-3.1), 0.6, new DiffuseColor(4, 4, 12), 0,1));
+        scene1.addObj("Metal sphere 1", new Sphere(new Vec3D(-0.75,-1.45,-4.4), 1.05, new DiffuseColor(4, 8, 4), 0,2));
+        scene1.addObj("Glass sphere 1", new Sphere(new Vec3D(2.0,-2.05,-3.7), 0.5, new DiffuseColor(10, 10, 1), 0,3));
+        scene1.addObj("Diffuse sphere 1", new Sphere(new Vec3D(-1.75,-1.95,-3.1), 0.6, new DiffuseColor(4, 4, 12), 0,1));
         // Plane: normal, distance from origin to normal, color, emission, type
-        scene.addObj("bottom plane", new Plane(new Vec3D(0,1,0), 2.5, new DiffuseColor(6, 6, 6), 0,1)); // bottom plane
-        scene.addObj("back plane", new Plane(new Vec3D(0,0,1), 5.5, new DiffuseColor(6, 6, 6), 0,1)); // back plane
-        scene.addObj("left plane", new Plane(new Vec3D(1,0,0), 2.75, new DiffuseColor(10, 2, 2), 0,1)); // left plane
-        scene.addObj("right plane", new Plane(new Vec3D(-1,0,0), 2.75, new DiffuseColor(2, 10, 2), 0,1)); // right plane
-        scene.addObj("ceiling plane", new Plane(new Vec3D(0,-1,0), 3.0, new DiffuseColor(6, 6, 6), 0,1)); // ceiling plane
-        scene.addObj("front plane", new Plane(new Vec3D(0,0,-1), 0.5, new DiffuseColor(6, 6, 6), 0,1)); // front plane
+        scene1.addObj("bottom plane", new Plane(new Vec3D(0,1,0), 2.5, new DiffuseColor(6, 6, 6), 0,1)); // bottom plane
+        scene1.addObj("back plane", new Plane(new Vec3D(0,0,1), 5.5, new DiffuseColor(6, 6, 6), 0,1)); // back plane
+        scene1.addObj("left plane", new Plane(new Vec3D(1,0,0), 2.75, new DiffuseColor(10, 2, 2), 0,1)); // left plane
+        scene1.addObj("right plane", new Plane(new Vec3D(-1,0,0), 2.75, new DiffuseColor(2, 10, 2), 0,1)); // right plane
+        scene1.addObj("ceiling plane", new Plane(new Vec3D(0,-1,0), 3.0, new DiffuseColor(6, 6, 6), 0,1)); // ceiling plane
+        scene1.addObj("front plane", new Plane(new Vec3D(0,0,-1), 0.5, new DiffuseColor(6, 6, 6), 0,1)); // front plane
         // add lights - use color and emissiveness and diffuse material for diffuse radial light
-        scene.addObj("light sphere 1", new Sphere(new Vec3D(0,1.9,-3), 0.5, new DiffuseColor(0, 0, 0), 10000,1));
+        scene1.addObj("light sphere 1", new Sphere(new Vec3D(0,1.9,-3), 0.5, new DiffuseColor(0, 0, 0), 10000,1));
 
         // modify objects in the scene, need to deal with possibility of null
         try {
-            scene.getObjectByName("Glass sphere 1").setRefractiveIndex(1.5);
+            scene1.getObjectByName("Glass sphere 1").setRefractiveIndex(1.5);
+        }catch(NullPointerException e) {
+            System.out.println("Object not found to modify");
+        }
+        final Scene scene2 = new Scene();
+        
+
+
+        // add objects
+        // Sphere: origin, radius, color, emission, type 
+        scene2.addObj("Metal sphere 1", new Sphere(new Vec3D(-0.75,-1.45,-4.4), 1.05, new DiffuseColor(4, 8, 4), 0,2));
+        scene2.addObj("Glass sphere 1", new Sphere(new Vec3D(2.0,-2.05,-3.7), 0.5, new DiffuseColor(10, 10, 1), 0,3));
+        scene2.addObj("Diffuse sphere 1", new Sphere(new Vec3D(-1.75,-1.95,-3.1), 0.6, new DiffuseColor(4, 4, 12), 0,1));
+        // Plane: normal, distance from origin to normal, color, emission, type
+        scene2.addObj("bottom plane", new Plane(new Vec3D(0,1,0), 2.5, new DiffuseColor(6, 6, 6), 0,1)); // bottom plane
+        scene2.addObj("back plane", new Plane(new Vec3D(0,0,1), 5.5, new DiffuseColor(6, 6, 6), 0,1)); // back plane
+        scene2.addObj("left plane", new Plane(new Vec3D(1,0,0), 2.75, new DiffuseColor(10, 2, 2), 0,1)); // left plane
+        scene2.addObj("right plane", new Plane(new Vec3D(-1,0,0), 2.75, new DiffuseColor(2, 10, 2), 0,1)); // right plane
+        scene2.addObj("ceiling plane", new Plane(new Vec3D(0,-1,0), 3.0, new DiffuseColor(6, 6, 6), 0,1)); // ceiling plane
+        scene2.addObj("front plane", new Plane(new Vec3D(0,0,-1), 0.5, new DiffuseColor(6, 6, 6), 0,1)); // front plane
+        // add lights - use color and emissiveness and diffuse material for diffuse radial light
+        scene2.addObj("light sphere 1", new Sphere(new Vec3D(0,1.9,-3), 0.5, new DiffuseColor(0, 0, 0), 10000,1));
+
+        // modify objects in the scene, need to deal with possibility of null
+        try {
+            scene2.getObjectByName("Glass sphere 1").setRefractiveIndex(1.5);
         }catch(NullPointerException e) {
             System.out.println("Object not found to modify");
         }
@@ -362,56 +381,69 @@ public class RenderingEquation {
         
         // TODO parallelize the coming loop
         
-        // deal with many processor types
-        int maxThreads = Runtime.getRuntime().availableProcessors() - 1; // use max threads-1 to leave some room for other processes
-        maxThreads = Integer.max(maxThreads, 1);
-        boolean useMaxThreads = false; // enable for using more than 1 thread
-        int threadCount = (useMaxThreads && maxThreads > 1) ? maxThreads : 1;
-
-        
-        final int pieceSize = (int) height/threadCount;
-        final int lastPieceSize = height-(pieceSize*threadCount) + pieceSize;
-        
-        System.out.println("Piece Size: "+ pieceSize);
+        int threadCount = 2;
         
         // create arrays for each thread
-        final DiffuseColor[][][] rowArray = new DiffuseColor[threadCount][][];
+        final DiffuseColor[][] rowArray1 = new DiffuseColor[width][height/threadCount];
+        final DiffuseColor[][] rowArray2 = new DiffuseColor[width][height/threadCount];
         
-        // for each sub-array
-        for (int thread = 0; thread < threadCount; thread++) {
-            rowArray[thread] = new DiffuseColor[width][((thread != threadCount-1) ? pieceSize : lastPieceSize)];
-            // Instantiate each DiffuseColor object
-            for (int i = 0; i < width; i++) {
-                for (int j = 0; j < ((thread != threadCount-1) ? pieceSize : lastPieceSize); j++) {
-                    rowArray[thread][i][j] = new DiffuseColor();
-                }
+        
+        // Instantiate each DiffuseColor object
+        for (int i = 0; i < width; i++) {
+            for (int j = 0; j < height/threadCount; j++) {
+                rowArray1[i][j] = new DiffuseColor();
             }
         }
+        for (int i = 0; i < width; i++) {
+            for (int j = 0; j < height/threadCount; j++) {
+                rowArray2[i][j] = new DiffuseColor();
+            }
+        }
+        
 
         System.out.println("Start Multithreading");
         
         ExecutorService execServ = Executors.newFixedThreadPool(threadCount);
         ArrayList<CompletableFuture<Void>> tasks = new ArrayList<>();
         // Un-Parallelized loop broken into columns using number of chosen threads
-        for (int rowPiece = 0; rowPiece < threadCount; rowPiece++) {
-            final int rowPieceFinal = rowPiece;
-            final int myStart = rowPiece*pieceSize;
-            final int myEnd = myStart+((rowPiece != threadCount-1) ? pieceSize : lastPieceSize);
-            
-            CompletableFuture<Void> task = CompletableFuture.runAsync(() -> {
-            System.out.println("Start executor "+rowPieceFinal);
-            
-            for (int row = myStart; row < myEnd; row++) {
-                if (row % 5 == 0) System.out.println(row);
+        
+                // set samples per pixels
+        final double SPP1 = samples;
+        final double SPP2 = samples;
+        
+        final Halton halton11 = new Halton();
+        final Halton halton21 = new Halton();
+        final Halton halton12 = new Halton();
+        final Halton halton22 = new Halton();
+        halton11.number(0,2);
+        halton21.number(0,2);
+        halton12.number(0,2);
+        halton22.number(0,2);
+        
+        
+        CompletableFuture<Void> task1 = CompletableFuture.runAsync(() -> {
+            for (int row = 0; row < height/threadCount; row++) {
+                if (row % 10 == 0) System.out.println(row);
 
                 for (int column = 0; column < width; column++) {
-                    simulatePerPixel(column, row, row - myStart, SPP, halton1, halton2, scene, rowArray[rowPieceFinal]);
+                    simulatePerPixel(column, row, row, SPP1, halton11, halton21, scene1, rowArray1);
                 }
             }
-                System.out.println("Finish executor "+rowPieceFinal);
-            }, execServ);
-            tasks.add(task);
-        }
+        },execServ);
+        
+        CompletableFuture<Void> task2 = CompletableFuture.runAsync(() -> {
+            for (int row = height/threadCount; row < height; row++) {
+                if (row % 10 == 0) System.out.println(row);
+
+                for (int column = 0; column < width; column++) {
+                    simulatePerPixel(column, row, row - height/threadCount, SPP2, halton12, halton22, scene2, rowArray2);
+                }
+            }
+        }, execServ);
+        tasks.add(task1);
+        tasks.add(task2);
+
+        
         CompletableFuture.allOf(tasks.toArray(new CompletableFuture[0])).join();
         execServ.shutdown();
         
@@ -424,17 +456,20 @@ public class RenderingEquation {
         // create buffered image
         BufferedImage output = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
 
-        for (int i = 0; i < threadCount; i++) {
+        
             
-            int myStart = i*pieceSize;
-            int myEnd = myStart+((i != threadCount-1) ? pieceSize : lastPieceSize);
-            
-            for (int row = myStart; row < myEnd; row++) {
-                for (int column = 0; column < width; column++) {
-                    output.setRGB(column, row, new Color(Integer.min((int)rowArray[i][column][row].getR(),255), Integer.min((int)rowArray[i][column][row].getG(),255), Integer.min((int)rowArray[i][column][row].getB(),255)).getRGB());
-                }
+        for (int row = 0; row < height/threadCount; row++) {
+            for (int column = 0; column < width; column++) {
+                output.setRGB(column, row, new Color(Integer.min((int)rowArray1[column][row].getR(),255), Integer.min((int)rowArray1[column][row].getG(),255), Integer.min((int)rowArray1[column][row].getB(),255)).getRGB());
             }
         }
+        
+        for (int row = 0; row < height/threadCount; row++) {
+            for (int column = 0; column < width; column++) {
+                output.setRGB(column, row+height/threadCount, new Color(Integer.min((int)rowArray2[column][row].getR(),255), Integer.min((int)rowArray2[column][row].getG(),255), Integer.min((int)rowArray2[column][row].getB(),255)).getRGB());
+            }
+        }
+        
         
         try {
             ImageIO.write(output, "bmp", saveFile);
