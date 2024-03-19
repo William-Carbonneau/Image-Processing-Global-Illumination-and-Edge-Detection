@@ -2,6 +2,7 @@ package edu.vanier.global_illumination_image_processing;
 
 import edu.vanier.global_illumination_image_processing.controllers.FXMLConvolutionsSceneController;
 import edu.vanier.global_illumination_image_processing.controllers.FXMLMainAppController;
+import edu.vanier.global_illumination_image_processing.controllers.FXMLTitleSceneController;
 import java.io.IOException;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
@@ -35,8 +36,8 @@ public class MainApp extends Application {
             //loader.setController(new FXMLMainAppController());
             
             //Convolution
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/FXMLConvolutionsScene.fxml"));
-            loader.setController(new FXMLConvolutionsSceneController(primaryStage));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/FXMLTitleScene.fxml"));
+            loader.setController(new FXMLTitleSceneController());
             
             Pane root = loader.load();
             //-- 2) Create and set the scene to the stage.
@@ -44,9 +45,10 @@ public class MainApp extends Application {
             primaryStage.setScene(scene);
             primaryStage.sizeToScene();
             // We just need to bring the main window to front.
-            primaryStage.setAlwaysOnTop(true);            
+            primaryStage.setAlwaysOnTop(true);
             primaryStage.show();
             primaryStage.setAlwaysOnTop(false);
+            
         } catch (IOException ex) {
             logger.error(ex.getMessage(), ex);
         }

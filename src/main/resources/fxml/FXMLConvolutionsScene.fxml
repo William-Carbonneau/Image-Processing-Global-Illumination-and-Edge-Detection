@@ -32,6 +32,7 @@
   OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 -->
 
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ChoiceBox?>
 <?import javafx.scene.control.Label?>
@@ -49,11 +50,12 @@
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.shape.Line?>
 <?import javafx.scene.text.Font?>
 
-<VBox prefHeight="600.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1">
+<VBox prefHeight="600.0" prefWidth="905.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1">
   <children>
     <MenuBar VBox.vgrow="NEVER">
       <menus>
@@ -135,60 +137,61 @@
                                           <Button fx:id="convolveBtn" mnemonicParsing="false" text="Convolve" />
                                        </children>
                                     </HBox>
-                                    <HBox alignment="CENTER_LEFT" layoutX="10.0" layoutY="36.0" prefHeight="45.0" prefWidth="266.0">
+                                    <HBox alignment="CENTER_LEFT" prefHeight="49.0" prefWidth="266.0">
                                        <children>
-                                          <GridPane alignment="CENTER" prefHeight="39.0" prefWidth="228.0">
-                                             <columnConstraints>
-                                                <ColumnConstraints hgrow="SOMETIMES" maxWidth="192.0" minWidth="10.0" prefWidth="146.0" />
-                                                <ColumnConstraints hgrow="SOMETIMES" maxWidth="94.0" minWidth="10.0" prefWidth="80.0" />
-                                             </columnConstraints>
-                                             <rowConstraints>
-                                                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                             </rowConstraints>
-                                             <children>
-                                                <Label prefHeight="33.0" prefWidth="185.0" text="Choose image from files:">
-                                                   <font>
-                                                      <Font name="System Bold" size="12.0" />
-                                                   </font>
-                                                </Label>
-                                                <ImageView fitHeight="45.0" fitWidth="56.0" GridPane.columnIndex="1">
-                                                   <image>
-                                                      <Image url="@../Images/Icons/FileIcon.png" />
-                                                   </image>
-                                                </ImageView>
-                                             </children>
-                                          </GridPane>
-                                          <Button fx:id="getFromFileBtn" mnemonicParsing="false" prefHeight="25.0" prefWidth="92.0" text="File" />
+                                          <Label text="File Opened: " />
                                        </children>
                                     </HBox>
-                                    <HBox prefHeight="45.0" prefWidth="266.0">
+                                    <HBox alignment="CENTER_LEFT" layoutX="10.0" layoutY="36.0" prefHeight="92.0" prefWidth="266.0">
                                        <children>
-                                          <GridPane alignment="CENTER" prefHeight="39.0" prefWidth="226.0">
+                                          <GridPane alignment="CENTER" prefHeight="39.0" prefWidth="225.0">
                                              <columnConstraints>
-                                                <ColumnConstraints hgrow="SOMETIMES" maxWidth="192.0" minWidth="10.0" prefWidth="185.0" />
-                                                <ColumnConstraints hgrow="SOMETIMES" maxWidth="94.0" minWidth="10.0" prefWidth="41.0" />
+                                                <ColumnConstraints hgrow="SOMETIMES" maxWidth="192.0" minWidth="10.0" prefWidth="176.0" />
+                                                <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" maxWidth="94.0" minWidth="10.0" prefWidth="49.0" />
                                              </columnConstraints>
                                              <rowConstraints>
                                                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                              </rowConstraints>
                                              <children>
-                                                <Label prefHeight="33.0" prefWidth="185.0" text="Choose image from database:">
+                                                <Label prefHeight="33.0" prefWidth="156.0" text="Choose image from files:">
                                                    <font>
                                                       <Font name="System Bold" size="12.0" />
                                                    </font>
                                                 </Label>
-                                                <ImageView fitHeight="27.0" fitWidth="27.0" GridPane.columnIndex="1">
-                                                   <image>
-                                                      <Image url="@../Images/Icons/DatabaseIcon.png" />
-                                                   </image>
-                                                </ImageView>
+                                                <Label prefHeight="33.0" prefWidth="185.0" text="Choose image from database:" GridPane.rowIndex="1">
+                                                   <font>
+                                                      <Font name="System Bold" size="12.0" />
+                                                   </font>
+                                                </Label>
+                                                <StackPane prefHeight="150.0" prefWidth="200.0" GridPane.columnIndex="1">
+                                                   <children>
+                                                      <ImageView fx:id="getFromFileImage" fitHeight="45.0" fitWidth="56.0">
+                                                         <image>
+                                                            <Image url="@../Images/Icons/FileIcon.png" />
+                                                         </image>
+                                                      </ImageView>
+                                                      <Button fx:id="getFromFileBtn" mnemonicParsing="false" opacity="0.0" prefHeight="76.0" prefWidth="97.0" />
+                                                   </children>
+                                                </StackPane>
+                                                <HBox prefHeight="100.0" prefWidth="200.0" />
+                                                <StackPane prefHeight="150.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                                                   <children>
+                                                      <ImageView fitHeight="33.0" fitWidth="32.0">
+                                                         <image>
+                                                            <Image url="@../Images/Icons/DatabaseIcon.png" />
+                                                         </image>
+                                                      </ImageView>
+                                                      <Button fx:id="getFromDatabaseBtn" mnemonicParsing="false" opacity="0.0" prefHeight="91.0" prefWidth="122.0" />
+                                                   </children>
+                                                </StackPane>
                                              </children>
                                           </GridPane>
                                        </children>
                                     </HBox>
                                  </children>
                               </VBox>
-                              <VBox alignment="CENTER" prefHeight="200.0" prefWidth="266.0">
+                              <VBox alignment="CENTER" prefHeight="181.0" prefWidth="266.0">
                                  <children>
                                     <Label text="Custom Kernel">
                                        <font>
@@ -210,7 +213,7 @@
                                               <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                             </rowConstraints>
                                              <children>
-                                                <TextField fx:id="txt11" />
+                                                <TextField fx:id="txt11" prefHeight="25.0" prefWidth="61.0" />
                                                 <TextField fx:id="txt12" GridPane.columnIndex="1" />
                                                 <TextField fx:id="txt13" GridPane.columnIndex="2" />
                                                 <TextField fx:id="txt21" GridPane.rowIndex="1" />
@@ -220,12 +223,15 @@
                                                 <TextField fx:id="txt32" GridPane.columnIndex="1" GridPane.rowIndex="2" />
                                                 <TextField fx:id="txt33" prefHeight="68.0" prefWidth="82.0" GridPane.columnIndex="2" GridPane.rowIndex="2" />
                                              </children>
+                                             <padding>
+                                                <Insets left="15.0" right="15.0" />
+                                             </padding>
                                           </GridPane>
                                        </children>
                                     </VBox>
                                  </children>
                               </VBox>
-                              <VBox alignment="CENTER" layoutX="10.0" layoutY="10.0" prefHeight="138.0" prefWidth="266.0">
+                              <VBox alignment="CENTER" layoutX="10.0" layoutY="10.0" prefHeight="123.0" prefWidth="266.0">
                                  <children>
                                     <Label text="Image Saving">
                                        <font>
@@ -233,52 +239,48 @@
                                        </font>
                                     </Label>
                                     <Line endX="50.0" startX="-50.0" />
-                                    <HBox alignment="CENTER_LEFT" layoutX="10.0" layoutY="36.0" prefHeight="45.0" prefWidth="266.0">
+                                    <HBox alignment="CENTER_LEFT" prefHeight="69.0" prefWidth="266.0">
                                        <children>
-                                          <GridPane alignment="CENTER" prefHeight="39.0" prefWidth="226.0">
+                                          <GridPane alignment="CENTER" prefHeight="39.0" prefWidth="225.0">
                                              <columnConstraints>
-                                                <ColumnConstraints hgrow="SOMETIMES" maxWidth="192.0" minWidth="10.0" prefWidth="178.0" />
-                                                <ColumnConstraints hgrow="SOMETIMES" maxWidth="94.0" minWidth="10.0" prefWidth="48.0" />
+                                                <ColumnConstraints hgrow="SOMETIMES" maxWidth="192.0" minWidth="10.0" prefWidth="176.0" />
+                                                <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" maxWidth="94.0" minWidth="10.0" prefWidth="49.0" />
                                              </columnConstraints>
                                              <rowConstraints>
                                                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                              </rowConstraints>
                                              <children>
-                                                <Label prefHeight="33.0" prefWidth="185.0" text="Choose image from files:">
+                                                <Label prefHeight="33.0" prefWidth="156.0" text="Save image to files:">
                                                    <font>
                                                       <Font name="System Bold" size="12.0" />
                                                    </font>
                                                 </Label>
-                                                <ImageView fitHeight="45.0" fitWidth="56.0" GridPane.columnIndex="1">
-                                                   <image>
-                                                      <Image url="@../Images/Icons/FileIcon.png" />
-                                                   </image>
-                                                </ImageView>
-                                             </children>
-                                          </GridPane>
-                                       </children>
-                                    </HBox>
-                                    <HBox prefHeight="45.0" prefWidth="266.0">
-                                       <children>
-                                          <GridPane alignment="CENTER" prefHeight="39.0" prefWidth="226.0">
-                                             <columnConstraints>
-                                                <ColumnConstraints hgrow="SOMETIMES" maxWidth="192.0" minWidth="10.0" prefWidth="185.0" />
-                                                <ColumnConstraints hgrow="SOMETIMES" maxWidth="94.0" minWidth="10.0" prefWidth="41.0" />
-                                             </columnConstraints>
-                                             <rowConstraints>
-                                                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                             </rowConstraints>
-                                             <children>
-                                                <Label prefHeight="33.0" prefWidth="185.0" text="Choose image from database:">
+                                                <Label prefHeight="33.0" prefWidth="185.0" text="Save image to database:" GridPane.rowIndex="1">
                                                    <font>
                                                       <Font name="System Bold" size="12.0" />
                                                    </font>
                                                 </Label>
-                                                <ImageView fitHeight="27.0" fitWidth="27.0" GridPane.columnIndex="1">
-                                                   <image>
-                                                      <Image url="@../Images/Icons/DatabaseIcon.png" />
-                                                   </image>
-                                                </ImageView>
+                                                <StackPane prefHeight="52.0" prefWidth="65.0" GridPane.columnIndex="1">
+                                                   <children>
+                                                      <ImageView fitHeight="45.0" fitWidth="56.0">
+                                                         <image>
+                                                            <Image url="@../Images/Icons/FileIcon.png" />
+                                                         </image>
+                                                      </ImageView>
+                                                      <Button fx:id="SaveToFileBtn" mnemonicParsing="false" opacity="0.0" prefHeight="71.0" prefWidth="88.0" />
+                                                   </children>
+                                                </StackPane>
+                                                <StackPane prefHeight="150.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                                                   <children>
+                                                      <ImageView fitHeight="33.0" fitWidth="32.0">
+                                                         <image>
+                                                            <Image url="@../Images/Icons/DatabaseIcon.png" />
+                                                         </image>
+                                                      </ImageView>
+                                                      <Button fx:id="SaveToDatabaseBtn" mnemonicParsing="false" opacity="0.0" prefHeight="70.0" prefWidth="101.0" />
+                                                   </children>
+                                                </StackPane>
                                              </children>
                                           </GridPane>
                                        </children>
