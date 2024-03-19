@@ -47,8 +47,8 @@ application {
    //       that contains the main method to be executed.
 
   //  mainClass = 'edu.vanier.global_illumination_image_processing.MainApp'
-   mainClass = 'edu.vanier.Global_Illumination_Image_Processing.tests.RenderTest'
+   //mainClass = 'edu.vanier.Global_Illumination_Image_Processing.tests.RenderTest'
 
-   // mainClass = 'edu.vanier.global_illumination_image_processing.MainApp'
+   mainClass = 'edu.vanier.global_illumination_image_processing.MainApp'
 
 }

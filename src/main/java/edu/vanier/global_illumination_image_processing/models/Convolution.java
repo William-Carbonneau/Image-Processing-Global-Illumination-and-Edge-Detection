@@ -4,12 +4,21 @@ import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import javafx.stage.Stage;
 import javax.imageio.ImageIO;
 
 /**
  * This class is a collection of static methods that are useful for convolutions.
  */
 public class Convolution {
+    float[][] rulesGaussian = {{1,2,1},{2,4,2},{1,2,1}};
+    //https://pro.arcgis.com/en/pro-app/latest/help/analysis/raster-functions/convolution-function.htm#:~:text=The%20Convolution%20function%20performs%20filtering,or%20other%20kernel%2Dbased%20enhancements.
+    float[][] rulesSharp1 = {{0f,-0.25f,0f},{-0.25f,2f,-0.25f},{0f,-0.25f,0f}};
+    float[][] rulesSobelX = {{-1,0,1},{-2,0,2},{-1,0,1}};
+    Stage primaryStage;
+    File inputFile;
+    String nameFileOut;
+    float threshold = 100;
     public static void print1DArray(int[] array){
         System.out.print("[");
         for(int counter=0; counter<array.length; counter++){
