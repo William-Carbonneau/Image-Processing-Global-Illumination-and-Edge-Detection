@@ -402,8 +402,9 @@ public class RenderingEquation {
             System.out.println("Start executor "+rowPieceFinal);
             
             for (int row = myStart; row < myEnd; row++) {
-                for (int column = 0; column < width; column++) {
+                if (row % 5 == 0) System.out.println(row);
 
+                for (int column = 0; column < width; column++) {
                     simulatePerPixel(column, row, row - myStart, SPP, halton1, halton2, scene, rowArray[rowPieceFinal]);
                 }
             }
@@ -413,9 +414,6 @@ public class RenderingEquation {
         }
         CompletableFuture.allOf(tasks.toArray(new CompletableFuture[0])).join();
         execServ.shutdown();
-            
-     
-//        }
         
         
         System.out.println("Render finished");
