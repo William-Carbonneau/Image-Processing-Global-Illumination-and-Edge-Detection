@@ -48,12 +48,15 @@ public class FXMLConvolutionsSceneController {
     ChoiceBox convolutionCB;
     @FXML
     TextField txt11,txt12,txt13,txt21,txt22,txt23,txt31,txt32,txt33;
+    // Source for the kernel to implement: https://youtu.be/C_zFhWdM4ic?si=CH3JvuO9mSfVmleJ
     float[][] rulesGaussian = {{1,2,1},{2,4,2},{1,2,1}};
     //Source for the kernel to implement: https://pro.arcgis.com/en/pro-app/latest/help/analysis/raster-functions/convolution-function.htm#:~:text=The%20Convolution%20function%20performs%20filtering,or%20other%20kernel%2Dbased%20enhancements.
     float[][] rulesSharp1 = {{0f,-0.25f,0f},{-0.25f,2f,-0.25f},{0f,-0.25f,0f}};
+    //Source for the kernel: https://en.wikipedia.org/wiki/Sobel_operator
     float[][] rulesSobelY = {{-1,0,1},
                              {-2,0,2},
                              {-1,0,1}};
+    //Source for the kernel: https://en.wikipedia.org/wiki/Sobel_operator
     float[][] rulesSobelX = {{-1,-2,-1},
                              {0,0,0},
                              {1,2,1}};
