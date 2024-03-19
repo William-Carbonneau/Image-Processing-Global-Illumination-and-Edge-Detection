@@ -1,0 +1,4 @@
+sample 1: https://samples-files.com/sample-bmp-file/
+sample 2: https://freetestdata.com/image-files/bmp/#google_vignette
+sample 3: https://people.math.sc.edu/Burkardt/data/bmp/blackbuck.bmp
+sample 4: https://people.math.sc.edu/Burkardt/data/bmp/lena.bmp
