@@ -59,7 +59,7 @@ public class FXMLConvolutionsSceneController {
     
     @FXML
     public void initialize(){
-        convolutionCB.getItems().addAll("Custom Kernel", "Gaussian Blur", "Sharpening","Grayscale", "Sobel X", "Sobel Y", "Sobel Complete");
+        convolutionCB.getItems().addAll("Custom Kernel", "Gaussian Blur", "Sharpening","Grayscale", "Sobel X", "Sobel Y", "Sobel Complete", "Reset");
         convolutionCB.setOnAction((event)->{
             //Get the value of the convolution
             String choice = convolutionCB.getValue().toString();
@@ -278,6 +278,10 @@ public class FXMLConvolutionsSceneController {
                 } catch (IOException | NullPointerException ex) {
                     System.out.println("Error caught");
                 }
+                inputFile=null;
+            }
+            else if(choice.equals("Reset")){
+                System.out.println("Reset");
                 inputFile=null;
             }
             else{
