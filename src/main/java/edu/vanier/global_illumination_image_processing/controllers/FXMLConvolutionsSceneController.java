@@ -23,6 +23,12 @@ import javax.imageio.ImageIO;
  */
 public class FXMLConvolutionsSceneController {
     @FXML
+    Button getFromDatabaseBtn;
+    @FXML
+    Button SaveToFileBtn;
+    @FXML
+    Button SaveToDatabaseBtn;
+    @FXML
     ImageView imageImgView;
     @FXML
     Button getFromFileBtn;
@@ -279,9 +285,22 @@ public class FXMLConvolutionsSceneController {
             }
         });
         getFromFileBtn.setOnAction((event)->{
-            System.out.println("Button file clicked");
-            this.inputFile = getFileFromFChooser();
+            System.out.println("Get from file clicked");
+            //this.inputFile = getFileFromFChooser();
         });
+        getFromDatabaseBtn.setOnAction((event)->{
+            System.out.println("Get from database clicked");
+            
+        });
+        SaveToFileBtn.setOnAction((event)->{
+            System.out.println("Save to File clicked");
+            
+        });
+        SaveToDatabaseBtn.setOnAction((event)->{
+            System.out.println("Save to Database clicked");
+            
+        });
+        
         convolveBtn.setOnAction((event)->{
             System.out.println("Convolution button clicked");
             if(inputFile==null){

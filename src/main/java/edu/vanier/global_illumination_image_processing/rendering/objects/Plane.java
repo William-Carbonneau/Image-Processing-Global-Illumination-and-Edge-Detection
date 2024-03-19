@@ -8,7 +8,7 @@ import edu.vanier.global_illumination_image_processing.rendering.DiffuseColor;
 
 /**
  * Plane SceneObject represented mathematically
- * TODO docs
+ * 
  * @author William Carbonneau
  */
 public class Plane extends SceneObject{
@@ -17,44 +17,99 @@ public class Plane extends SceneObject{
     
     // getters and setters
     
-    public Vec3D getNormal() {
-        return normal;
-    }
-
+    /**
+     * Set the material color of the Plane
+     * 
+     * @param color DiffuseColor
+     */
     public void setColor(DiffuseColor color) {
         this.color = color;
     }
+    
+    /**
+     * Set the normal vector of the Plane
+     * 
+     * @param newNormal Vec3D
+     */
+    public void setNormal(Vec3D newNormal) {
+        this.normal = newNormal;
+    }
 
+    /**
+     * Set the distance of the Plane from the origin
+     * 
+     * @param newDistanceOrigin 
+     */
+    public void setDistanceOrigin(double newDistanceOrigin) {
+        this.distanceOrigin = newDistanceOrigin;
+    }
+
+    /**
+     * Set the emission value of the Plane
+     * 
+     * @param emission double
+     */
     public void setEmission(double emission) {
         this.emission = emission;
     }
 
+    /**
+     * Set the material type of the Plane
+     * 1 = Diffuse, 2 = Reflective, 3 = Refractive
+     * 
+     * @param type int
+     */
     public void setType(int type) {
         this.type = type;
     }
 
+    /**
+     * Get the material color of the Plane
+     * 
+     * @return color DiffuseColor
+     */
+    @Override
     public DiffuseColor getColor() {
         return color;
     }
+    
+    /**
+     * Get the normal vector of the Plane
+     * 
+     * @return normal Vec3D
+     */
+    public Vec3D getNormal() {
+        return normal;
+    }
 
+    /**
+     * Get the emission value of the Plane
+     * 
+     * @return emission double
+     */
+    @Override
     public double getEmission() {
         return emission;
     }
 
+    /**
+     * Get the material type of the Plane
+     * 1 = Diffuse, 2 = Reflective, 3 = Refractive
+     * 
+     * @return type int
+     */
+    @Override
     public int getType() {
         return type;
     }
 
+    /**
+     * Get the distance from the origin of the Plane
+     * 
+     * @return double
+     */
     public double getDistance() {
         return distanceOrigin;
-    }
-
-    public void setNormal(Vec3D n) {
-        this.normal = n;
-    }
-
-    public void setDirection(double d) {
-        this.distanceOrigin = d;
     }
 
     /**General Constructor
@@ -80,6 +135,12 @@ public class Plane extends SceneObject{
     
     // math methods
     
+    /**
+     * Calculate intersection of Plane with a Ray
+     * 
+     * @param intersectRay Ray
+     * @return double, distance to origin of Ray from intersect point
+     */
     @Override
     public double intersect(Ray intersectRay) {
         double d0 = getNormal().dot(intersectRay.getDirection());
@@ -91,6 +152,12 @@ public class Plane extends SceneObject{
         }
     }
 
+    /**
+     * Calculate the normal at a point, just gets it in the case of a Plane
+     * 
+     * @param intersectPoint
+     * @return normal Vec3D
+     */
     @Override
     public Vec3D normal(Vec3D intersectPoint) {
         return normal;

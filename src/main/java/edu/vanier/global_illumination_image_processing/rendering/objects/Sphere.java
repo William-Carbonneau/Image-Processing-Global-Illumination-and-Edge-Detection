@@ -8,7 +8,7 @@ import edu.vanier.global_illumination_image_processing.rendering.DiffuseColor;
 
 /**
  * Sphere SceneObject represented mathematically 
- * TODO docs
+ * 
  * @author William Carbonneau
  */
 public class Sphere extends SceneObject {
@@ -16,48 +16,101 @@ public class Sphere extends SceneObject {
     private double radius;
 
     // getters and setters
-    
-    public Vec3D getOrigin() {
-        return origin;
-    }
 
+    /**
+     * Set the origin of the Sphere
+     * 
+     * @param origin Vec3D
+     */
     public void setOrigin(Vec3D origin) {
         this.origin = origin;
     }
 
+    /**
+     * Set the radius of the Sphere
+     * 
+     * @param radius double
+     */
     public void setRadius(double radius) {
         this.radius = radius;
     }
 
+    /**
+     * Set the material color of the Sphere
+     * 
+     * @param color DiffuseColor
+     */
     public void setColor(DiffuseColor color) {
         this.color = color;
     }
 
+    /**
+     * Set the emission value of the Sphere
+     * 
+     * @param emission double
+     */
     public void setEmission(double emission) {
         this.emission = emission;
     }
 
+    /**
+     * Set the material type of the Sphere
+     * 1 = Diffuse, 2 = Reflective, 3 = Refractive
+     * 
+     * @param type int
+     */
     public void setType(int type) {
         this.type = type;
     }
 
+    /**
+     * Get the material color of the Sphere
+     * 
+     * @return color DiffuseColor
+     */
     public DiffuseColor getColor() {
         return color;
     }
 
+    /**
+     * Get the emission value of the Sphere
+     * 
+     * @return emission double
+     */
     public double getEmission() {
         return emission;
     }
-
+    /**
+     * Get the material type of the Sphere
+     * 1 = Diffuse, 2 = Reflective, 3 = Refractive
+     * 
+     * @return type int
+     */
     public int getType() {
         return type;
     }
-
+    
+    /**
+     * Get the origin of the Sphere
+     * 
+     * @return origin Vec3D
+     */
+    public Vec3D getOrigin() {
+        return origin;
+    }
+    
+    /**
+     * Get the radius of the Sphere
+     * 
+     * @return radius double
+     */
     public double getRadius() {
         return radius;
     }
 
-    /**General Constructor
+    /**
+     * General Constructor
+     * 
      * @param origin Vec3D
      * @param radius double
      */
@@ -66,7 +119,9 @@ public class Sphere extends SceneObject {
         this.radius = radius;
     }
     
-    /**Material Constructor
+    /**
+     * Material Constructor
+     * 
      * @param origin Vec3D
      * @param radius double
      * @param color DiffuseColor
@@ -81,6 +136,11 @@ public class Sphere extends SceneObject {
 
     // math methods
     
+    /**
+     * Get intersection of a Ray with the Sphere
+     * @param intersectRay Ray
+     * @return double, distance to origin of Ray from intersect point
+     */
     @Override
     public double intersect(Ray intersectRay) {
         Vec3D ray0MinusOrigin = (intersectRay.getOrigin().subtract(this.getOrigin()));
@@ -94,7 +154,13 @@ public class Sphere extends SceneObject {
         double solution2 = -sphereComponent - disc;
         return (solution2>Intersection.EPS) ? solution2/2 : ((solutionl>Intersection.EPS) ? solutionl/2 : 0);
     }
-
+    
+    /**
+     * Calculate the normal of the Sphere at a point
+     * 
+     * @param intersectPoint Ray
+     * @return normal Vec3D
+     */
     @Override
     public Vec3D normal(Vec3D intersectPoint) {
         return intersectPoint.subtract(this.getOrigin()).multiply(1.0/radius); // normalize by radius to avoid square root
