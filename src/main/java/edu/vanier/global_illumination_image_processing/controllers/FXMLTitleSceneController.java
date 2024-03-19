@@ -12,6 +12,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Button;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 /**
@@ -21,7 +22,7 @@ import javafx.stage.Stage;
 public class FXMLTitleSceneController {
     
     @FXML
-    Pane RootPane;
+    VBox RootVBox;
     @FXML
     Button ImageProcessingBtn;
     @FXML
@@ -47,7 +48,7 @@ public class FXMLTitleSceneController {
                 FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/FXMLConvolutionsScene.fxml"));
                 loader.setController(new FXMLConvolutionsSceneController(primaryStage));
                 Pane root = loader.load();
-                RootPane.getChildren().setAll(root);
+                RootVBox.getChildren().setAll(root);
             } catch (IOException ex) {
                 Logger.getLogger(FXMLTitleSceneController.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -60,7 +61,7 @@ public class FXMLTitleSceneController {
                 FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/FXMLRenderScene.fxml"));
                 loader.setController(new FXMLRenderSceneController());
                 Pane root = loader.load();
-                RootPane.getChildren().setAll(root);
+                RootVBox.getChildren().setAll(root);
             } catch (IOException ex) {
                 Logger.getLogger(FXMLTitleSceneController.class.getName()).log(Level.SEVERE, null, ex);
             }
