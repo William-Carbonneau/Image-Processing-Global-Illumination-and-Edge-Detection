@@ -51,8 +51,12 @@ public class FXMLConvolutionsSceneController {
     float[][] rulesGaussian = {{1,2,1},{2,4,2},{1,2,1}};
     //https://pro.arcgis.com/en/pro-app/latest/help/analysis/raster-functions/convolution-function.htm#:~:text=The%20Convolution%20function%20performs%20filtering,or%20other%20kernel%2Dbased%20enhancements.
     float[][] rulesSharp1 = {{0f,-0.25f,0f},{-0.25f,2f,-0.25f},{0f,-0.25f,0f}};
-    float[][] rulesSobelY = {{-1,0,1},{-2,0,2},{-1,0,1}};
-    float[][] rulesSobelX = {{-1,-2,-1},{0,0,0},{1,2,1}};
+    float[][] rulesSobelY = {{-1,0,1},
+                             {-2,0,2},
+                             {-1,0,1}};
+    float[][] rulesSobelX = {{-1,-2,-1},
+                             {0,0,0},
+                             {1,2,1}};
     Stage primaryStage;
     File inputFile;
     String nameFileOut;
@@ -333,7 +337,10 @@ public class FXMLConvolutionsSceneController {
             }
         });
     }
-    
+    /**
+     * This method opens a file chooser and returns the file chosen by the user
+     * @return File file chosen by the user
+     */
     public File getFileFromFChooser(){
         Stage stage = new Stage();
         FileChooser f = new FileChooser();
@@ -343,6 +350,15 @@ public class FXMLConvolutionsSceneController {
         stage.close();
         return file;
     }
+    /**
+     * @param fileNameIn
+     * @param fileNameOut
+     * @param rulesModel
+     * This method takes an image input, performs a convolution to it, and outputs the image output
+     * This source was used as a reference to use ImageIO in the context of performing a convolution (However, the entire algorithm for performing a given convolution on an array was created separately by Loovdrish):
+     * https://ramok.tech/2018/09/27/convolution-in-java/
+     * @throws IOException 
+     */
     public static void performConvolution(String fileNameIn, String fileNameOut, float[][] rulesModel) throws IOException{
         BufferedImage BI = createBI(fileNameIn);
         float[][] r = new float[BI.getWidth()][BI.getHeight()];
@@ -376,8 +392,14 @@ public class FXMLConvolutionsSceneController {
             }
         }
         File file = new File(fileNameOut);
-        ImageIO.write(finalImage, "png", file);
+        ImageIO.write(finalImage, "bmp", file);
     }
+    /**
+     * This method applies a kernel to an array. Based on an input rules array
+     * @param rulesModel
+     * @param in
+     * @return 
+     */
     public static float[][] performConvolutionOnArray(float[][] rulesModel, float[][] in){
         float[][] result = new float[in.length][in[0].length];
         float weightRules=0;
