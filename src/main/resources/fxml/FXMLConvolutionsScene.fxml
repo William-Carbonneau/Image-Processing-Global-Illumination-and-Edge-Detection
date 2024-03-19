@@ -55,10 +55,15 @@
 <?import javafx.scene.shape.Line?>
 <?import javafx.scene.text.Font?>
 
-<VBox prefHeight="600.0" prefWidth="905.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1">
+<VBox fx:id="RootVBox" prefHeight="600.0" prefWidth="905.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1">
   <children>
     <MenuBar VBox.vgrow="NEVER">
       <menus>
+            <Menu fx:id="BackToTitleMenu" mnemonicParsing="false" text="Back">
+               <items>
+                  <MenuItem fx:id="BackToTitleMenuItem" mnemonicParsing="false" text="Back to title" />
+               </items>
+            </Menu>
         <Menu mnemonicParsing="false" text="File">
           <items>
             <MenuItem mnemonicParsing="false" text="New" />
@@ -273,12 +278,12 @@
                                                 </StackPane>
                                                 <StackPane prefHeight="150.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
                                                    <children>
+                                                      <Button fx:id="SaveToDatabaseBtn" mnemonicParsing="false" opacity="0.0" prefHeight="70.0" prefWidth="101.0" />
                                                       <ImageView fitHeight="33.0" fitWidth="32.0">
                                                          <image>
                                                             <Image url="@../Images/Icons/DatabaseIcon.png" />
                                                          </image>
                                                       </ImageView>
-                                                      <Button fx:id="SaveToDatabaseBtn" mnemonicParsing="false" opacity="0.0" prefHeight="70.0" prefWidth="101.0" />
                                                    </children>
                                                 </StackPane>
                                              </children>

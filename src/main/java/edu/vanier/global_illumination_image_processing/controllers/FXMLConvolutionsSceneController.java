@@ -4,13 +4,19 @@ import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.Menu;
+import javafx.scene.control.MenuItem;
 import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
@@ -22,6 +28,10 @@ import javax.imageio.ImageIO;
  * @Loovdrish Sujore
  */
 public class FXMLConvolutionsSceneController {
+    @FXML
+    VBox RootVBox;
+    @FXML
+    MenuItem BackToTitleMenuItem;
     @FXML
     Button getFromDatabaseBtn;
     @FXML
@@ -309,6 +319,17 @@ public class FXMLConvolutionsSceneController {
             System.out.println("Convolution button clicked");
             if(inputFile==null){
                 getFromFileBtn.getOnAction();
+            }
+        });
+        BackToTitleMenuItem.setOnAction((event)->{
+            try {
+                System.out.println("Back to Title clicked");
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/FXMLTitleScene.fxml"));
+                loader.setController(new FXMLTitleSceneController());
+                Pane root = loader.load();
+                RootVBox.getChildren().setAll(root);
+            } catch (IOException ex) {
+                Logger.getLogger(FXMLConvolutionsSceneController.class.getName()).log(Level.SEVERE, null, ex);
             }
         });
     }
