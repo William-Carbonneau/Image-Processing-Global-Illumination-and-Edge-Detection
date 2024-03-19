@@ -45,7 +45,7 @@ public class FXMLTitleSceneController {
             try {
                 System.out.println("Image Button clicked");
                 FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/FXMLConvolutionsScene.fxml"));
-                loader.setController(new FXMLConvolutionsSceneController());
+                loader.setController(new FXMLConvolutionsSceneController(primaryStage));
                 Pane root = loader.load();
                 RootPane.getChildren().setAll(root);
             } catch (IOException ex) {
