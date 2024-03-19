@@ -135,7 +135,7 @@ public class Plane extends SceneObject{
     
     // math methods
     /**
-     * Calculate ntersection of Plane with a Ray
+     * Calculate intersection of Plane with a Ray
      * @param intersectRay Ray
      * @return double, distance to origin of Ray from intersect point
      */
