@@ -103,7 +103,7 @@ public class FXMLConvolutionsSceneController {
                     this.inputFile = getFileFromFChooser();
                 }
                 // Let the user choose a directory to create the image
-                // Choose the directory in which the user wants to save the settings
+                // Choose the directory in which the user wants to save the image
                 Stage stage = new Stage();
                 DirectoryChooser dc = new DirectoryChooser();
                 primaryStage.setAlwaysOnTop(false);
@@ -133,7 +133,7 @@ public class FXMLConvolutionsSceneController {
                     this.inputFile = getFileFromFChooser();
                 }
                 // Let the user choose a directory to create the image
-                // Choose the directory in which the user wants to save the settings
+                // Choose the directory in which the user wants to save the image
                 Stage stage = new Stage();
                 DirectoryChooser dc = new DirectoryChooser();
                 primaryStage.setAlwaysOnTop(false);
@@ -162,7 +162,7 @@ public class FXMLConvolutionsSceneController {
                     this.inputFile = getFileFromFChooser();
                 }
                 // Let the user choose a directory to create the image
-                // Choose the directory in which the user wants to save the settings
+                // Choose the directory in which the user wants to save the image
                 Stage stage = new Stage();
                 DirectoryChooser dc = new DirectoryChooser();
                 primaryStage.setAlwaysOnTop(false);
@@ -191,7 +191,7 @@ public class FXMLConvolutionsSceneController {
                     this.inputFile = getFileFromFChooser();
                 }
                 // Let the user choose a directory to create the image
-                // Choose the directory in which the user wants to save the settings
+                // Choose the directory in which the user wants to save the image
                 Stage stage = new Stage();
                 DirectoryChooser dc = new DirectoryChooser();
                 primaryStage.setAlwaysOnTop(false);
@@ -220,7 +220,7 @@ public class FXMLConvolutionsSceneController {
                     this.inputFile = getFileFromFChooser();
                 }
                 // Let the user choose a directory to create the image
-                // Choose the directory in which the user wants to save the settings
+                // Choose the directory in which the user wants to save the image
                 Stage stage = new Stage();
                 DirectoryChooser dc = new DirectoryChooser();
                 primaryStage.setAlwaysOnTop(false);
@@ -251,7 +251,7 @@ public class FXMLConvolutionsSceneController {
                     this.inputFile = getFileFromFChooser();
                 }
                 // Let the user choose a directory to create the image
-                // Choose the directory in which the user wants to save the settings
+                // Choose the directory in which the user wants to save the image
                 Stage stage = new Stage();
                 DirectoryChooser dc = new DirectoryChooser();
                 primaryStage.setAlwaysOnTop(false);
@@ -282,7 +282,7 @@ public class FXMLConvolutionsSceneController {
                     this.inputFile = getFileFromFChooser();
                 }
                 // Let the user choose a directory to create the image
-                // Choose the directory in which the user wants to save the settings
+                // Choose the directory in which the user wants to save the image
                 Stage stage = new Stage();
                 DirectoryChooser dc = new DirectoryChooser();
                 primaryStage.setAlwaysOnTop(false);
