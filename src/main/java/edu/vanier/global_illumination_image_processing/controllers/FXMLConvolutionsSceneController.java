@@ -15,6 +15,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.TextField;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
@@ -77,6 +78,7 @@ public class FXMLConvolutionsSceneController {
     @FXML
     public void initialize(){
         convolutionCB.getItems().addAll("Custom Kernel", "Gaussian Blur", "Sharpening","Grayscale", "Sobel X", "Sobel Y", "Sobel Complete", "Reset");
+        
         convolutionCB.setOnAction((event)->{
             //Get the value of the convolution
             String choice = convolutionCB.getValue().toString();
@@ -117,6 +119,7 @@ public class FXMLConvolutionsSceneController {
                     // Create a file with the name
                     fileOut = new File(dc.getInitialDirectory()+"\\"+nameFileOut+".bmp");
                     performConvolution(this.inputFile.getAbsolutePath(), fileOut.getAbsolutePath(), rulesCustom);
+                    displayImage(fileOut.getAbsolutePath());
                 } catch (IOException | NullPointerException ex) {
                     System.out.println("Error caught");
                 }
@@ -146,6 +149,7 @@ public class FXMLConvolutionsSceneController {
                     // Create a file with the name
                     fileOut = new File(dc.getInitialDirectory()+"\\"+nameFileOut+".bmp");
                     performConvolution(this.inputFile.getAbsolutePath(), fileOut.getAbsolutePath(), rulesGaussian);
+                    displayImage(fileOut.getAbsolutePath());
                 } catch (IOException | NullPointerException ex) {
                     System.out.println("Error caught");
                 }
@@ -174,6 +178,7 @@ public class FXMLConvolutionsSceneController {
                     // Create a file with the name
                     fileOut = new File(dc.getInitialDirectory()+"\\"+nameFileOut+".bmp");
                     performConvolution(this.inputFile.getAbsolutePath(), fileOut.getAbsolutePath(), rulesSharp1);
+                    displayImage(fileOut.getAbsolutePath());
                 } catch (IOException | NullPointerException ex) {
                     System.out.println("Error caught");
                 }
@@ -202,6 +207,7 @@ public class FXMLConvolutionsSceneController {
                     // Create a file with the name
                     fileOut = new File(dc.getInitialDirectory()+"\\"+nameFileOut+".bmp");
                     performGrayscale(this.inputFile.getAbsolutePath(), fileOut.getAbsolutePath());
+                    displayImage(fileOut.getAbsolutePath());
                 } catch (IOException | NullPointerException ex) {
                     System.out.println("Error caught");
                 }
@@ -232,6 +238,7 @@ public class FXMLConvolutionsSceneController {
                     performConvolution(this.inputFile.getAbsolutePath(), fileOut.getAbsolutePath(), rulesGaussian);
                     performGrayscale(fileOut.getAbsolutePath(), fileOut.getAbsolutePath());
                     performSobelX(fileOut.getAbsolutePath(),fileOut.getAbsolutePath());
+                    displayImage(fileOut.getAbsolutePath());
                 } catch (IOException | NullPointerException ex) {
                     System.out.println("Error caught");
                 }
@@ -262,13 +269,14 @@ public class FXMLConvolutionsSceneController {
                     performConvolution(this.inputFile.getAbsolutePath(), fileOut.getAbsolutePath(), rulesGaussian);
                     performGrayscale(fileOut.getAbsolutePath(), fileOut.getAbsolutePath());
                     performSobelY(fileOut.getAbsolutePath(),fileOut.getAbsolutePath());
+                    displayImage(fileOut.getAbsolutePath());
                 } catch (IOException | NullPointerException ex) {
                     System.out.println("Error caught");
                 }
                 inputFile=null;
             }
             else if(choice.equals("Sobel Complete")){
-                                System.out.println("Sobel Complete clicked");
+                System.out.println("Sobel Complete clicked");
                 //Get the image the user wants to convolve
                 if(inputFile==null){
                     this.inputFile = getFileFromFChooser();
@@ -292,6 +300,7 @@ public class FXMLConvolutionsSceneController {
                     performConvolution(this.inputFile.getAbsolutePath(), fileOut.getAbsolutePath(), rulesGaussian);
                     performGrayscale(fileOut.getAbsolutePath(), fileOut.getAbsolutePath());
                     mergeSobels(fileOut.getAbsolutePath(),fileOut.getAbsolutePath());
+                    displayImage(fileOut.getAbsolutePath());
                 } catch (IOException | NullPointerException ex) {
                     System.out.println("Error caught");
                 }
@@ -307,7 +316,12 @@ public class FXMLConvolutionsSceneController {
         });
         getFromFileBtn.setOnAction((event)->{
             System.out.println("Get from file clicked");
-            //this.inputFile = getFileFromFChooser();
+            inputFile = getFileFromFChooser();
+            try{
+                displayImage(inputFile.getAbsolutePath());
+            }catch(Exception e){
+                System.out.println("Error caught");
+            }
         });
         getFromDatabaseBtn.setOnAction((event)->{
             System.out.println("Get from database clicked");
@@ -322,12 +336,7 @@ public class FXMLConvolutionsSceneController {
             
         });
         
-        convolveBtn.setOnAction((event)->{
-            System.out.println("Convolution button clicked");
-            if(inputFile==null){
-                getFromFileBtn.getOnAction();
-            }
-        });
+        convolveBtn.setOnAction(convolutionCB.getOnAction());
         BackToTitleMenuItem.setOnAction((event)->{
             try {
                 System.out.println("Back to Title clicked");
@@ -664,5 +673,14 @@ public class FXMLConvolutionsSceneController {
         //Create and write the final image
         File file = new File(filePathOut);
         ImageIO.write(finalImage, "bmp", file);
+        displayImage(file.getAbsolutePath());
+    }
+    /**
+     * This method displays an image file onto the image view imageImgView
+     * @param filePath 
+     * Source: https://docs.oracle.com/javase/8/javafx/api/javafx/scene/image/ImageView.html
+     */
+    public void displayImage(String filePath){
+        imageImgView.setImage(new Image(filePath));
     }
 }

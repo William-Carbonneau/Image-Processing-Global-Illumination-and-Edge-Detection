@@ -1,7 +1,6 @@
 package edu.vanier.Global_Illumination_Image_Processing.tests;
 
 import edu.vanier.global_illumination_image_processing.controllers.FXMLConvolutionsSceneController;
-import edu.vanier.global_illumination_image_processing.controllers.FXMLMainAppController;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
