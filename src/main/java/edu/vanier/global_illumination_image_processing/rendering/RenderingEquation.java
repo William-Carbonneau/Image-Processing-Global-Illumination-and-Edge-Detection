@@ -1,38 +1,38 @@
 package edu.vanier.global_illumination_image_processing.rendering;
-import edu.vanier.global_illumination_image_processing.rendering.objects.Plane;
-import edu.vanier.global_illumination_image_processing.rendering.objects.Sphere;
-import java.awt.Color;
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.concurrent.AbstractExecutorService;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import java.util.stream.IntStream;
-import javax.imageio.ImageIO;
-import org.apache.commons.math3.random.MersenneTwister;
-import org.apache.commons.math3.distribution.UniformRealDistribution;
 
 /**
  * The main algorithm for 3D Global illumination rendering
+ * 
  * @author William Carbonneau
  */
 public class RenderingEquation {
-    // create uniform random numbers
-    private static final MersenneTwister twister = new MersenneTwister();
-    private static final UniformRealDistribution uniRealDist = new UniformRealDistribution(twister, 0.0, 1.0);
-    // width and height of render image/camera in pixels, cannot be static for dynamic adjustment
-    private static int width = 800, height = 800;
+    
+    /** width and height of render image/camera in pixels, cannot be static for dynamic adjustment */
+    private int width, height;
+    /** The Scene to render */
+    private Scene scene;
+    /** random instance for general use */
+    private UniformRandom rand;
+    
+    /** Halton samplers */
+    public final Halton halton1;
+    public final Halton halton2;
+    
+    /**
+     * Constructor with width, height and Scene
+     * 
+     * @param width int
+     * @param height int
+     * @param scene Scene
+     */
+    public RenderingEquation(int width, int height, Scene scene) {
+        this.width = width;
+        this.height = height;
+        this.scene = scene;
+        this.rand = new UniformRandom();
+        this.halton1 = new Halton();
+        this.halton2 = new Halton();
+    }
 
     /**
      * Returns the width of the camera's viewport.
@@ -71,31 +71,13 @@ public class RenderingEquation {
     }
     
     /**
-     * get uniform random numbers from -1.0 to 1.0
-     * 
-     * @return double
-     */
-    public static double uniformRand() {
-        return 2.0 * uniRealDist.sample() - 1.0;
-    }
-    
-    /**
-     * get uniform random numbers from 0.0 to 1.0
-     * 
-     * @return double
-     */
-    public static double uniformRand2() {
-        return uniRealDist.sample();
-    }
-    
-    /**
      * Get the coordinates on the perspective camera plane
      * 
      * @param x
      * @param y
      * @return Vec3D
      */
-    private static Vec3D CamPlaneCoordinate(double x, double y) {
+    private Vec3D CamPlaneCoordinate(double x, double y) {
         double w = width;
         double h = height;
         
@@ -115,21 +97,21 @@ public class RenderingEquation {
     * @param uniform2  The random angle parameter used for sampling the hemisphere.
     * @return Vec3D representing the stratified sample point on the hemisphere.
     */
-    private static Vec3D Hemisphere(double uniform1, double uniform2) {
-/* // non-stratified sampler
-        double radius = Math.sqrt(1.0 - (uniform1 * uniform1));
-        double angle = 2 * Math.PI * uniform2;
-        return new Vec3D(Math.cos(angle) * radius, Math.sin(angle) * radius, uniform1);
-*/
+    private Vec3D Hemisphere(double uniform1, double uniform2, boolean stratified) {
+        if (stratified) {
+            // stratified sampling, costly square roots, but improved sampling performance
+            double radius = Math.sqrt(uniform1);
+            double angle = 2*Math.PI*uniform2;
+            double xPos = radius*Math.cos(angle);
+            double yPos = radius*Math.sin(angle);
 
-        // stratified sampling, costly square roots, but improved sampling performance
-        double radius = Math.sqrt(uniform1);
-        double angle = 2*Math.PI*uniform2;
-        double xPos = radius*Math.cos(angle);
-        double yPos = radius*Math.sin(angle);
-        
-        return new Vec3D(xPos,yPos, Math.sqrt(Double.max(0.0, 1.0-uniform1)));
-        
+            return new Vec3D(xPos,yPos, Math.sqrt(Double.max(0.0, 1.0-uniform1)));
+        }else {
+            // non-stratified sampler
+            double radius = Math.sqrt(1.0 - (uniform1 * uniform1));
+            double angle = 2 * Math.PI * uniform2;
+            return new Vec3D(Math.cos(angle) * radius, Math.sin(angle) * radius, uniform1);
+        }
     }
     
     /**
@@ -144,7 +126,7 @@ public class RenderingEquation {
     * @param halton1         The first Halton sequence generator used for random number generation.
     * @param halton2         The second Halton sequence generator used for random number generation.
     */
-    private static void trace(Ray ray, Scene scene, int recursionDepth, DiffuseColor color, Halton halton1, Halton halton2) {
+    private void trace(Ray ray, Scene scene, int recursionDepth, DiffuseColor color, Halton halton1, Halton halton2, boolean stratified) {
         
         // russian roulette recursion
         double rouletteFactor = 1.0;
@@ -152,7 +134,7 @@ public class RenderingEquation {
         // exit condition
         if (recursionDepth >= 5) {
             double rouletteStopProbability = 0.1;
-            if (uniformRand2() <= rouletteStopProbability) {
+            if (rand.uniformRand2() <= rouletteStopProbability) {
                 // if we meet the exit probablilistic condition return from recursion
                 return;
             }
@@ -160,6 +142,7 @@ public class RenderingEquation {
             rouletteFactor = 1.0 / (1.0 - rouletteStopProbability);
         }
         
+        // get intersection of scene and ray
         Intersection intersect = scene.intersect(ray);
         // check if interscetion exists, otherwise return
         if(!intersect.containsObjectBool()) return;
@@ -195,7 +178,7 @@ public class RenderingEquation {
 //            rotationY = new Vec3D(0,0,0);
             
             // get new direction from hemisphere sampler
-            Vec3D sampleDirection = Hemisphere(uniformRand2(),uniformRand2());
+            Vec3D sampleDirection = Hemisphere(rand.uniformRand2(),rand.uniformRand2(), stratified);
             
             // intentional bug for swirl effect
 //            Vec3D sampleDirection = Hemisphere(halton1.get(),halton2.get());
@@ -207,8 +190,7 @@ public class RenderingEquation {
             rotatedDirection.setY(new Vec3D(rotationX.getY(), rotationY.getY(), normal.getY()).dot(sampleDirection));
             rotatedDirection.setZ(new Vec3D(rotationX.getZ(), rotationY.getZ(), normal.getZ()).dot(sampleDirection));
             
-
-            ray.setDirection(rotatedDirection); // already normalized, no need for costly operation
+            ray.setDirection(rotatedDirection); // already normalized, no need for costly square root operation
             
             // intentional bug for psychedelic effect
 //            ray.setDirection(normal);
@@ -219,7 +201,7 @@ public class RenderingEquation {
             DiffuseColor tempColor = new DiffuseColor(0,0,0);
 
             // call recursive trace
-            trace(ray,scene,recursionDepth+1,tempColor,halton1,halton2);
+            trace(ray,scene,recursionDepth+1,tempColor,halton1,halton2,stratified);
             
             // recursive collection/aggregation
             color.addToObject(tempColor.multiplyColor(intersect.getObject().getColor()).multiply(cosineDirection * 0.1 * rouletteFactor));
@@ -235,7 +217,7 @@ public class RenderingEquation {
             DiffuseColor tempColor = new DiffuseColor(0,0,0);
             
             // call recursive trace
-            trace(ray,scene,recursionDepth+1,tempColor,halton1,halton2);
+            trace(ray,scene,recursionDepth+1,tempColor,halton1,halton2,stratified);
             
             // recursive collection/aggregation
             color.addToObject(tempColor.multiply(rouletteFactor));
@@ -258,6 +240,7 @@ public class RenderingEquation {
                 rIndex = 1/rIndex;
             }
 
+            // reciprocal index
             rIndex = 1/rIndex;
             
             double cosineDirection1 = -1.0 * normal.dot(ray.getDirection());
@@ -265,7 +248,7 @@ public class RenderingEquation {
             // Schlick approximation
             double fresnelFactorProbability = ratio + (1.0-ratio)* Math.pow(1.0-cosineDirection1, 5.0);
             // calculate refraction direction
-            if (cosineDirection2 > 0 && uniformRand2() > fresnelFactorProbability) {
+            if (cosineDirection2 > 0 && rand.uniformRand2() > fresnelFactorProbability) {
                 ray.setDirection(ray.getDirection().multiply(rIndex).add(normal.multiply(rIndex*cosineDirection1-Math.sqrt(cosineDirection2))).norm());
             }else {
                 // otherwise get the reflection index
@@ -276,7 +259,7 @@ public class RenderingEquation {
             DiffuseColor tempColor = new DiffuseColor(0,0,0);
             
             // call recursive trace
-            trace(ray,scene,recursionDepth+1,tempColor,halton1,halton2);
+            trace(ray,scene,recursionDepth+1,tempColor,halton1,halton2,stratified);
             
             // recursive collection/aggregation
             color.addToObject(tempColor.multiply(1.15*rouletteFactor));
@@ -287,15 +270,17 @@ public class RenderingEquation {
     /**
      * Simulate for one pixel for all samples per pixel
      * 
+     * @param column image column for ray
+     * @param rowCam image row in camera for ray
+     * @param rowAdjusted image row adjusted in array
      * @param SPP samples per pixel, type: int
      * @param halton1 Halton sequence 1, type: Halton
      * @param halton2 Halton sequence 2, type: Halton
      * @param scene the scene containing simulation, type Scene
      * @param pixels array of image pixels, type: DiffuseColor[][]
      */
-    private static void simulatePerPixel(int column, int rowCam, int rowAdjusted, double SPP, Halton halton1, Halton halton2, Scene scene, DiffuseColor[][] pixels) {
+    public void simulatePerPixel(int column, int rowCam, int rowAdjusted, double SPP, Halton halton1, Halton halton2, Scene scene, DiffuseColor[][] pixels, boolean stratified) {
         
-//        System.out.print("rowAdjusted: " + rowAdjusted + ", ");
         // loop over samples per pixel
         for (int samples = 0; samples < SPP; samples++) {
             DiffuseColor colorMaster = new DiffuseColor(0,0,0);
@@ -303,180 +288,16 @@ public class RenderingEquation {
             // create camera plane coordinates
             Vec3D camera = CamPlaneCoordinate(column, rowCam);
             // anti-aliasing of the camera coordinates
-            camera.setX(camera.getX() + uniformRand()/700);
-            camera.setY(camera.getY() + uniformRand()/700);
+            camera.setX(camera.getX() + rand.uniformRand()/700);
+            camera.setY(camera.getY() + rand.uniformRand()/700);
             // ray with direction from the origin to the camera plane (Where the camera is placed relative to its plane or lens)
             Ray ray = new Ray(new Vec3D(0,0,0), camera.subtract(new Vec3D(0,0,0)).norm());
 
             // trace the ray recursively
-            trace(ray, scene, 0,colorMaster, halton1, halton2);
+            trace(ray, scene, 0,colorMaster, halton1, halton2, stratified);
 
             // set the appropriate pixel
             pixels[column][rowAdjusted] = pixels[column][rowAdjusted].add(colorMaster.multiply(1/SPP));
         }
-    }
-    
-    /**
-     * Run the path tracer with parameters
-     * Uses the trace() method
-     * This also outputs the file as a ppm
-     * 
-     * @param samples sample per pixel for simulation
-     * @return int run status non-zero is error
-     */
-    public static int run(double samples) {
-        final Scene scene1 = new Scene();
-        
-
-
-        // add objects
-        // Sphere: origin, radius, color, emission, type 
-        scene1.addObj("Metal sphere 1", new Sphere(new Vec3D(-0.75,-1.45,-4.4), 1.05, new DiffuseColor(4, 8, 4), 0,2));
-        scene1.addObj("Glass sphere 1", new Sphere(new Vec3D(2.0,-2.05,-3.7), 0.5, new DiffuseColor(10, 10, 1), 0,3));
-        scene1.addObj("Diffuse sphere 1", new Sphere(new Vec3D(-1.75,-1.95,-3.1), 0.6, new DiffuseColor(4, 4, 12), 0,1));
-        // Plane: normal, distance from origin to normal, color, emission, type
-        scene1.addObj("bottom plane", new Plane(new Vec3D(0,1,0), 2.5, new DiffuseColor(6, 6, 6), 0,1)); // bottom plane
-        scene1.addObj("back plane", new Plane(new Vec3D(0,0,1), 5.5, new DiffuseColor(6, 6, 6), 0,1)); // back plane
-        scene1.addObj("left plane", new Plane(new Vec3D(1,0,0), 2.75, new DiffuseColor(10, 2, 2), 0,1)); // left plane
-        scene1.addObj("right plane", new Plane(new Vec3D(-1,0,0), 2.75, new DiffuseColor(2, 10, 2), 0,1)); // right plane
-        scene1.addObj("ceiling plane", new Plane(new Vec3D(0,-1,0), 3.0, new DiffuseColor(6, 6, 6), 0,1)); // ceiling plane
-        scene1.addObj("front plane", new Plane(new Vec3D(0,0,-1), 0.5, new DiffuseColor(6, 6, 6), 0,1)); // front plane
-        // add lights - use color and emissiveness and diffuse material for diffuse radial light
-        scene1.addObj("light sphere 1", new Sphere(new Vec3D(0,1.9,-3), 0.5, new DiffuseColor(0, 0, 0), 10000,1));
-
-        // modify objects in the scene, need to deal with possibility of null
-        try {
-            scene1.getObjectByName("Glass sphere 1").setRefractiveIndex(1.5);
-        }catch(NullPointerException e) {
-            System.out.println("Object not found to modify");
-        }
-        final Scene scene2 = new Scene();
-        
-
-
-        // add objects
-        // Sphere: origin, radius, color, emission, type 
-        scene2.addObj("Metal sphere 1", new Sphere(new Vec3D(-0.75,-1.45,-4.4), 1.05, new DiffuseColor(4, 8, 4), 0,2));
-        scene2.addObj("Glass sphere 1", new Sphere(new Vec3D(2.0,-2.05,-3.7), 0.5, new DiffuseColor(10, 10, 1), 0,3));
-        scene2.addObj("Diffuse sphere 1", new Sphere(new Vec3D(-1.75,-1.95,-3.1), 0.6, new DiffuseColor(4, 4, 12), 0,1));
-        // Plane: normal, distance from origin to normal, color, emission, type
-        scene2.addObj("bottom plane", new Plane(new Vec3D(0,1,0), 2.5, new DiffuseColor(6, 6, 6), 0,1)); // bottom plane
-        scene2.addObj("back plane", new Plane(new Vec3D(0,0,1), 5.5, new DiffuseColor(6, 6, 6), 0,1)); // back plane
-        scene2.addObj("left plane", new Plane(new Vec3D(1,0,0), 2.75, new DiffuseColor(10, 2, 2), 0,1)); // left plane
-        scene2.addObj("right plane", new Plane(new Vec3D(-1,0,0), 2.75, new DiffuseColor(2, 10, 2), 0,1)); // right plane
-        scene2.addObj("ceiling plane", new Plane(new Vec3D(0,-1,0), 3.0, new DiffuseColor(6, 6, 6), 0,1)); // ceiling plane
-        scene2.addObj("front plane", new Plane(new Vec3D(0,0,-1), 0.5, new DiffuseColor(6, 6, 6), 0,1)); // front plane
-        // add lights - use color and emissiveness and diffuse material for diffuse radial light
-        scene2.addObj("light sphere 1", new Sphere(new Vec3D(0,1.9,-3), 0.5, new DiffuseColor(0, 0, 0), 10000,1));
-
-        // modify objects in the scene, need to deal with possibility of null
-        try {
-            scene2.getObjectByName("Glass sphere 1").setRefractiveIndex(1.5);
-        }catch(NullPointerException e) {
-            System.out.println("Object not found to modify");
-        }
-        
-        // start a clock
-        final long startTime = System.currentTimeMillis();
-        
-        // TODO parallelize the coming loop
-        
-        int threadCount = 2;
-        
-        // create arrays for each thread
-        final DiffuseColor[][] rowArray1 = new DiffuseColor[width][height/threadCount];
-        final DiffuseColor[][] rowArray2 = new DiffuseColor[width][height/threadCount];
-        
-        
-        // Instantiate each DiffuseColor object
-        for (int i = 0; i < width; i++) {
-            for (int j = 0; j < height/threadCount; j++) {
-                rowArray1[i][j] = new DiffuseColor();
-            }
-        }
-        for (int i = 0; i < width; i++) {
-            for (int j = 0; j < height/threadCount; j++) {
-                rowArray2[i][j] = new DiffuseColor();
-            }
-        }
-        
-
-        System.out.println("Start Multithreading");
-        
-        ExecutorService execServ = Executors.newFixedThreadPool(threadCount);
-        ArrayList<CompletableFuture<Void>> tasks = new ArrayList<>();
-        // Un-Parallelized loop broken into columns using number of chosen threads
-        
-                // set samples per pixels
-        final double SPP1 = samples;
-        final double SPP2 = samples;
-        
-        final Halton halton11 = new Halton();
-        final Halton halton21 = new Halton();
-        final Halton halton12 = new Halton();
-        final Halton halton22 = new Halton();
-        halton11.number(0,2);
-        halton21.number(0,2);
-        halton12.number(0,2);
-        halton22.number(0,2);
-        
-        
-        CompletableFuture<Void> task1 = CompletableFuture.runAsync(() -> {
-            for (int row = 0; row < height/threadCount; row++) {
-                if (row % 10 == 0) System.out.println(row);
-
-                for (int column = 0; column < width; column++) {
-                    simulatePerPixel(column, row, row, SPP1, halton11, halton21, scene1, rowArray1);
-                }
-            }
-        },execServ);
-        
-        CompletableFuture<Void> task2 = CompletableFuture.runAsync(() -> {
-            for (int row = height/threadCount; row < height; row++) {
-                if (row % 10 == 0) System.out.println(row);
-
-                for (int column = 0; column < width; column++) {
-                    simulatePerPixel(column, row, row - height/threadCount, SPP1, halton12, halton22, scene1, rowArray2);
-                }
-            }
-        }, execServ);
-        tasks.add(task1);
-        tasks.add(task2);
-
-        
-        CompletableFuture.allOf(tasks.toArray(new CompletableFuture[0])).join();
-        execServ.shutdown();
-        
-        
-        System.out.println("Render finished");
-        System.out.println("Final time (milliseconnds): " + (System.currentTimeMillis() - startTime));
-        
-        File saveFile = new File("ray.bmp");
-        
-        // create buffered image
-        BufferedImage output = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
-
-        
-            
-        for (int row = 0; row < height/threadCount; row++) {
-            for (int column = 0; column < width; column++) {
-                output.setRGB(column, row, new Color(Integer.min((int)rowArray1[column][row].getR(),255), Integer.min((int)rowArray1[column][row].getG(),255), Integer.min((int)rowArray1[column][row].getB(),255)).getRGB());
-            }
-        }
-        
-        for (int row = 0; row < height/threadCount; row++) {
-            for (int column = 0; column < width; column++) {
-                output.setRGB(column, row+height/threadCount, new Color(Integer.min((int)rowArray2[column][row].getR(),255), Integer.min((int)rowArray2[column][row].getG(),255), Integer.min((int)rowArray2[column][row].getB(),255)).getRGB());
-            }
-        }
-        
-        
-        try {
-            ImageIO.write(output, "bmp", saveFile);
-        }catch(Exception e) {
-            e.printStackTrace();
-        }
-  
-        return 0;
     }
 }
