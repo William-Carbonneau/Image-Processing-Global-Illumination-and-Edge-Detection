@@ -39,8 +39,8 @@ public class RenderTest {
         }
 
         RenderWrapper renderer = new RenderWrapper(800, 800, scene, 16.0);
-        renderer.setSPP(256);
-        renderer.render(true,true);
+        renderer.setSPP(16.0);
+        renderer.render(true,true,0);
         renderer.save();
     }
 }

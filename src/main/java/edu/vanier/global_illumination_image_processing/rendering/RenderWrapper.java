@@ -25,6 +25,8 @@ public class RenderWrapper {
     private double SPP;
     /** thread count of previous render */
     private int threadCount = 0;
+    /** processors to be spared during the render */
+    private int sparedProcessors = 1;
     
     /** lost of array references */
     ArrayList<DiffuseColor[][]> imagePieces = new ArrayList<>();
@@ -120,17 +122,26 @@ public class RenderWrapper {
      * Render the scene MultiThreaded
      * 
      * @param multithread boolean MultiThread yes/no (true/false)
+     * @param stratified boolean stratified sampling yes/no (true/false)
+     * @param threads threads requested to use, <= 0 for maximum
      */
-    public void render(boolean multithread, boolean stratified) {
+    public void render(boolean multithread, boolean stratified, int threads) {
         System.out.printf("Rendering: %2.0f samples%n", SPP);
         // start a clock
         final long startTime = System.currentTimeMillis();
         
-        // deal with many processor types - get maximum available threads TODO parameterize the 1 to leave for the user
-        int maxThreads = Runtime.getRuntime().availableProcessors() - 1; // use max threads-1 to leave a thread for other processes (including the app itself)
+        // deal with many processor types - get maximum available threads 
+        // TODO make spared processors modifiable (requires error handling)
+        int maxThreads = Runtime.getRuntime().availableProcessors() - sparedProcessors; // use max threads-1 to leave a thread for other processes (including the app itself)
+        // handle maxThreads or 1
         maxThreads = Integer.max(maxThreads, 1);
-        // determine maximum threadCount
-        final int threadCountLocal = (multithread && maxThreads > 1) ? maxThreads : 1;
+        
+        final int threadCountLocal;
+        
+        // if the threads requested exceeds the maximum available (-1), or it is 0, provide maximum available
+        if (threads > maxThreads || threads <= 0) threadCountLocal = (multithread && maxThreads > 1) ? maxThreads : 1;
+        else threadCountLocal = threads;
+
         // update previous threadcount
         this.threadCount = threadCountLocal;
         
@@ -153,7 +164,7 @@ public class RenderWrapper {
             }
         }
         
-        System.out.println("Start Multithreading");
+        System.out.println("Start Multithreading with "+threadCount+" threads");
         
          // create thread-pool
         ExecutorService execServ = Executors.newFixedThreadPool(threadCountLocal);
@@ -184,6 +195,7 @@ public class RenderWrapper {
         }
         // collect threads and complete them.
         CompletableFuture.allOf(tasks.toArray(new CompletableFuture[0])).join();
+        // those who live by the thread die by the thread
         execServ.shutdown();   
         
         System.out.println("Render finished");
