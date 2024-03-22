@@ -1,4 +1,4 @@
-package edu.vanier.Global_Illumination_Image_Processing.models;
+package edu.vanier.global_illumination_image_processing.models;
 
 import java.awt.Color;
 import java.awt.image.BufferedImage;
@@ -15,18 +15,10 @@ public class Convolution {
     float[][] rulesGaussian = {{1,2,1},{2,4,2},{1,2,1}};
     //Source for the kernel to implement: https://pro.arcgis.com/en/pro-app/latest/help/analysis/raster-functions/convolution-function.htm#:~:text=The%20Convolution%20function%20performs%20filtering,or%20other%20kernel%2Dbased%20enhancements.
     float[][] rulesSharp1 = {{0f,-0.25f,0f},{-0.25f,2f,-0.25f},{0f,-0.25f,0f}};
-    //Source for the kernel: https://en.wikipedia.org/wiki/Sobel_operator
-    float[][] rulesSobelY = {{-1,0,1},
-                             {-2,0,2},
-                             {-1,0,1}};
-    //Source for the kernel: https://en.wikipedia.org/wiki/Sobel_operator
-    float[][] rulesSobelX = {{-1,-2,-1},
-                             {0,0,0},
-                             {1,2,1}};
     Stage primaryStage;
     File inputFile;
     String nameFileOut;
-    float threshold = 100;
+    
     /**
      * This method prints a 1-D array
      * @param array 
@@ -94,7 +86,193 @@ public class Convolution {
         }
         return arrayOut;
     }
+    
+        /**
+     * This method takes an input image and outputs its grayscale.
+     * @param filePathIn - The path of the file input
+     * @param filePathOut - The path of the file output
+     * @throws IOException 
+     * Source used as a reference to use ImageIO: https://ramok.tech/2018/09/27/convolution-in-java/
+     */
+    public static void performGrayscale(String filePathIn, String filePathOut) throws IOException {
+        BufferedImage BI = createBI(filePathIn);
+        BufferedImage finalImage = new BufferedImage(BI.getWidth(), BI.getHeight(), BufferedImage.TYPE_BYTE_GRAY);
+        //Initialize the values of r, g, and b
+        //Snippet of code taken from https://www.youtube.com/watch?v=zSo3QZTleqA
+        int p,a,r,g,b,avg;
+        for(int w=0; w<BI.getWidth(); w++){
+            for(int h=0; h<BI.getHeight(); h++){
+                p = BI.getRGB(w, h);
+                a = (p>>24)&0xff;
+                r = (p>>16)&0xff;
+                g = (p>>8)&0xff;
+                b = p&0xff;
+                avg = (r+g+b)/3;
+                p=(a<<24)|(avg<<16)|(avg<<8)|avg;
+                finalImage.setRGB(w, h, p);
+            }
+        }
+        File file = new File(filePathOut);
+        ImageIO.write(finalImage, "bmp", file);
+        
+    }
     /**
+     * This method performs Sobel edge detection along the x axis for an image.
+     * 
+     * @param filePathIn
+     * @param filePathOut
+     * @throws IOException 
+     * This source was used as a reference to use ImageIO in the context of performing a convolution:
+     * https://ramok.tech/2018/09/27/convolution-in-java/
+     */
+    public static void performSobelX(String filePathIn, String filePathOut) throws IOException {
+        float threshold = 100;
+        //Source for the kernel: https://en.wikipedia.org/wiki/Sobel_operator
+        float[][] rulesSobelX = {{-1,-2,-1},
+                             {0,0,0},
+                             {1,2,1}};
+        BufferedImage BI = createBI(filePathIn);
+        // Create the array gray corresponding to the average values of the pixels
+        float[][] g = new float[BI.getWidth()][BI.getHeight()];
+        //Initialize the values of g
+        Color color;
+        //The values of a geayscale image are uniform, meaning that the values for red, blue, and green are all the same
+        // Therefore, we can take any one of these three to initialize the array g (g)
+        for(int w=0; w<BI.getWidth(); w++){
+            for(int h=0; h<BI.getHeight(); h++){
+                color = new Color(BI.getRGB(w, h));
+                g[w][h] = color.getGreen();
+            }
+        }
+        //Perform the convolution on the gray array, in order to get the final one
+        // gFinal contains the floating numbers describing how much the colour values change to its left and right. (It does not represent the grayscale value, but the difference in the grayscale)
+        float[][] gFinal = performConvolutionOnArray(rulesSobelX, g);
+        //Make a new image
+        BufferedImage finalImage = new BufferedImage(g.length, g[0].length, BufferedImage.TYPE_INT_RGB);
+        for(int w=0; w<BI.getWidth(); w++){
+            for(int h=0; h<BI.getHeight(); h++){
+                //If the difference is bigger than the threshold, color that spot white
+                if(gFinal[w][h]>threshold){
+                    color =new Color(255,255,255);
+                }
+                //If not, colour it black
+                else{
+                    color = new Color(0,0,0);
+                    System.out.println(gFinal[w][h]);
+                }
+                //Set the value of the colour
+                finalImage.setRGB(w, h, color.getRGB());
+            }
+        }
+        // Create and write the output file
+        File file = new File(filePathOut);
+        ImageIO.write(finalImage, "bmp", file);
+    }
+    /**
+     * This method performs Sobel edge detection along the y axis for an image.
+     * 
+     * @param filePathIn
+     * @param filePathOut
+     * @throws IOException 
+     * This source was used as a reference to use ImageIO in the context of performing a convolution:
+     * https://ramok.tech/2018/09/27/convolution-in-java/
+     */
+    public static void performSobelY(String filePathIn, String filePathOut) throws IOException {
+        float threshold = 100;
+        //Source for the kernel: https://en.wikipedia.org/wiki/Sobel_operator
+        float[][] rulesSobelY = {{-1,0,1},
+                             {-2,0,2},
+                             {-1,0,1}};
+        BufferedImage BI = createBI(filePathIn);
+        // Create the array gray corresponding to the average values of the pixels
+        float[][] g = new float[BI.getWidth()][BI.getHeight()];
+        //Initialize the values of g
+        Color color;
+        //The values of a geayscale image are uniform, meaning that the values for red, blue, and green are all the same
+        // Therefore, we can take any one of these three to initialize the array g (g)
+        for(int w=0; w<BI.getWidth(); w++){
+            for(int h=0; h<BI.getHeight(); h++){
+                color = new Color(BI.getRGB(w, h));
+                g[w][h] = color.getGreen();
+            }
+        }
+        //Perform the convolution on the gray array, in order to get the final one
+        // gFinal contains the floating numbers describing how much the colour values change up to down. (It does not represent the grayscale value, but the difference in the grayscale)
+        float[][] gFinal = performConvolutionOnArray(rulesSobelY, g);
+        //Make a new image
+        BufferedImage finalImage = new BufferedImage(g.length, g[0].length, BufferedImage.TYPE_INT_RGB);
+        for(int w=0; w<BI.getWidth(); w++){
+            for(int h=0; h<BI.getHeight(); h++){
+                //If the difference is bigger than the threshold, color that spot white
+                if(gFinal[w][h]>threshold){
+                    color =new Color(255,255,255);
+                }
+                // If not, colour it black
+                else{
+                    color = new Color(0,0,0);
+                    System.out.println(gFinal[w][h]);
+                }
+                //Set the value of the colour
+                finalImage.setRGB(w, h, color.getRGB());
+            }
+        }
+        // Create and write the output file
+        File file = new File(filePathOut);
+        ImageIO.write(finalImage, "bmp", file);
+    }
+    /**
+     * This method detects all edges of an input image, and outputs the result outlining the edges of the image
+     * @param filePathIn - The path of the path input
+     * @param filePathOut - The path of the file output
+     * @throws IOException 
+     * This source was used as a reference to use ImageIO in the context of performing a convolution:
+     * https://ramok.tech/2018/09/27/convolution-in-java/
+     */
+    public static void mergeSobels(String filePathIn, String filePathOut) throws IOException{
+        float threshold = 100;
+        //Source for the kernel: https://en.wikipedia.org/wiki/Sobel_operator
+        float[][] rulesSobelY = {{-1,0,1},
+                             {-2,0,2},
+                             {-1,0,1}};
+        //Source for the kernel: https://en.wikipedia.org/wiki/Sobel_operator
+        float[][] rulesSobelX = {{-1,-2,-1},
+                             {0,0,0},
+                             {1,2,1}};
+        BufferedImage BI = createBI(filePathIn);
+        //Create the array corresponding to the differences around the central pixel for the grayscale
+        float[][] g = new float[BI.getWidth()][BI.getHeight()];
+        //Initialize the values of g
+        Color color;
+        for(int w=0; w<BI.getWidth(); w++){
+            for(int h=0; h<BI.getHeight(); h++){
+                color = new Color(BI.getRGB(w, h));
+                g[w][h] = color.getGreen();
+            }
+        }
+        //Perform the convolution on the colours array individually
+        float[][] gFinalX = performConvolutionOnArray(rulesSobelX, g);
+        float[][] gFinalY = performConvolutionOnArray(rulesSobelY, g);
+        //Combine the sobels to make a new image
+        BufferedImage finalImage = new BufferedImage(g.length, g[0].length, BufferedImage.TYPE_INT_RGB);
+        for(int w=0; w<BI.getWidth(); w++){
+            for(int h=0; h<BI.getHeight(); h++){
+                if(gFinalX[w][h]>threshold){
+                    color =new Color(255,255,255);
+                }
+                else if(gFinalY[w][h]>threshold){
+                    color =new Color(255,255,255);
+                }
+                else{
+                    color = new Color(0,0,0);
+                }
+                finalImage.setRGB(w, h, color.getRGB());
+            }
+        }
+        //Create and write the final image
+        File file = new File(filePathOut);
+        ImageIO.write(finalImage, "bmp", file);
+    }
+        /**
      * @param fileNameIn
      * @param fileNameOut
      * @param rulesModel
