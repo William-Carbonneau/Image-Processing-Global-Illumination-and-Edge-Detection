@@ -214,9 +214,9 @@
                                     <Line endX="50.0" startX="-50.0" />
                                  </children>
                               </VBox>
-                              <AnchorPane prefHeight="245.0" prefWidth="253.0">
+                              <AnchorPane prefHeight="373.0" prefWidth="266.0">
                                  <children>
-                                    <ListView fx:id="listObjectList" prefHeight="200.0" prefWidth="200.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" />
+                                    <ListView fx:id="listObjectList" prefHeight="373.0" prefWidth="266.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
                                  </children>
                               </AnchorPane>
                            </children>
