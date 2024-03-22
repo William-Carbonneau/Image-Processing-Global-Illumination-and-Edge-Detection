@@ -1,4 +1,4 @@
-package edu.vanier.Global_Illumination_Image_Processing.tests;
+package edu.vanier.global_illumination_image_processing.tests;
 
 import edu.vanier.global_illumination_image_processing.rendering.DiffuseColor;
 import edu.vanier.global_illumination_image_processing.rendering.RenderWrapper;
@@ -6,9 +6,15 @@ import edu.vanier.global_illumination_image_processing.rendering.Scene;
 import edu.vanier.global_illumination_image_processing.rendering.Vec3D;
 import edu.vanier.global_illumination_image_processing.rendering.objects.Plane;
 import edu.vanier.global_illumination_image_processing.rendering.objects.Sphere;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
- * A test class for the rendering, test is qualitative 
+ * A test class for the rendering, test is qualitative
+ * 
  * @author William Carbonneau
  */
 public class RenderTest {
@@ -42,5 +48,41 @@ public class RenderTest {
         renderer.setSPP(16.0);
         renderer.render(true,true,0);
         renderer.save();
+        
+        // benchmark 10 threads 16 SPP
+        long time1 = 0;
+        long time2 = 0;
+        long time3 = 0;
+        
+        long average  = 0;
+        
+        FileWriter fileWriter = null;
+        try {
+            fileWriter = new FileWriter("bench.csv");
+        } catch (IOException ex) {
+            Logger.getLogger(RenderTest.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        PrintWriter printWriter = new PrintWriter(fileWriter);
+        
+        printWriter.println(""+time1+","+time3+","+time2+","+average);
+        
+        for (int i = 1; i < 11; i++) {
+            for (int times = 0; times < 3; times++) {
+                switch (times) {
+                    case 0 -> time1 = System.currentTimeMillis();
+                    case 1 -> time2 = System.currentTimeMillis();
+                    case 2 -> time3 = System.currentTimeMillis();
+                }
+                renderer.render(true,true,i);
+                switch (times) {
+                    case 0 -> time1 = System.currentTimeMillis()-time1;
+                    case 1 -> time2 = System.currentTimeMillis()-time2;
+                    case 2 -> time3 = System.currentTimeMillis()-time3;
+                }
+            }
+            average = (time1 + time2 + time3)/3;                
+            printWriter.println(""+time1+","+time3+","+time2+","+average);
+        }
+        printWriter.close();
     }
 }

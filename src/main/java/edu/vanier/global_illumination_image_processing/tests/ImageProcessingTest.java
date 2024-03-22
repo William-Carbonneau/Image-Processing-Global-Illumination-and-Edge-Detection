@@ -1,4 +1,4 @@
-package edu.vanier.Global_Illumination_Image_Processing.tests;
+package edu.vanier.global_illumination_image_processing.tests;
 
 import java.awt.Color;
 import java.awt.image.BufferedImage;

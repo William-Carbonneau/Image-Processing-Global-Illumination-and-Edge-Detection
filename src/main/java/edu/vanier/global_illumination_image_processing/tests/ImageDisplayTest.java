@@ -1,4 +1,4 @@
-package edu.vanier.Global_Illumination_Image_Processing.tests;
+package edu.vanier.global_illumination_image_processing.tests;
 
 import edu.vanier.global_illumination_image_processing.controllers.FXMLMainAppController;
 import javafx.application.Application;
