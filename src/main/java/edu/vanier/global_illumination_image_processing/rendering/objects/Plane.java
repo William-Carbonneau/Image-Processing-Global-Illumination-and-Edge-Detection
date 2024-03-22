@@ -135,6 +135,12 @@ public class Plane extends SceneObject{
     
     // math methods
     
+    /**
+     * Calculate intersection of Plane with a Ray
+     * 
+     * @param intersectRay Ray
+     * @return double, distance to origin of Ray from intersect point
+     */
     @Override
     public double intersect(Ray intersectRay) {
         double d0 = getNormal().dot(intersectRay.getDirection());

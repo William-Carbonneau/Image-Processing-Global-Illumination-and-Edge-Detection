@@ -12,6 +12,8 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Button;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
 
 /**
  *
@@ -20,11 +22,22 @@ import javafx.scene.layout.Pane;
 public class FXMLTitleSceneController {
     
     @FXML
-    Pane RootPane;
+    VBox RootVBox;
     @FXML
     Button ImageProcessingBtn;
     @FXML
     Button GlobalIlluminationBtn;
+    
+    Stage primaryStage;
+
+    public FXMLTitleSceneController(Stage primaryStage) {
+        this.primaryStage = primaryStage;
+    }
+
+    public FXMLTitleSceneController() {
+    }
+    
+    
 
     @FXML
     public void initialize() {
@@ -33,9 +46,9 @@ public class FXMLTitleSceneController {
             try {
                 System.out.println("Image Button clicked");
                 FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/FXMLConvolutionsScene.fxml"));
-                loader.setController(new FXMLConvolutionsSceneController());
+                loader.setController(new FXMLConvolutionsSceneController(primaryStage));
                 Pane root = loader.load();
-                RootPane.getChildren().setAll(root);
+                RootVBox.getChildren().setAll(root);
             } catch (IOException ex) {
                 Logger.getLogger(FXMLTitleSceneController.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -48,7 +61,7 @@ public class FXMLTitleSceneController {
                 FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/FXMLRenderScene.fxml"));
                 loader.setController(new FXMLRenderSceneController());
                 Pane root = loader.load();
-                RootPane.getChildren().setAll(root);
+                RootVBox.getChildren().setAll(root);
             } catch (IOException ex) {
                 Logger.getLogger(FXMLTitleSceneController.class.getName()).log(Level.SEVERE, null, ex);
             }
