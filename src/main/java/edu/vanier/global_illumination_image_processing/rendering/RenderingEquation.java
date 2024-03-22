@@ -62,6 +62,15 @@ public class RenderingEquation {
     }
 
     /**
+     * Get the Scene instance to modify it
+     * 
+     * @return 
+     */
+    public Scene getScene() {
+        return scene;
+    }
+
+    /**
      * Sets the height of the camera's viewport.
      * 
      * @param heightParam The height to be set for the camera's viewport.
