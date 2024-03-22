@@ -49,6 +49,6 @@ application {
   //  mainClass = 'edu.vanier.global_illumination_image_processing.MainApp'
    //mainClass = 'edu.vanier.global_illumination_image_processing.tests.RenderTest'
 
-   //mainClass = 'edu.vanier.global_illumination_image_processing.MainApp'
+   mainClass = 'edu.vanier.global_illumination_image_processing.MainApp'
 
 }

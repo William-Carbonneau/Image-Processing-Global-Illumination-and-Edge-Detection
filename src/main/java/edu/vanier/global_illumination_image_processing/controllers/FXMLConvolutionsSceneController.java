@@ -83,7 +83,9 @@ public class FXMLConvolutionsSceneController {
             if(choice.equals("Custom Kernel")){
                 System.out.println("Custom Kernel Clicked");
                 float[][] rulesCustom = new float[3][3];
-                TextField[][] txtRules = {{txt11,txt12,txt13},{txt21,txt22,txt23},{txt31,txt32,txt33}};
+                TextField[][] txtRules = {{txt11,txt12,txt13},
+                                          {txt21,txt22,txt23},
+                                          {txt31,txt32,txt33}};
                 for(int i=0; i<txtRules.length; i++){
                     for(int j=0; j<txtRules[0].length;j++){
                         try{
@@ -112,7 +114,7 @@ public class FXMLConvolutionsSceneController {
                 try {
                     dc.getInitialDirectory().createNewFile();
                     // Make a dialog appear for the user to choose a name for the file
-                    String nameFileOut = chooseNameDialog();
+                    String nameFileOut = chooseNameFileDialog();
                     // Create a file with the name
                     fileOut = new File(dc.getInitialDirectory()+"\\"+nameFileOut+".bmp");
                     Convolution.performConvolution(this.inputFile.getAbsolutePath(), fileOut.getAbsolutePath(), rulesCustom);
@@ -142,7 +144,7 @@ public class FXMLConvolutionsSceneController {
                 try {
                     dc.getInitialDirectory().createNewFile();
                     // Make a dialog appear for the user to choose a name for the file
-                    String nameFileOut = chooseNameDialog();
+                    String nameFileOut = chooseNameFileDialog();
                     // Create a file with the name
                     fileOut = new File(dc.getInitialDirectory()+"\\"+nameFileOut+".bmp");
                     Convolution.performConvolution(this.inputFile.getAbsolutePath(), fileOut.getAbsolutePath(), rulesGaussian);
@@ -171,7 +173,7 @@ public class FXMLConvolutionsSceneController {
                 try {
                     dc.getInitialDirectory().createNewFile();
                     // Make a dialog appear for the user to choose a name for the file
-                    String nameFileOut = chooseNameDialog();
+                    String nameFileOut = chooseNameFileDialog();
                     // Create a file with the name
                     fileOut = new File(dc.getInitialDirectory()+"\\"+nameFileOut+".bmp");
                     Convolution.performConvolution(this.inputFile.getAbsolutePath(), fileOut.getAbsolutePath(), rulesSharp1);
@@ -200,7 +202,7 @@ public class FXMLConvolutionsSceneController {
                 try {
                     dc.getInitialDirectory().createNewFile();
                     // Make a dialog appear for the user to choose a name for the file
-                    String nameFileOut = chooseNameDialog();
+                    String nameFileOut = chooseNameFileDialog();
                     // Create a file with the name
                     fileOut = new File(dc.getInitialDirectory()+"\\"+nameFileOut+".bmp");
                     Convolution.performGrayscale(this.inputFile.getAbsolutePath(), fileOut.getAbsolutePath());
@@ -229,7 +231,7 @@ public class FXMLConvolutionsSceneController {
                 try {
                     dc.getInitialDirectory().createNewFile();
                     // Make a dialog appear for the user to choose a name for the file
-                    String nameFileOut = chooseNameDialog();
+                    String nameFileOut = chooseNameFileDialog();
                     // Create a file with the name
                     fileOut = new File(dc.getInitialDirectory()+"\\"+nameFileOut+".bmp");
                     Convolution.performConvolution(this.inputFile.getAbsolutePath(), fileOut.getAbsolutePath(), rulesGaussian);
@@ -260,7 +262,7 @@ public class FXMLConvolutionsSceneController {
                 try {
                     dc.getInitialDirectory().createNewFile();
                     // Make a dialog appear for the user to choose a name for the file
-                    String nameFileOut = chooseNameDialog();
+                    String nameFileOut = chooseNameFileDialog();
                     // Create a file with the name
                     fileOut = new File(dc.getInitialDirectory()+"\\"+nameFileOut+".bmp");
                     Convolution.performConvolution(this.inputFile.getAbsolutePath(), fileOut.getAbsolutePath(), rulesGaussian);
@@ -276,22 +278,18 @@ public class FXMLConvolutionsSceneController {
                 System.out.println("Sobel Complete clicked");
                 //Get the image the user wants to convolve
                 if(inputFile==null){
+                    chooseFileDialog();
                     this.inputFile = getFileFromFChooser();
                 }
                 // Let the user choose a directory to create the image
                 // Choose the directory in which the user wants to save the image
-                Stage stage = new Stage();
-                DirectoryChooser dc = new DirectoryChooser();
-                primaryStage.setAlwaysOnTop(false);
-                stage.setAlwaysOnTop(true);
-                dc.setInitialDirectory(dc.showDialog(stage));
-                stage.setAlwaysOnTop(false);
-                primaryStage.setAlwaysOnTop(true);
+                chooseDirectoryDialog();
+                DirectoryChooser dc = getDirectoryChooser();
                 File fileOut;
                 try {
                     dc.getInitialDirectory().createNewFile();
                     // Make a dialog appear for the user to choose a name for the file
-                    String nameFileOut = chooseNameDialog();
+                    String nameFileOut = chooseNameFileDialog();
                     // Create a file with the name
                     fileOut = new File(dc.getInitialDirectory()+"\\"+nameFileOut+".bmp");
                     Convolution.performConvolution(this.inputFile.getAbsolutePath(), fileOut.getAbsolutePath(), rulesGaussian);
@@ -368,7 +366,7 @@ public class FXMLConvolutionsSceneController {
      * This is a method that Loovdrish has implemented last semester for the project on wave simulation
      * @return nameFile, String which corresponds to the name of the file
      */
-    public String chooseNameDialog(){
+    public String chooseNameFileDialog(){
         Stage stage = new Stage();
         VBox root = new VBox();
         Label nameLbl = new Label("Please write the name of your file");
@@ -386,6 +384,45 @@ public class FXMLConvolutionsSceneController {
         stage.showAndWait();
         return nameFileOut;
     }
+    /**
+     * This method creates a dialog that is responsible of letting the user anticipate that a File Chooser is about to appear.
+     * It creates a new stage which will be used as a window to contain the message.
+     */
+    public void chooseFileDialog(){
+        Stage stage = new Stage();
+        VBox root = new VBox();
+        Label nameLbl = new Label("Please choose the file you want to convolve");
+        TextField nameTxtFld = new TextField("Name");
+        nameTxtFld.setLayoutX(0);
+        Button GotItBtn = new Button("Got it!");
+        GotItBtn.setOnAction((event)->{
+            stage.close();
+        });
+        root.getChildren().addAll(nameLbl,GotItBtn);
+        stage.setAlwaysOnTop(true);
+        Scene scene = new Scene(root, 300, 200);
+        stage.setScene(scene);
+        stage.showAndWait();
+    }
+    /**
+     * This method creates a dialog that is responsible of letting the user anticipate that a Directory Chooser is about to appear.
+     * It creates a new stage which will be used as a window to contain the message.
+     * This is a method that Loovdrish has implemented last semester for the project on wave simulation
+     */
+    public void chooseDirectoryDialog(){
+        Stage stage = new Stage();
+        VBox root = new VBox();
+        Label nameLbl = new Label("Please choose a direcotry in which to save your output file");
+        Button GotItBtn = new Button("Got it!");
+        GotItBtn.setOnAction((event)->{
+            stage.close();
+        });
+        root.getChildren().addAll(nameLbl,GotItBtn);
+        stage.setAlwaysOnTop(true);
+        Scene scene = new Scene(root, 300, 200);
+        stage.setScene(scene);
+        stage.showAndWait();
+    }
 
     /**
      * This method displays an image file onto the image view imageImgView
@@ -394,5 +431,15 @@ public class FXMLConvolutionsSceneController {
      */
     public void displayImage(String filePath){
         imageImgView.setImage(new Image(filePath));
+    }
+    public DirectoryChooser getDirectoryChooser(){
+        Stage stage = new Stage();
+        DirectoryChooser dc = new DirectoryChooser();
+        primaryStage.setAlwaysOnTop(false);
+        stage.setAlwaysOnTop(true);
+        dc.setInitialDirectory(dc.showDialog(stage));
+        stage.setAlwaysOnTop(false);
+        primaryStage.setAlwaysOnTop(true);
+        return dc;
     }
 }
