@@ -31,7 +31,7 @@ public class FXMLRenderSceneController {
     @FXML MenuItem BackToTitleMenuItem;
     @FXML ListView listObjectList;
     @FXML Label lblObjectType;
-    @FXML Label lblObjectName;
+    @FXML Label txtObjectName;
     @FXML TextField txtObjectXPos;
     @FXML TextField txtObjectYPos;
     @FXML TextField txtObjectZPos;
@@ -62,6 +62,7 @@ public class FXMLRenderSceneController {
         objectList.add(new ObjWrapper("front plane", new Plane(new Vec3D(0,0,-1), 0.5, new DiffuseColor(6, 6, 6), 0,1)));
         objectList.add(new ObjWrapper("light sphere 1", new Sphere(new Vec3D(0,1.9,-3), 0.5, new DiffuseColor(0, 0, 0), 10000,1)));
         objectList.get(9).getObj().setRefractiveIndex(1.9);
+        
         BackToTitleMenuItem.setOnAction((event)->{
             try {
                 System.out.println("Back to Title clicked");
@@ -80,7 +81,7 @@ public class FXMLRenderSceneController {
             
             if (item == null) return;
             
-            lblObjectName.setText(item.getName());
+            txtObjectName.setText(item.getName());
             lblObjectType.setText("" + item.getObj().getClass().getSimpleName());
             txtObjectXPos.setText("" + item.getObj().getNormal().getX());
             txtObjectYPos.setText("" + item.getObj().getNormal().getY());
@@ -93,9 +94,9 @@ public class FXMLRenderSceneController {
                 case 2 -> choiceMaterial.setValue(typeChoiceBoxList.get(1));
                 case 3 -> choiceMaterial.setValue(typeChoiceBoxList.get(2));
             }
-//            choiceMaterial.setValue(item);
-
         });
+        
+        
         
     }
     
