@@ -177,7 +177,7 @@
                                                 <Font size="13.0" />
                                              </font>
                                           </Label>
-                                          <ChoiceBox fx:id="choiceMaterial" prefHeight="25.0" prefWidth="60.0" />
+                                          <ChoiceBox fx:id="choiceMaterial" prefHeight="25.0" prefWidth="70.0" />
                                        </children>
                                     </HBox>
                                     <HBox alignment="CENTER_LEFT" spacing="2.0" GridPane.columnIndex="1" GridPane.rowIndex="3">
@@ -187,7 +187,7 @@
                                                 <Font size="13.0" />
                                              </font>
                                           </Label>
-                                          <TextField fx:id="txtIOREmissiveness" prefHeight="25.0" prefWidth="60.0" text="2.95" />
+                                          <TextField fx:id="txtIOREmissiveness" prefHeight="25.0" prefWidth="70.0" text="2.95" />
                                        </children>
                                     </HBox>
                                     <HBox alignment="CENTER_LEFT" spacing="2.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
@@ -213,7 +213,7 @@
                                                 <Font size="13.0" />
                                              </font>
                                           </Label>
-                                          <TextField fx:id="txtIOREmissiveness11" prefHeight="25.0" prefWidth="60.0" text="2.95" />
+                                          <TextField fx:id="txtIOREmissiveness11" prefHeight="25.0" prefWidth="70.0" text="2.95" />
                                        </children>
                                     </HBox>
                                  </children>
