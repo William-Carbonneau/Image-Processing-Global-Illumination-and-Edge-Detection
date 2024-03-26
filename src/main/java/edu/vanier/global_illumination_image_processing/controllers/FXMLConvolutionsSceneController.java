@@ -334,7 +334,7 @@ public class FXMLConvolutionsSceneController {
         
         convolveBtn.setOnAction(convolutionCB.getOnAction());
         BackToTitleMenuItem.setOnAction((event)->{
-            MainApp.switchScene(MainApp.FXMLTitleScene, new FXMLTitleSceneController());
+            MainApp.switchScene(MainApp.FXMLTitleScene, new FXMLTitleSceneController(primaryStage));
             
         });
     }

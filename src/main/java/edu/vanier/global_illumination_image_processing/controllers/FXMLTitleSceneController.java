@@ -44,13 +44,13 @@ public class FXMLTitleSceneController {
     public void initialize() {
         System.out.println("Title Scene being loaded");
         ImageProcessingBtn.setOnAction((event) -> {
-            MainApp.switchScene(MainApp.FXMLConvolutionsScene, new FXMLConvolutionsSceneController());
+            MainApp.switchScene(MainApp.FXMLConvolutionsScene, new FXMLConvolutionsSceneController(primaryStage));
             
             
         });
 
         GlobalIlluminationBtn.setOnAction((event) -> {
-            MainApp.switchScene(MainApp.FXMLRenderScene, new FXMLRenderSceneController());
+            MainApp.switchScene(MainApp.FXMLRenderScene, new FXMLRenderSceneController(primaryStage));
             
         });
     }
