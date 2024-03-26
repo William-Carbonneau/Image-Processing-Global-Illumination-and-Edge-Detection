@@ -53,6 +53,34 @@ public abstract class SceneObject {
     }
 
     /**
+     * Set the emission value
+     * 
+     * @param emission double
+     */
+    public void setEmission(double emission) {
+        this.emission = emission;
+    }
+
+    /**
+     * Set the color
+     * 
+     * @param color DiffuseColor
+     */
+    public void setColor(DiffuseColor color) {
+        this.color = color;
+    }
+
+    /**
+     * Set the type (1 = Diffuse, 2 = Reflective, 3 = Refractive)
+     * 
+     * @param type int
+     */
+    public void setType(int type) {
+        this.type = type;
+    }
+    
+    
+    /**
      * Computes the intersection of the object with a given ray.
      * 
      * @param intersectRay The ray to intersect with the object.
