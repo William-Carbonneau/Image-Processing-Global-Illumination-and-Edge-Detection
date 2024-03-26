@@ -12,8 +12,6 @@ import edu.vanier.global_illumination_image_processing.rendering.DiffuseColor;
  * @author William Carbonneau
  */
 public class Plane extends SceneObject{
-    private Vec3D normal;
-    private double distanceOrigin;
     
     // getters and setters
     
@@ -24,24 +22,6 @@ public class Plane extends SceneObject{
      */
     public void setColor(DiffuseColor color) {
         this.color = color;
-    }
-    
-    /**
-     * Set the normal vector of the Plane
-     * 
-     * @param newNormal Vec3D
-     */
-    public void setNormal(Vec3D newNormal) {
-        this.normal = newNormal;
-    }
-
-    /**
-     * Set the distance of the Plane from the origin
-     * 
-     * @param newDistanceOrigin 
-     */
-    public void setDistanceOrigin(double newDistanceOrigin) {
-        this.distanceOrigin = newDistanceOrigin;
     }
 
     /**
@@ -72,15 +52,6 @@ public class Plane extends SceneObject{
     public DiffuseColor getColor() {
         return color;
     }
-    
-    /**
-     * Get the normal vector of the Plane
-     * 
-     * @return normal Vec3D
-     */
-    public Vec3D getNormal() {
-        return normal;
-    }
 
     /**
      * Get the emission value of the Plane
@@ -104,15 +75,8 @@ public class Plane extends SceneObject{
     }
 
     /**
-     * Get the distance from the origin of the Plane
+     * General Constructor
      * 
-     * @return double
-     */
-    public double getDistance() {
-        return distanceOrigin;
-    }
-
-    /**General Constructor
      * @param normal
      * @param distanceOrigin*/
     public Plane(Vec3D normal, double distanceOrigin) {
@@ -120,7 +84,8 @@ public class Plane extends SceneObject{
         this.distanceOrigin = distanceOrigin;
     }
     
-    /**Material Constructor
+    /**
+     * Material Constructor
      * @param normal
      * @param distanceOrigin
      * @param color
@@ -145,7 +110,7 @@ public class Plane extends SceneObject{
     public double intersect(Ray intersectRay) {
         double d0 = getNormal().dot(intersectRay.getDirection());
         if (d0 != 0) {
-            double temp = -1 * (((getNormal().dot(intersectRay.getOrigin()))+getDistance()) / d0);
+            double temp = -1 * (((getNormal().dot(intersectRay.getOrigin()))+getDistanceOrigin()) / d0);
             return (temp > Intersection.EPS) ? temp : 0;
         }else {
             return 0;

@@ -6,8 +6,7 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-
-<VBox fx:id="RootVBox" alignment="CENTER" prefHeight="285.0" prefWidth="480.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1">
+<VBox fx:id="RootVBox" alignment="CENTER" prefHeight="285.0" prefWidth="480.0" spacing="25.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1">
    <children>
       <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Global Illumination and Image Processing " textAlignment="CENTER" wrappingWidth="479.09375">
          <font>
@@ -34,4 +33,7 @@
          </VBox.margin>
       </Button>
    </children>
+   <padding>
+      <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
+   </padding>
 </VBox>

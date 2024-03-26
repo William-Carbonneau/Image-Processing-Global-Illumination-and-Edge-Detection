@@ -49,6 +49,7 @@ public class RenderTest {
         renderer.render(true,true,0);
         renderer.save();
         
+        /*
         // benchmark 10 threads 16 SPP
         /*
         long time1 = 0;

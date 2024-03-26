@@ -21,6 +21,12 @@ public abstract class SceneObject {
     /** The refractive index for Snell's law, for refractive objects (type 3)*/
     public double refractiveIndex; // TODO modify for refractive index per object likely this line: double rIndex = parameterList.get("refractiveIndex");
 
+    /** Distance to origin used by Plane */
+    public double distanceOrigin = 0;
+    
+    /** Base coordinate used by all objects */
+    public Vec3D normal;
+    
     /**
      * Sets the material properties of the object.
      * 
@@ -36,7 +42,44 @@ public abstract class SceneObject {
         this.type = type;
         this.refractiveIndex = 1.5;
     }
+        
+    /**
+     * Set the normal vector of the Plane
+     * 
+     * @param newNormal Vec3D
+     */
+    public void setNormal(Vec3D newNormal) {
+        this.normal = newNormal;
+    }
 
+    /**
+     * Set the emission value
+     * 
+     * @param emission double
+     */
+    public void setEmission(double emission) {
+        this.emission = emission;
+    }
+
+    /**
+     * Set the color
+     * 
+     * @param color DiffuseColor
+     */
+    public void setColor(DiffuseColor color) {
+        this.color = color;
+    }
+
+    /**
+     * Set the type (1 = Diffuse, 2 = Reflective, 3 = Refractive)
+     * 
+     * @param type int
+     */
+    public void setType(int type) {
+        this.type = type;
+    }
+    
+    
     /**
      * Computes the intersection of the object with a given ray.
      * 
@@ -61,6 +104,15 @@ public abstract class SceneObject {
     public DiffuseColor getColor() {
         return color;
     }
+        
+    /**
+     * Get the normal vector of the Plane
+     * 
+     * @return normal Vec3D
+     */
+    public Vec3D getNormal() {
+        return normal;
+    }
 
     /**
      * get the emission value of this object
@@ -83,6 +135,15 @@ public abstract class SceneObject {
     public int getType() {
         return type;
     }
+    
+     /**
+     * Get the distance from the origin (only for some objects is this relevant otherwise 0)
+     * 
+     * @return double
+     */
+    public double getDistanceOrigin() {
+        return distanceOrigin;
+    }
 
     /**
      * Sets the refractive index property of the object.
@@ -91,6 +152,15 @@ public abstract class SceneObject {
      */
     public void setRefractiveIndex(double refractiveIndex) {
         this.refractiveIndex = refractiveIndex;
+    }
+    
+    /**
+     * Set the distance of the Plane from the origin
+     * 
+     * @param newDistanceOrigin 
+     */
+    public void setDistanceOrigin(double newDistanceOrigin) {
+        this.distanceOrigin = newDistanceOrigin;
     }
 
     /**
