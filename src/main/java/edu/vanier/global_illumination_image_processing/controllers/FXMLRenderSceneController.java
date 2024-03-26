@@ -45,6 +45,11 @@ public class FXMLRenderSceneController {
     @FXML TextField txtSPP; // TODO get and set value from GUI
     @FXML ChoiceBox choiceMaterial;
     @FXML Button btnRender;
+    Stage primaryStage;
+
+    public FXMLRenderSceneController(Stage primaryStage) {
+        this.primaryStage = primaryStage;
+    }
 
     
     public void initialize(){
