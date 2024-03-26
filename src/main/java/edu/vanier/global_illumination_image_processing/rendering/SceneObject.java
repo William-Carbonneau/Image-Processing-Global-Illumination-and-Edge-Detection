@@ -21,6 +21,12 @@ public abstract class SceneObject {
     /** The refractive index for Snell's law, for refractive objects (type 3)*/
     public double refractiveIndex; // TODO modify for refractive index per object likely this line: double rIndex = parameterList.get("refractiveIndex");
 
+    /** Distance to origin used by Plane */
+    public double distanceOrigin = 0;
+    
+    /** Base coordinate used by all objects */
+    public Vec3D normal;
+    
     /**
      * Sets the material properties of the object.
      * 
@@ -35,6 +41,15 @@ public abstract class SceneObject {
         this.emission = emission;
         this.type = type;
         this.refractiveIndex = 1.5;
+    }
+        
+    /**
+     * Set the normal vector of the Plane
+     * 
+     * @param newNormal Vec3D
+     */
+    public void setNormal(Vec3D newNormal) {
+        this.normal = newNormal;
     }
 
     /**
@@ -60,6 +75,15 @@ public abstract class SceneObject {
      */
     public DiffuseColor getColor() {
         return color;
+    }
+        
+    /**
+     * Get the normal vector of the Plane
+     * 
+     * @return normal Vec3D
+     */
+    public Vec3D getNormal() {
+        return normal;
     }
 
     /**

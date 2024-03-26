@@ -12,19 +12,11 @@ import edu.vanier.global_illumination_image_processing.rendering.DiffuseColor;
  * @author William Carbonneau
  */
 public class Sphere extends SceneObject {
-    private Vec3D origin;
     private double radius;
 
     // getters and setters
 
-    /**
-     * Set the origin of the Sphere
-     * 
-     * @param origin Vec3D
-     */
-    public void setOrigin(Vec3D origin) {
-        this.origin = origin;
-    }
+
 
     /**
      * Set the radius of the Sphere
@@ -91,15 +83,6 @@ public class Sphere extends SceneObject {
     }
     
     /**
-     * Get the origin of the Sphere
-     * 
-     * @return origin Vec3D
-     */
-    public Vec3D getOrigin() {
-        return origin;
-    }
-    
-    /**
      * Get the radius of the Sphere
      * 
      * @return radius double
@@ -115,7 +98,7 @@ public class Sphere extends SceneObject {
      * @param radius double
      */
     public Sphere(Vec3D origin, double radius) {
-        this.origin = origin;
+        this.normal = origin;
         this.radius = radius;
     }
     
@@ -129,7 +112,7 @@ public class Sphere extends SceneObject {
      * @param type int
      */
     public Sphere(Vec3D origin, double radius, DiffuseColor color, double emission, int type) {
-        this.origin = origin;
+        this.normal = origin;
         this.radius = radius;
         setMaterial(color, emission,type);
     }
@@ -143,7 +126,7 @@ public class Sphere extends SceneObject {
      */
     @Override
     public double intersect(Ray intersectRay) {
-        Vec3D ray0MinusOrigin = (intersectRay.getOrigin().subtract(this.getOrigin()));
+        Vec3D ray0MinusOrigin = (intersectRay.getOrigin().subtract(this.getNormal()));
         // solving quadratic formula
         double sphereComponent = ray0MinusOrigin.multiply(2).dot(intersectRay.getDirection());
         double originNew = ray0MinusOrigin.dot(ray0MinusOrigin) - (this.getRadius()*this.getRadius());
@@ -163,7 +146,7 @@ public class Sphere extends SceneObject {
      */
     @Override
     public Vec3D normal(Vec3D intersectPoint) {
-        return intersectPoint.subtract(this.getOrigin()).multiply(1.0/radius); // normalize by radius to avoid square root
+        return intersectPoint.subtract(this.getNormal()).multiply(1.0/radius); // normalize by radius to avoid square root
     }
     
 }

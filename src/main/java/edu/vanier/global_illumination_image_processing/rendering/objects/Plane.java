@@ -12,8 +12,6 @@ import edu.vanier.global_illumination_image_processing.rendering.DiffuseColor;
  * @author William Carbonneau
  */
 public class Plane extends SceneObject{
-    private Vec3D normal;
-    private double distanceOrigin;
     
     // getters and setters
     
@@ -24,15 +22,6 @@ public class Plane extends SceneObject{
      */
     public void setColor(DiffuseColor color) {
         this.color = color;
-    }
-    
-    /**
-     * Set the normal vector of the Plane
-     * 
-     * @param newNormal Vec3D
-     */
-    public void setNormal(Vec3D newNormal) {
-        this.normal = newNormal;
     }
 
     /**
@@ -72,15 +61,6 @@ public class Plane extends SceneObject{
     public DiffuseColor getColor() {
         return color;
     }
-    
-    /**
-     * Get the normal vector of the Plane
-     * 
-     * @return normal Vec3D
-     */
-    public Vec3D getNormal() {
-        return normal;
-    }
 
     /**
      * Get the emission value of the Plane
@@ -113,6 +93,7 @@ public class Plane extends SceneObject{
     }
 
     /**General Constructor
+     * 
      * @param normal
      * @param distanceOrigin*/
     public Plane(Vec3D normal, double distanceOrigin) {
