@@ -294,7 +294,7 @@ public class FXMLConvolutionsSceneController {
                     fileOut = new File(dc.getInitialDirectory()+"\\"+nameFileOut+".bmp");
                     Convolution.performConvolution(this.inputFile.getAbsolutePath(), fileOut.getAbsolutePath(), rulesGaussian);
                     Convolution.performGrayscale(fileOut.getAbsolutePath(), fileOut.getAbsolutePath());
-                    Convolution.mergeSobels(fileOut.getAbsolutePath(),fileOut.getAbsolutePath());
+                    Convolution.performSobel(fileOut.getAbsolutePath(),fileOut.getAbsolutePath());
                     displayImage(fileOut.getAbsolutePath());
                 } catch (IOException | NullPointerException ex) {
                     System.out.println("Error caught");
