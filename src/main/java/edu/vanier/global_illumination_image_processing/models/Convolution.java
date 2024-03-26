@@ -93,23 +93,26 @@ public class Convolution {
      * @param filePathOut - The path of the file output
      * @throws IOException 
      * Source used as a reference to use ImageIO: https://ramok.tech/2018/09/27/convolution-in-java/
+     * A grayscale pixel is obtained by averaging the r, g, and b values: https://web.stanford.edu/class/cs101/image-6-grayscale-adva.html
      */
     public static void performGrayscale(String filePathIn, String filePathOut) throws IOException {
         BufferedImage BI = createBI(filePathIn);
         BufferedImage finalImage = new BufferedImage(BI.getWidth(), BI.getHeight(), BufferedImage.TYPE_BYTE_GRAY);
         //Initialize the values of r, g, and b
-        //Snippet of code taken from https://www.youtube.com/watch?v=zSo3QZTleqA
-        int p,a,r,g,b,avg;
+        float r;
+        float g;
+        float b;
+        float avg;
+        Color color;
         for(int w=0; w<BI.getWidth(); w++){
             for(int h=0; h<BI.getHeight(); h++){
-                p = BI.getRGB(w, h);
-                a = (p>>24)&0xff;
-                r = (p>>16)&0xff;
-                g = (p>>8)&0xff;
-                b = p&0xff;
+                color = new Color(BI.getRGB(w, h));
+                r = color.getRed();
+                g = color.getGreen();
+                b = color.getBlue();
                 avg = (r+g+b)/3;
-                p=(a<<24)|(avg<<16)|(avg<<8)|avg;
-                finalImage.setRGB(w, h, p);
+                color = new Color(avg/255,avg/255,avg/255);
+                finalImage.setRGB(w, h, color.getRGB());
             }
         }
         File file = new File(filePathOut);
