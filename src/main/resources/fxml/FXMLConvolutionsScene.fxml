@@ -142,6 +142,16 @@
                                           <Button fx:id="convolveBtn" mnemonicParsing="false" text="Convolve" />
                                        </children>
                                     </HBox>
+                                    <HBox prefHeight="69.0" prefWidth="268.0">
+                                       <children>
+                                          <TextField fx:id="thresholdTxtBox" prefHeight="25.0" prefWidth="137.0">
+                                             <HBox.margin>
+                                                <Insets />
+                                             </HBox.margin>
+                                          </TextField>
+                                          <Button fx:id="convolveAgainBtn" mnemonicParsing="false" text="Convolve Again" />
+                                       </children>
+                                    </HBox>
                                     <HBox alignment="CENTER_LEFT" prefHeight="49.0" prefWidth="266.0">
                                        <children>
                                           <Label text="File Opened: " />

@@ -174,9 +174,8 @@ public class Convolution {
      * @param filePathOut
      * @throws IOException 
      */
-    public static void performSobel(String filePathIn, String filePathOut) throws IOException{
+    public static void performSobel(String filePathIn, String filePathOut, float threshold) throws IOException{
         
-        float threshold = 100;
         //Source for the kernel: https://en.wikipedia.org/wiki/Sobel_operator
         float[][] rulesSobelX = {{-1,-2,-1},
                              {0,0,0},

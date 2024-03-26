@@ -45,6 +45,11 @@ public class FXMLConvolutionsSceneController {
     @FXML
     ChoiceBox convolutionCB;
     @FXML
+    TextField thresholdTxtBox;
+    @FXML
+    Button convolveAgainBtn;
+    float defaultThreshold=100;
+    @FXML
     TextField txt11,txt12,txt13,txt21,txt22,txt23,txt31,txt32,txt33;
     // Source for the kernel to implement: https://youtu.be/C_zFhWdM4ic?si=CH3JvuO9mSfVmleJ
     float[][] rulesGaussian = {{1,2,1},{2,4,2},{1,2,1}};
@@ -62,6 +67,7 @@ public class FXMLConvolutionsSceneController {
     File inputFile;
     String nameFileOut;
     float threshold = 50;
+    File fileOut;
 
     public FXMLConvolutionsSceneController(Stage primaryStage) {
         this.primaryStage = primaryStage;
@@ -71,11 +77,90 @@ public class FXMLConvolutionsSceneController {
     FXMLConvolutionsSceneController() {
         
     }
-    
+    public TextField[][] getCustomKernelTxtField(){
+        TextField[][] txtRules = {{txt11,txt12,txt13},
+                                          {txt21,txt22,txt23},
+                                          {txt31,txt32,txt33}};
+        return txtRules;
+    }
+    public float[][] getCustomKernelFloat(TextField[][] txtRules){
+        float[][] rulesCustom = new float[3][3];
+        for(int i=0; i<txtRules.length; i++){
+                        for(int j=0; j<txtRules[0].length;j++){
+                            try{
+                                rulesCustom[i][j] = Float.valueOf(txtRules[i][j].getText());
+                            }catch(Exception e){
+                                rulesCustom[i][j] = 0f;
+                            }
+                        }
+                    }
+        return rulesCustom;
+    }
     @FXML
     public void initialize(){
         convolutionCB.getItems().addAll("Custom Kernel", "Gaussian Blur", "Sharpening","Grayscale", "Sobel X", "Sobel Y", "Sobel Complete", "Reset");
-        
+        convolveAgainBtn.setOnAction((event)->{
+            if(fileOut!=null){
+                inputFile = fileOut;
+                String choice = convolutionCB.getValue().toString();
+                System.out.println(choice+" clicked");
+                if(choice.equals("Custom Kernel")){
+                    TextField[][] txtRules = getCustomKernelTxtField();
+                    float[][] rulesCustom = getCustomKernelFloat(txtRules);
+                    
+                // Let the user choose a directory to create the image
+                // Choose the directory in which the user wants to save the image
+                Stage stage = new Stage();
+                DirectoryChooser dc = new DirectoryChooser();
+                primaryStage.setAlwaysOnTop(false);
+                stage.setAlwaysOnTop(true);
+                dc.setInitialDirectory(dc.showDialog(stage));
+                stage.setAlwaysOnTop(false);
+                primaryStage.setAlwaysOnTop(true);
+                try {
+                    dc.getInitialDirectory().createNewFile();
+                    // Make a dialog appear for the user to choose a name for the file
+                    String nameFileOut = chooseNameFileDialog();
+                    // Create a file with the name
+                    fileOut = new File(dc.getInitialDirectory()+"\\"+nameFileOut+".bmp");
+                    Convolution.performConvolution(this.inputFile.getAbsolutePath(), fileOut.getAbsolutePath(), rulesCustom);
+                    displayImage(fileOut.getAbsolutePath());
+                } catch (IOException | NullPointerException ex) {
+                    System.out.println("Error caught");
+                }
+                inputFile=null;
+                
+            }
+                if(choice.equals("Gaussian Blur")){
+                    // Let the user choose a directory to create the image
+                    // Choose the directory in which the user wants to save the image
+                    Stage stage = new Stage();
+                    DirectoryChooser dc = new DirectoryChooser();
+                    primaryStage.setAlwaysOnTop(false);
+                    stage.setAlwaysOnTop(true);
+                    dc.setInitialDirectory(dc.showDialog(stage));
+                    stage.setAlwaysOnTop(false);
+                    primaryStage.setAlwaysOnTop(true);
+                    try {
+                        dc.getInitialDirectory().createNewFile();
+                        // Make a dialog appear for the user to choose a name for the file
+                        String nameFileOut = chooseNameFileDialog();
+                        // Create a file with the name
+                        fileOut = new File(dc.getInitialDirectory()+"\\"+nameFileOut+".bmp");
+                        Convolution.performConvolution(this.inputFile.getAbsolutePath(), fileOut.getAbsolutePath(), rulesGaussian);
+                        displayImage(fileOut.getAbsolutePath());
+                    } catch (IOException | NullPointerException ex) {
+                        System.out.println("Error caught");
+                    }
+                    inputFile=null;
+                    
+                }
+            }
+            else{
+                System.out.println("The output file is null");
+            }
+            
+        });
         convolutionCB.setOnAction((event)->{
             //Get the value of the convolution
             String choice = convolutionCB.getValue().toString();
@@ -110,7 +195,6 @@ public class FXMLConvolutionsSceneController {
                 dc.setInitialDirectory(dc.showDialog(stage));
                 stage.setAlwaysOnTop(false);
                 primaryStage.setAlwaysOnTop(true);
-                File fileOut;
                 try {
                     dc.getInitialDirectory().createNewFile();
                     // Make a dialog appear for the user to choose a name for the file
@@ -140,7 +224,6 @@ public class FXMLConvolutionsSceneController {
                 dc.setInitialDirectory(dc.showDialog(stage));
                 stage.setAlwaysOnTop(false);
                 primaryStage.setAlwaysOnTop(true);
-                File fileOut;
                 try {
                     dc.getInitialDirectory().createNewFile();
                     // Make a dialog appear for the user to choose a name for the file
@@ -169,7 +252,6 @@ public class FXMLConvolutionsSceneController {
                 dc.setInitialDirectory(dc.showDialog(stage));
                 stage.setAlwaysOnTop(false);
                 primaryStage.setAlwaysOnTop(true);
-                File fileOut;
                 try {
                     dc.getInitialDirectory().createNewFile();
                     // Make a dialog appear for the user to choose a name for the file
@@ -198,7 +280,6 @@ public class FXMLConvolutionsSceneController {
                 dc.setInitialDirectory(dc.showDialog(stage));
                 stage.setAlwaysOnTop(false);
                 primaryStage.setAlwaysOnTop(true);
-                File fileOut;
                 try {
                     dc.getInitialDirectory().createNewFile();
                     // Make a dialog appear for the user to choose a name for the file
@@ -227,7 +308,6 @@ public class FXMLConvolutionsSceneController {
                 dc.setInitialDirectory(dc.showDialog(stage));
                 stage.setAlwaysOnTop(false);
                 primaryStage.setAlwaysOnTop(true);
-                File fileOut;
                 try {
                     dc.getInitialDirectory().createNewFile();
                     // Make a dialog appear for the user to choose a name for the file
@@ -258,7 +338,6 @@ public class FXMLConvolutionsSceneController {
                 dc.setInitialDirectory(dc.showDialog(stage));
                 stage.setAlwaysOnTop(false);
                 primaryStage.setAlwaysOnTop(true);
-                File fileOut;
                 try {
                     dc.getInitialDirectory().createNewFile();
                     // Make a dialog appear for the user to choose a name for the file
@@ -285,16 +364,27 @@ public class FXMLConvolutionsSceneController {
                 // Choose the directory in which the user wants to save the image
                 chooseDirectoryDialog();
                 DirectoryChooser dc = getDirectoryChooser();
-                File fileOut;
                 try {
                     dc.getInitialDirectory().createNewFile();
                     // Make a dialog appear for the user to choose a name for the file
                     String nameFileOut = chooseNameFileDialog();
+                    //Get the threshold from the FXML
+                    float threshold=100;
+                    if(thresholdTxtBox.getText()==null){
+                        threshold=defaultThreshold;
+                    }
+                    else{
+                        try{
+                        threshold = Float.parseFloat(thresholdTxtBox.getText());
+                        }catch(Exception e){
+                            threshold=defaultThreshold;
+                        }
+                    }
                     // Create a file with the name
                     fileOut = new File(dc.getInitialDirectory()+"\\"+nameFileOut+".bmp");
                     Convolution.performConvolution(this.inputFile.getAbsolutePath(), fileOut.getAbsolutePath(), rulesGaussian);
                     Convolution.performGrayscale(fileOut.getAbsolutePath(), fileOut.getAbsolutePath());
-                    Convolution.performSobel(fileOut.getAbsolutePath(),fileOut.getAbsolutePath());
+                    Convolution.performSobel(fileOut.getAbsolutePath(),fileOut.getAbsolutePath(), threshold);
                     displayImage(fileOut.getAbsolutePath());
                 } catch (IOException | NullPointerException ex) {
                     System.out.println("Error caught");

@@ -50,6 +50,7 @@ public class RenderTest {
         renderer.save();
         
         // benchmark 10 threads 16 SPP
+        /*
         long time1 = 0;
         long time2 = 0;
         long time3 = 0;
@@ -84,5 +85,6 @@ public class RenderTest {
             printWriter.println(""+time1+","+time3+","+time2+","+average);
         }
         printWriter.close();
+*/
     }
 }
