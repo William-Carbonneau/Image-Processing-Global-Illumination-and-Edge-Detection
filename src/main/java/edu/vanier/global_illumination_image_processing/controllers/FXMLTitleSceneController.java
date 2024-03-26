@@ -4,6 +4,7 @@
  */
 package edu.vanier.global_illumination_image_processing.controllers;
 
+import edu.vanier.global_illumination_image_processing.MainApp;
 import java.io.IOException;
 import java.util.HashSet;
 import java.util.logging.Level;
@@ -43,28 +44,14 @@ public class FXMLTitleSceneController {
     public void initialize() {
         System.out.println("Title Scene being loaded");
         ImageProcessingBtn.setOnAction((event) -> {
-            try {
-                System.out.println("Image Button clicked");
-                FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/FXMLConvolutionsScene.fxml"));
-                loader.setController(new FXMLConvolutionsSceneController(primaryStage));
-                Pane root = loader.load();
-                RootVBox.getChildren().setAll(root);
-            } catch (IOException ex) {
-                Logger.getLogger(FXMLTitleSceneController.class.getName()).log(Level.SEVERE, null, ex);
-            }
+            MainApp.switchScene(MainApp.FXMLConvolutionsScene, new FXMLConvolutionsSceneController());
+            
             
         });
 
         GlobalIlluminationBtn.setOnAction((event) -> {
-            try {
-                System.out.println("Illumination Button clicked");
-                FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/FXMLRenderScene.fxml"));
-                loader.setController(new FXMLRenderSceneController());
-                Pane root = loader.load();
-                RootVBox.getChildren().setAll(root);
-            } catch (IOException ex) {
-                Logger.getLogger(FXMLTitleSceneController.class.getName()).log(Level.SEVERE, null, ex);
-            }
+            MainApp.switchScene(MainApp.FXMLRenderScene, new FXMLRenderSceneController());
+            
         });
     }
 

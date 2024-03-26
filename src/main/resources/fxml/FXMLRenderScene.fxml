@@ -134,6 +134,7 @@
                                   <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                   <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                     <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                 </rowConstraints>
                                  <children>
                                     <Label fx:id="lblObjectName" text="Object Name" GridPane.columnIndex="1">
@@ -176,7 +177,7 @@
                                                 <Font size="13.0" />
                                              </font>
                                           </Label>
-                                          <ChoiceBox fx:id="choiceMaterial" prefHeight="25.0" prefWidth="60.0" />
+                                          <ChoiceBox fx:id="choiceMaterial" prefHeight="25.0" prefWidth="70.0" />
                                        </children>
                                     </HBox>
                                     <HBox alignment="CENTER_LEFT" spacing="2.0" GridPane.columnIndex="1" GridPane.rowIndex="3">
@@ -186,7 +187,7 @@
                                                 <Font size="13.0" />
                                              </font>
                                           </Label>
-                                          <TextField fx:id="txtIOREmissiveness" prefHeight="25.0" prefWidth="60.0" text="2.95" />
+                                          <TextField fx:id="txtIOREmissiveness" prefHeight="25.0" prefWidth="70.0" text="2.95" />
                                        </children>
                                     </HBox>
                                     <HBox alignment="CENTER_LEFT" spacing="2.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
@@ -197,6 +198,22 @@
                                              </font>
                                           </Label>
                                           <Label fx:id="lblObjectType" text="Sphere" />
+                                       </children>
+                                    </HBox>
+                                    <HBox alignment="CENTER_LEFT" layoutX="145.0" layoutY="103.0" spacing="2.0" GridPane.rowIndex="4">
+                                       <children>
+                                          <Label fx:id="lblIOREmissiveness1" prefHeight="17.0" prefWidth="73.0" text="Emissiveness:" />
+                                          <TextField fx:id="txtIOREmissiveness1" prefHeight="25.0" prefWidth="44.0" text="2.95" />
+                                       </children>
+                                    </HBox>
+                                    <HBox alignment="CENTER_LEFT" layoutX="15.0" layoutY="134.0" spacing="2.0" GridPane.columnIndex="1" GridPane.rowIndex="4">
+                                       <children>
+                                          <Label fx:id="lblIOREmissiveness11" prefHeight="17.0" prefWidth="54.0" text="DTO:">
+                                             <font>
+                                                <Font size="13.0" />
+                                             </font>
+                                          </Label>
+                                          <TextField fx:id="txtIOREmissiveness11" prefHeight="25.0" prefWidth="70.0" text="2.95" />
                                        </children>
                                     </HBox>
                                  </children>

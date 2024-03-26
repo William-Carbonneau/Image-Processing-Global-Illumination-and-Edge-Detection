@@ -1,5 +1,6 @@
 package edu.vanier.global_illumination_image_processing.controllers;
 
+import edu.vanier.global_illumination_image_processing.MainApp;
 import edu.vanier.global_illumination_image_processing.models.Convolution;
 import java.io.File;
 import java.io.IOException;
@@ -333,15 +334,8 @@ public class FXMLConvolutionsSceneController {
         
         convolveBtn.setOnAction(convolutionCB.getOnAction());
         BackToTitleMenuItem.setOnAction((event)->{
-            try {
-                System.out.println("Back to Title clicked");
-                FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/FXMLTitleScene.fxml"));
-                loader.setController(new FXMLTitleSceneController());
-                Pane root = loader.load();
-                RootVBox.getChildren().setAll(root);
-            } catch (IOException ex) {
-                Logger.getLogger(FXMLConvolutionsSceneController.class.getName()).log(Level.SEVERE, null, ex);
-            }
+            MainApp.switchScene(MainApp.FXMLTitleScene, new FXMLTitleSceneController());
+            
         });
     }
     /**
