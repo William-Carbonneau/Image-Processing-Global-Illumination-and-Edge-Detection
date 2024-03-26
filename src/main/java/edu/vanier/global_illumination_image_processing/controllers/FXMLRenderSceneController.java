@@ -31,7 +31,7 @@ public class FXMLRenderSceneController {
     @FXML MenuItem BackToTitleMenuItem;
     @FXML ListView listObjectList;
     @FXML Label lblObjectType;
-    @FXML Label txtObjectName;
+    @FXML TextField txtObjectName;
     @FXML TextField txtObjectXPos;
     @FXML TextField txtObjectYPos;
     @FXML TextField txtObjectZPos;
