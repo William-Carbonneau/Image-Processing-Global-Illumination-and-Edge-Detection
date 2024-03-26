@@ -4,8 +4,10 @@ import edu.vanier.global_illumination_image_processing.controllers.FXMLConvoluti
 import edu.vanier.global_illumination_image_processing.controllers.FXMLMainAppController;
 import edu.vanier.global_illumination_image_processing.controllers.FXMLTitleSceneController;
 import java.io.IOException;
+import java.util.logging.Level;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
@@ -22,6 +24,10 @@ import org.slf4j.LoggerFactory;
  */
 public class MainApp extends Application {
 
+    public static final String FXMLTitleScene = "FXMLTitleScene";
+    public static final String FXMLConvolutionsScene = "FXMLConvolutionsScene";
+    public static final String FXMLRenderScene = "FXMLRenderScene";
+    private static Scene scene;
     private final static Logger logger = LoggerFactory.getLogger(MainApp.class);
 
     @Override
@@ -31,17 +37,20 @@ public class MainApp extends Application {
             //-- 1) Load the scene graph from the specified FXML file and 
             // associate it with its FXML controller.
             
+            Parent root = loadFXML(FXMLTitleScene, new FXMLTitleSceneController());
+            scene = new Scene(root, 1000, 700);
+            
             //Image Rendering
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/FXMLTitleScene.fxml"));
-            loader.setController(new FXMLTitleSceneController(primaryStage));
+            //FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/FXMLTitleScene.fxml"));
+            //loader.setController(new FXMLTitleSceneController(primaryStage));
             
             //Convolution
             //FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/FXMLConvolutionsScene.fxml"));
             //loader.setController(new FXMLConvolutionsSceneController(primaryStage));
             
-            Pane root = loader.load();
+            //Pane root = loader.load();
+            
             //-- 2) Create and set the scene to the stage.
-            Scene scene = new Scene(root, 1000, 700);
             primaryStage.setScene(scene);
             primaryStage.sizeToScene();
             // We just need to bring the main window to front.
@@ -51,6 +60,36 @@ public class MainApp extends Application {
         } catch (IOException ex) {
             logger.error(ex.getMessage(), ex);
         }
+    }
+    
+    /**
+     * Changes the primary stage's current scene.
+     *
+     * @param fxmlFile The name of the FXML file to be loaded.
+     * @param fxmlController An instance of the FXML controller to be associated
+     * with the loaded FXML scene graph.
+     */
+    public static void switchScene(String fxmlFile, Object fxmlController) {
+        try {
+            scene.setRoot(loadFXML(fxmlFile, fxmlController));
+        } catch (IOException ex) {
+            java.util.logging.Logger.getLogger(MainApp.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    /**
+     * Loads a scene graph from an FXML file.
+     *
+     * @param fxmlFile The name of the FXML file to be loaded.
+     * @param fxmlController An instance of the FXML controller to be associated
+     * with the loaded FXML scene graph.
+     * @return The root node of the loaded scene graph.
+     * @throws IOException
+     */
+    public static Parent loadFXML(String fxmlFile, Object fxmlController) throws IOException {
+        FXMLLoader fxmlLoader = new FXMLLoader(MainApp.class.getResource("/fxml/" + fxmlFile + ".fxml"));
+        fxmlLoader.setController(fxmlController);
+        return fxmlLoader.load();
     }
 
     public static void main(String[] args) {
