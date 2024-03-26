@@ -35,7 +35,9 @@ public class FXMLRenderSceneController {
     @FXML TextField txtObjectXPos;
     @FXML TextField txtObjectYPos;
     @FXML TextField txtObjectZPos;
-    @FXML TextField txtIOREmissiveness;
+    @FXML TextField txtDTO;
+    @FXML TextField txtEmissiveness;
+    @FXML TextField txtIOR;
     @FXML ChoiceBox choiceMaterial;
     
     
@@ -83,7 +85,9 @@ public class FXMLRenderSceneController {
             txtObjectXPos.setText("" + item.getObj().getNormal().getX());
             txtObjectYPos.setText("" + item.getObj().getNormal().getY());
             txtObjectZPos.setText("" + item.getObj().getNormal().getZ());
-            txtIOREmissiveness.setText("" + item.getObj().getRefractiveIndex());
+            txtDTO.setText("" + item.getObj().getDistanceOrigin());
+            txtIOR.setText("" + item.getObj().getRefractiveIndex());
+            txtEmissiveness.setText("" + item.getObj().getEmission());
             switch (item.getObj().getType()) {
                 case 1 -> choiceMaterial.setValue(typeChoiceBoxList.get(0));
                 case 2 -> choiceMaterial.setValue(typeChoiceBoxList.get(1));

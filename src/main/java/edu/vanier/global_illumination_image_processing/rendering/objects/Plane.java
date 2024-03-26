@@ -25,15 +25,6 @@ public class Plane extends SceneObject{
     }
 
     /**
-     * Set the distance of the Plane from the origin
-     * 
-     * @param newDistanceOrigin 
-     */
-    public void setDistanceOrigin(double newDistanceOrigin) {
-        this.distanceOrigin = newDistanceOrigin;
-    }
-
-    /**
      * Set the emission value of the Plane
      * 
      * @param emission double
@@ -84,15 +75,7 @@ public class Plane extends SceneObject{
     }
 
     /**
-     * Get the distance from the origin of the Plane
-     * 
-     * @return double
-     */
-    public double getDistance() {
-        return distanceOrigin;
-    }
-
-    /**General Constructor
+     * General Constructor
      * 
      * @param normal
      * @param distanceOrigin*/
@@ -101,7 +84,8 @@ public class Plane extends SceneObject{
         this.distanceOrigin = distanceOrigin;
     }
     
-    /**Material Constructor
+    /**
+     * Material Constructor
      * @param normal
      * @param distanceOrigin
      * @param color
@@ -126,7 +110,7 @@ public class Plane extends SceneObject{
     public double intersect(Ray intersectRay) {
         double d0 = getNormal().dot(intersectRay.getDirection());
         if (d0 != 0) {
-            double temp = -1 * (((getNormal().dot(intersectRay.getOrigin()))+getDistance()) / d0);
+            double temp = -1 * (((getNormal().dot(intersectRay.getOrigin()))+getDistanceOrigin()) / d0);
             return (temp > Intersection.EPS) ? temp : 0;
         }else {
             return 0;

@@ -107,6 +107,15 @@ public abstract class SceneObject {
     public int getType() {
         return type;
     }
+    
+     /**
+     * Get the distance from the origin (only for some objects is this relevant otherwise 0)
+     * 
+     * @return double
+     */
+    public double getDistanceOrigin() {
+        return distanceOrigin;
+    }
 
     /**
      * Sets the refractive index property of the object.
@@ -115,6 +124,15 @@ public abstract class SceneObject {
      */
     public void setRefractiveIndex(double refractiveIndex) {
         this.refractiveIndex = refractiveIndex;
+    }
+    
+    /**
+     * Set the distance of the Plane from the origin
+     * 
+     * @param newDistanceOrigin 
+     */
+    public void setDistanceOrigin(double newDistanceOrigin) {
+        this.distanceOrigin = newDistanceOrigin;
     }
 
     /**
