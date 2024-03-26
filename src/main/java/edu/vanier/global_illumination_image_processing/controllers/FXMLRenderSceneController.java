@@ -1,5 +1,6 @@
 package edu.vanier.global_illumination_image_processing.controllers;
 
+import edu.vanier.global_illumination_image_processing.MainApp;
 import edu.vanier.global_illumination_image_processing.rendering.DiffuseColor;
 import edu.vanier.global_illumination_image_processing.rendering.RenderWrapper;
 import edu.vanier.global_illumination_image_processing.rendering.Scene;
@@ -22,6 +23,7 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
 
 /**
  * The controller for the rendering scene
@@ -75,15 +77,8 @@ public class FXMLRenderSceneController {
         }
         
         BackToTitleMenuItem.setOnAction((event)->{
-            try {
-                System.out.println("Back to Title clicked");
-                FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/FXMLTitleScene.fxml"));
-                loader.setController(new FXMLTitleSceneController());
-                Pane root = loader.load();
-                RootVBox.getChildren().setAll(root);
-            } catch (IOException ex) {
-                Logger.getLogger(FXMLConvolutionsSceneController.class.getName()).log(Level.SEVERE, null, ex);
-            }
+            
+            MainApp.switchScene(MainApp.FXMLTitleScene, new FXMLTitleSceneController(primaryStage));
         });
         
         /**

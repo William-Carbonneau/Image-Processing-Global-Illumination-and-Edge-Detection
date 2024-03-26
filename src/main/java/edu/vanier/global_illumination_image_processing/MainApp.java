@@ -37,7 +37,7 @@ public class MainApp extends Application {
             //-- 1) Load the scene graph from the specified FXML file and 
             // associate it with its FXML controller.
             
-            Parent root = loadFXML(FXMLTitleScene, new FXMLTitleSceneController());
+            Parent root = loadFXML(FXMLTitleScene, new FXMLTitleSceneController(primaryStage));
             scene = new Scene(root, 1000, 700);
             
             //Image Rendering
