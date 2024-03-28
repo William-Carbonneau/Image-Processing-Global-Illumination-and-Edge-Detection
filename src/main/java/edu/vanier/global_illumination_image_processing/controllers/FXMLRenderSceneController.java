@@ -100,6 +100,7 @@ public class FXMLRenderSceneController {
         txtSPP.setOnKeyTyped((event) -> {
             renderer.setSPP(Double.parseDouble(txtSPP.getText()));
         });
+        // filters all incoming characters from getControlNewText() by the regex. Returns null new String is it does not match
         txtSPP.setTextFormatter(new TextFormatter <> (input -> input.getControlNewText().matches(textFormatterRegex) ? input : null));
         
         /**
