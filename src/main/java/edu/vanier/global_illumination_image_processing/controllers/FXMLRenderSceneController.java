@@ -8,20 +8,16 @@ import edu.vanier.global_illumination_image_processing.rendering.SceneObject;
 import edu.vanier.global_illumination_image_processing.rendering.Vec3D;
 import edu.vanier.global_illumination_image_processing.rendering.objects.Plane;
 import edu.vanier.global_illumination_image_processing.rendering.objects.Sphere;
-import java.io.IOException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.TextField;
-import javafx.scene.layout.Pane;
+import javafx.scene.control.TextFormatter;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
@@ -31,6 +27,7 @@ import javafx.stage.Stage;
  * @author Zachary Tremblay and William Carbonneau
  */
 public class FXMLRenderSceneController {
+    // FXML objects
     @FXML VBox RootVBox;
     @FXML MenuItem BackToTitleMenuItem;
     @FXML ListView listObjectList;
@@ -47,10 +44,13 @@ public class FXMLRenderSceneController {
     @FXML Button btnRender;
     Stage primaryStage;
 
+    // construct this controller with the primary stage
     public FXMLRenderSceneController(Stage primaryStage) {
         this.primaryStage = primaryStage;
     }
-
+    
+    /** the regex expression to match any double number even negatives */
+    public final String textFormatterRegex = "\\-?\\d+\\.?\\d*";
     
     public void initialize(){
         /** create the render scene */
@@ -95,11 +95,12 @@ public class FXMLRenderSceneController {
         });
         
         /**
-         * Update the current SPP TODO only numbers allowed
+         * Update the current SPP - only numbers allowed by textFormatter
          */
         txtSPP.setOnKeyTyped((event) -> {
             renderer.setSPP(Double.parseDouble(txtSPP.getText()));
         });
+        txtSPP.setTextFormatter(new TextFormatter <> (input -> input.getControlNewText().matches(textFormatterRegex) ? input : null));
         
         /**
          * Update view of current object from list
@@ -138,7 +139,7 @@ public class FXMLRenderSceneController {
         });
         
         /**
-         * Update selected object's DTO TODO only numbers allowed
+         * Update selected object's DTO - only numbers allowed by textFormatter
          */
         txtDTO.setOnKeyTyped((event) -> {
             ObjWrapper item = (ObjWrapper) listObjectList.getSelectionModel().getSelectedItem();
@@ -148,9 +149,10 @@ public class FXMLRenderSceneController {
             // update object in list
             item.getObj().setDistanceOrigin(Double.parseDouble(txtDTO.getText()));
         });
+        txtDTO.setTextFormatter(new TextFormatter <> (input -> input.getControlNewText().matches(textFormatterRegex) ? input : null));
         
         /**
-         * Update selected object's Emissiveness TODO only numbers allowed
+         * Update selected object's Emissiveness - only numbers allowed by textFormatter
          */
         txtEmissiveness.setOnKeyTyped((event) -> {
             ObjWrapper item = (ObjWrapper) listObjectList.getSelectionModel().getSelectedItem();
@@ -160,9 +162,10 @@ public class FXMLRenderSceneController {
             // update object in list
             item.getObj().setEmission(Double.parseDouble(txtEmissiveness.getText()));
         });
+        txtEmissiveness.setTextFormatter(new TextFormatter <> (input -> input.getControlNewText().matches(textFormatterRegex) ? input : null));
         
         /**
-         * Update selected object's IOR TODO only numbers allowed
+         * Update selected object's IOR - only numbers allowed by textFormatter
          */
         txtIOR.setOnKeyTyped((event) -> {
             ObjWrapper item = (ObjWrapper) listObjectList.getSelectionModel().getSelectedItem();
@@ -172,9 +175,10 @@ public class FXMLRenderSceneController {
             // update object in list
             item.getObj().setRefractiveIndex(Double.parseDouble(txtIOR.getText()));
         });
+        txtIOR.setTextFormatter(new TextFormatter <> (input -> input.getControlNewText().matches(textFormatterRegex) ? input : null));
         
         /**
-         * Update selected object's X position TODO only numbers allowed
+         * Update selected object's X position - only numbers allowed by textFormatter
          */
         txtObjectXPos.setOnKeyTyped((event) -> {
             ObjWrapper item = (ObjWrapper) listObjectList.getSelectionModel().getSelectedItem();
@@ -184,9 +188,10 @@ public class FXMLRenderSceneController {
             // update object in list
             item.getObj().getNormal().setX((Double.parseDouble(txtObjectXPos.getText())));
         });
+        txtObjectXPos.setTextFormatter(new TextFormatter <> (input -> input.getControlNewText().matches(textFormatterRegex) ? input : null));
         
         /**
-         * Update selected object's Y position TODO only numbers allowed
+         * Update selected object's Y position - only numbers allowed by textFormatter
          */
         txtObjectYPos.setOnKeyTyped((event) -> {
             ObjWrapper item = (ObjWrapper) listObjectList.getSelectionModel().getSelectedItem();
@@ -196,9 +201,10 @@ public class FXMLRenderSceneController {
             // update object in list
             item.getObj().getNormal().setY((Double.parseDouble(txtObjectYPos.getText())));
         });
+        txtObjectYPos.setTextFormatter(new TextFormatter <> (input -> input.getControlNewText().matches(textFormatterRegex) ? input : null));
         
         /**
-         * Update selected object's Z position TODO only numbers allowed
+         * Update selected object's Z position - only numbers allowed by textFormatter
          */
         txtObjectZPos.setOnKeyTyped((event) -> {
             ObjWrapper item = (ObjWrapper) listObjectList.getSelectionModel().getSelectedItem();
@@ -208,6 +214,7 @@ public class FXMLRenderSceneController {
             // update object in list
             item.getObj().getNormal().setZ((Double.parseDouble(txtObjectZPos.getText())));
         });
+        txtObjectZPos.setTextFormatter(new TextFormatter <> (input -> input.getControlNewText().matches(textFormatterRegex) ? input : null));
         
         choiceMaterial.setOnAction((event) -> {
             ObjWrapper item = (ObjWrapper) listObjectList.getSelectionModel().getSelectedItem();

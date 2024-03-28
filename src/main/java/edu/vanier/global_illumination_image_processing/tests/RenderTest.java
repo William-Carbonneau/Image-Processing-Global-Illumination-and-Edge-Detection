@@ -6,11 +6,6 @@ import edu.vanier.global_illumination_image_processing.rendering.Scene;
 import edu.vanier.global_illumination_image_processing.rendering.Vec3D;
 import edu.vanier.global_illumination_image_processing.rendering.objects.Plane;
 import edu.vanier.global_illumination_image_processing.rendering.objects.Sphere;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * A test class for the rendering, test is qualitative
