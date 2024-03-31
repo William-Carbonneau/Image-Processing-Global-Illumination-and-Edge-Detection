@@ -40,6 +40,9 @@ dependencies {
     implementation "ch.qos.logback:logback-classic:$logbackVersion"
     implementation "ch.qos.logback:logback-core:$logbackVersion"
     implementation 'org.apache.commons:commons-math3:3.6.1'
+    
+    //Link to the SQLite snippet: https://central.sonatype.com/artifact/org.xerial/sqlite-jdbc?smo=true
+    implementation 'org.xerial:sqlite-jdbc:3.45.2.0'
 }
 
 application {       
@@ -49,6 +52,6 @@ application {
   //  mainClass = 'edu.vanier.global_illumination_image_processing.MainApp'
    //mainClass = 'edu.vanier.global_illumination_image_processing.tests.RenderTest'
 
-   mainClass = 'edu.vanier.global_illumination_image_processing.MainApp'
+   mainClass = 'edu.vanier.global_illumination_image_processing.tests.SQLiteTestGUI'
 
 }
