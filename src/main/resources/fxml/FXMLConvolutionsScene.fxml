@@ -55,7 +55,7 @@
 <?import javafx.scene.shape.Line?>
 <?import javafx.scene.text.Font?>
 
-<VBox fx:id="RootVBox" prefHeight="600.0" prefWidth="905.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1">
+<VBox fx:id="RootVBox" prefHeight="600.0" prefWidth="905.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1">
   <children>
     <MenuBar VBox.vgrow="NEVER">
       <menus>
@@ -288,7 +288,7 @@
                                                 </StackPane>
                                                 <StackPane prefHeight="150.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
                                                    <children>
-                                                      <Button fx:id="SaveToDatabaseBtn" mnemonicParsing="false" opacity="0.0" prefHeight="70.0" prefWidth="101.0" />
+                                                      <Button fx:id="saveToDatabaseBtn" mnemonicParsing="false" opacity="0.0" prefHeight="81.0" prefWidth="49.0" />
                                                       <ImageView fitHeight="33.0" fitWidth="32.0">
                                                          <image>
                                                             <Image url="@../Images/Icons/DatabaseIcon.png" />

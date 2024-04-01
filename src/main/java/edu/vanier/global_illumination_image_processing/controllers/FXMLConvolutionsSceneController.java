@@ -3,11 +3,13 @@ package edu.vanier.global_illumination_image_processing.controllers;
 import edu.vanier.global_illumination_image_processing.MainApp;
 import edu.vanier.global_illumination_image_processing.models.Convolution;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -58,6 +60,8 @@ public class FXMLConvolutionsSceneController {
     TextField thresholdTxtBox;
     @FXML
     Button convolveAgainBtn;
+    @FXML
+    Button saveToDatabaseBtn;
     float defaultThreshold=100;
     @FXML
     TextField txt11,txt12,txt13,txt21,txt22,txt23,txt31,txt32,txt33;
@@ -444,12 +448,35 @@ public class FXMLConvolutionsSceneController {
             }
             
         });
-        SaveToFileBtn.setOnAction((event)->{
-            System.out.println("Save to File clicked");
-            
-        });
-        SaveToDatabaseBtn.setOnAction((event)->{
+        saveToDatabaseBtn.setOnAction((event)->{
             System.out.println("Save to Database clicked");
+            Connection connection = null;
+            if(imageImgView.getImage()!=null){
+                Image imageToSave = imageImgView.getImage();
+                File temp = new File(imageToSave.getUrl());
+                System.out.println("URL "+imageToSave.getUrl());
+                try {
+                    FileInputStream FIS = new FileInputStream(temp.getAbsolutePath());
+                    byte[] b = FIS.readAllBytes();
+                    connection = DriverManager.getConnection("jdbc:sqlite:Images.db");
+                    PreparedStatement pstmt = connection.prepareStatement("INSERT INTO ImagesConvolutions(title, image) VALUES(?,?)");
+                    String titleImage = chooseNameFileDialog();
+                    pstmt.setString(1, titleImage);
+                    pstmt.setBytes(2, b);
+                    pstmt.execute();
+                    FileOutputStream FOS = new FileOutputStream(temp.getAbsolutePath());
+                    FOS.flush();
+                } catch (FileNotFoundException ex) {
+                    Logger.getLogger(FXMLConvolutionsSceneController.class.getName()).log(Level.SEVERE, null, ex);
+                } catch (IOException ex) {
+                    Logger.getLogger(FXMLConvolutionsSceneController.class.getName()).log(Level.SEVERE, null, ex);
+                } catch (SQLException ex) {
+                    Logger.getLogger(FXMLConvolutionsSceneController.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+            else{
+                print("The image view is null");
+            }
             
         });
         
@@ -575,7 +602,6 @@ public class FXMLConvolutionsSceneController {
             Image image;
             ImageView imageview;
             System.out.println(rs.getFetchSize());
-            ArrayList<File> filesTemp = new ArrayList<>();
             File temp;
             while(rs.next()){
                 String titleImage = rs.getString("title");
@@ -584,7 +610,6 @@ public class FXMLConvolutionsSceneController {
                 FOS = new FileOutputStream(temp);
                 FOS.write(b);
                 System.out.println("FOS written");
-                filesTemp.add(temp);
                 image  = new Image(temp.getAbsolutePath());
                 imageview = new ImageView();
                 imageview.setImage(image);
@@ -592,8 +617,6 @@ public class FXMLConvolutionsSceneController {
                 imageview.setImage(image);
                 FOS.flush();
             }
-            //System.out.println("File temp has been deleted: "+temp.delete());
-            //Read from the table
         }catch(SQLException e){
             System.out.println("SQLException caught");
         }
