@@ -168,7 +168,7 @@ public class RenderWrapper {
         
          // create thread-pool
         ExecutorService execServ = Executors.newFixedThreadPool(threadCountLocal);
-        ArrayList<CompletableFuture<Void>> tasks = new ArrayList<>();
+        ArrayList<CompletableFuture<Void>> tasks = new ArrayList<>(threadCountLocal);
         
         for (int rowPiece = 0; rowPiece < threadCountLocal; rowPiece++) {
             // create array managers
