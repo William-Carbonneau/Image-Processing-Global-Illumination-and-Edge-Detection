@@ -3,7 +3,14 @@ package edu.vanier.global_illumination_image_processing.controllers;
 import edu.vanier.global_illumination_image_processing.MainApp;
 import edu.vanier.global_illumination_image_processing.models.Convolution;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.fxml.FXML;
@@ -17,6 +24,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.TilePane;
 import javafx.scene.layout.VBox;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
@@ -409,8 +417,30 @@ public class FXMLConvolutionsSceneController {
                 System.out.println("Error caught");
             }
         });
+        
         getFromDatabaseBtn.setOnAction((event)->{
             System.out.println("Get from database clicked");
+            //Connect with the db
+            //We are assuming that the db has already been created
+            try{
+                //Read all images from the database and display them in GUI
+                //Set this primary stage off
+                primaryStage.setAlwaysOnTop(false);
+                //Create a window 
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/FXMLDatabaseConvolutions.fxml"));
+                TilePane root = loader.load();
+                Stage stage = new Stage();
+                Scene scene = new Scene(root);
+                stage.setScene(scene);
+                stage.setAlwaysOnTop(true);
+                stage.show();
+                String titleDatabase;
+                titleDatabase = "Images";
+                String tableName ="ImagesConvolutions" ;
+                //Get the elements from the db and display them
+                getFromDBAndDisplay(titleDatabase, tableName, root);
+            }catch(Exception e){
+            }
             
         });
         SaveToFileBtn.setOnAction((event)->{
@@ -525,5 +555,49 @@ public class FXMLConvolutionsSceneController {
         stage.setAlwaysOnTop(false);
         primaryStage.setAlwaysOnTop(true);
         return dc;
+    }
+    public static void print(String string){
+        System.out.println(string);
+    }
+    private void getFromDBAndDisplay(String titleDatabase,String tableName,  TilePane root) throws FileNotFoundException, IOException {
+        Connection connection = null;
+        try{
+            connection  =DriverManager.getConnection("jdbc:sqlite:"+titleDatabase+".db");
+            print("Connection established");
+            Statement stmt = connection.createStatement();
+            //Get the values from the table
+            String getResultSetFromDB = "Select *from "+tableName;
+            ResultSet rs = stmt.executeQuery(getResultSetFromDB);
+            print("rs created");
+            File temp = new File("src\\main\\resources\\Images\\Convolutions\\temp.bmp");
+            System.out.println("File temp created");
+            FileOutputStream FOS = new FileOutputStream(temp);
+            Image image;
+            ImageView imageview;
+            System.out.println(rs.getFetchSize());
+            while(rs.next()){
+                FOS.flush();
+                String titleImage = rs.getString("title");
+                byte[] b = rs.getBytes("image");
+                FOS.write(b);
+                System.out.println("FOS written");
+                image  = new Image(temp.getAbsolutePath());
+                imageview = new ImageView();
+                imageview.setImage(image);
+                root.getChildren().add(imageview);
+                imageview.setImage(image);
+            }
+            //System.out.println("File temp has been deleted: "+temp.delete());
+            //Read from the table
+        }catch(SQLException e){
+            System.out.println("SQLException caught");
+        }
+        finally{
+            try{
+                connection.close();
+            }catch(SQLException e){
+                System.out.println("Could not close the connection");
+            }
+        }
     }
 }

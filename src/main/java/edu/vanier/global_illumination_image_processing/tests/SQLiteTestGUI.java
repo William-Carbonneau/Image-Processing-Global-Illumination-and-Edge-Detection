@@ -68,7 +68,7 @@ class testControllerSQLiteGUI{
     public void initialize(){
         ClickMeBtn.setOnAction((event)->{
             try {
-                initImageDB("TestImaqesDb");
+                initImageDB("Images", "ImagesConvolutions");
             } catch (SQLException ex) {
                 System.out.println("Could not initialize the image database");
             } catch (FileNotFoundException ex) {
@@ -79,14 +79,14 @@ class testControllerSQLiteGUI{
         });
     }
 
-    private void initImageDB(String title) throws SQLException, FileNotFoundException, IOException {
+    private void initImageDB(String title, String tableName) throws SQLException, FileNotFoundException, IOException {
         Connection connection = null;
         try{
             connection = DriverManager.getConnection("jdbc:sqlite:"+title+".db");
             Statement stmt = connection.createStatement();
             System.out.println("Connection opened");
             try{
-                stmt.execute("DROP TABLE Images");
+                stmt.execute("DROP TABLE "+tableName);
                 System.out.println("Table that already existed has been deleted");
             }catch(SQLException e){
                 System.out.println("The table does not exist");
@@ -94,7 +94,7 @@ class testControllerSQLiteGUI{
             System.out.println("Reading main");
             //Create the table
             String stmtCreateTable = "" +
-                "CREATE TABLE Images"+
+                "CREATE TABLE "+tableName+
                 "( "+
                 "title varchar(255), "+
                 "image BLOB"+
@@ -102,9 +102,9 @@ class testControllerSQLiteGUI{
                 "";
             stmt.execute(stmtCreateTable);
             System.out.println("Table has been sucesfully created");
-            PreparedStatement pstmt = connection.prepareStatement("INSERT INTO Images(title, image) VALUES(?,?)");
+            PreparedStatement pstmt = connection.prepareStatement("INSERT INTO "+tableName+"(title, image) VALUES(?,?)");
             System.out.println("pstmt succesfully declared");
-            pstmt.setString(1,"Lena");
+            pstmt.setString(1,"Mountain");
             System.out.println("Lena title succesfully done");
             File file = new File("C:\\Users\\shalini\\Downloads\\Github\\Image-Processing-Global-Illumination-and-Edge-Detection\\src\\main\\resources\\Images\\Convolutions\\h.bmp");
             FileInputStream fin  = new FileInputStream(file.getAbsolutePath());
@@ -115,8 +115,15 @@ class testControllerSQLiteGUI{
             pstmt.execute();
             System.out.println("Execute method done");
             System.out.println("Data has been succesfully inserted");
+            File file2 = new File("C:\\Users\\shalini\\Downloads\\Github\\Image-Processing-Global-Illumination-and-Edge-Detection\\src\\main\\resources\\Images\\Convolutions\\sample4.bmp");
+            FileInputStream fin2  = new FileInputStream(file2.getAbsolutePath());
+            byte[] b2 = fin2.readAllBytes();
+            PreparedStatement pstmt2 = connection.prepareStatement("INSERT INTO "+tableName+"(title, image) VALUES(?,?)");
+            pstmt2.setString(1, "Lena");
+            pstmt2.setBytes(2, b2);
+            pstmt2.execute();
             //Read from db
-            ResultSet rs = stmt.executeQuery("Select *from Images");
+            ResultSet rs = stmt.executeQuery("Select *from "+tableName);
             while(rs.next()) {
                 String titleReceive = rs.getString("title");
                 byte[] bReceive = rs.getBytes("image");
