@@ -590,7 +590,7 @@ public class FXMLConvolutionsSceneController {
                 imageview.setImage(image);
                 root.getChildren().add(imageview);
                 imageview.setImage(image);
-                
+                FOS.flush();
             }
             //System.out.println("File temp has been deleted: "+temp.delete());
             //Read from the table
