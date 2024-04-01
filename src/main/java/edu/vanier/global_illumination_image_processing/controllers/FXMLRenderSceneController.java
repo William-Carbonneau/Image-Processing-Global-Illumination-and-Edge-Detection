@@ -8,6 +8,7 @@ import edu.vanier.global_illumination_image_processing.rendering.SceneObject;
 import edu.vanier.global_illumination_image_processing.rendering.Vec3D;
 import edu.vanier.global_illumination_image_processing.rendering.objects.Plane;
 import edu.vanier.global_illumination_image_processing.rendering.objects.Sphere;
+import java.awt.image.BufferedImage;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -19,10 +20,12 @@ import javafx.scene.control.ListView;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TextFormatter;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
+import javafx.embed.swing.SwingFXUtils;
 
 /**
  * The controller for the rendering scene
@@ -40,8 +43,8 @@ public class FXMLRenderSceneController {
     @FXML TextField txtObjectYPos;
     @FXML TextField txtObjectZPos;
     @FXML TextField txtDTO;
-    @FXML TextField txtWidth;
-    @FXML TextField txtHeight;
+//    @FXML TextField txtWidth;
+//    @FXML TextField txtHeight;
     @FXML TextField txtEmissiveness;
     @FXML TextField txtIOR;
     @FXML TextField txtThreads;
@@ -50,6 +53,7 @@ public class FXMLRenderSceneController {
     @FXML Button btnRender;
     @FXML ColorPicker clrObjPicker;
     @FXML HBox HboxDTO;
+    @FXML ImageView imgResult;
     Stage primaryStage;
 
     // construct this controller with the primary stage
@@ -100,7 +104,9 @@ public class FXMLRenderSceneController {
          */
         btnRender.setOnAction((event) -> {
             renderer.render(true, true, 0);
-            renderer.save();
+            BufferedImage image = renderer.save();
+            // output image converted from buferedimage to javafx image
+            if (image != null) imgResult.setImage(SwingFXUtils.toFXImage(image, null));
         });
         
         /**
@@ -112,23 +118,24 @@ public class FXMLRenderSceneController {
         // filters all incoming characters from getControlNewText() by the regex. Returns null new String is it does not match
         txtSPP.setTextFormatter(new TextFormatter <> (input -> input.getControlNewText().matches(textFormatterDoubleRegex) ? input : null));
         
-        /**
-         * Update the image width - only numbers allowed by textFormatter
-         */
-        txtWidth.setOnKeyTyped((event) -> {
-            renderer.setWidth((int)Double.parseDouble(txtWidth.getText()));
-        });
-        // filters all incoming characters from getControlNewText() by the regex. Returns null new String is it does not match
-        txtWidth.setTextFormatter(new TextFormatter <> (input -> input.getControlNewText().matches(textFormatterIntegerRegex) ? input : null));
-        
-        /**
-         * Update the Image Height - only numbers allowed by textFormatter
-         */
-        txtHeight.setOnKeyTyped((event) -> {
-            renderer.setHeight((int)Double.parseDouble(txtHeight.getText()));
-        });
-        // filters all incoming characters from getControlNewText() by the regex. Returns null new String is it does not match
-        txtHeight.setTextFormatter(new TextFormatter <> (input -> input.getControlNewText().matches(textFormatterIntegerRegex) ? input : null));
+        // temp removal for testing
+                            //        /**
+                            //         * Update the image width - only numbers allowed by textFormatter
+                            //         */
+                            //        txtWidth.setOnKeyTyped((event) -> {
+                            //            renderer.setWidth((int)Double.parseDouble(txtWidth.getText()));
+                            //        });
+                            //        // filters all incoming characters from getControlNewText() by the regex. Returns null new String is it does not match
+                            //        txtWidth.setTextFormatter(new TextFormatter <> (input -> input.getControlNewText().matches(textFormatterIntegerRegex) ? input : null));
+                            //        
+                            //        /**
+                            //         * Update the Image Height - only numbers allowed by textFormatter
+                            //         */
+                            //        txtHeight.setOnKeyTyped((event) -> {
+                            //            renderer.setHeight((int)Double.parseDouble(txtHeight.getText()));
+                            //        });
+                            //        // filters all incoming characters from getControlNewText() by the regex. Returns null new String is it does not match
+                            //        txtHeight.setTextFormatter(new TextFormatter <> (input -> input.getControlNewText().matches(textFormatterIntegerRegex) ? input : null));
 
         /**
          * Update the threads to be spared
@@ -177,7 +184,6 @@ public class FXMLRenderSceneController {
             ObjWrapper item = (ObjWrapper) listObjectList.getSelectionModel().getSelectedItem();
             Color color = clrObjPicker.getValue();
             if (item == null) return;
-            System.out.println(color.getGreen());
             // update object in list
             item.getObj().setColor(new DiffuseColor(color.getRed()*10, color.getGreen()*10, color.getBlue()*10));
         });

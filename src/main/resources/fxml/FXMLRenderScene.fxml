@@ -33,6 +33,7 @@
 -->
 
 <?import javafx.geometry.Insets?>
+<?import javafx.geometry.Rectangle2D?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ChoiceBox?>
 <?import javafx.scene.control.ColorPicker?>
@@ -45,6 +46,7 @@
 <?import javafx.scene.control.SeparatorMenuItem?>
 <?import javafx.scene.control.SplitPane?>
 <?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Pane?>
@@ -118,7 +120,15 @@
       <items>
         <AnchorPane>
                <children>
-                  <Pane prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                  <ScrollPane AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                     <content>
+                        <ImageView fx:id="imgResult" pickOnBounds="true" preserveRatio="true" smooth="false">
+                           <viewport>
+                              <Rectangle2D />
+                           </viewport>
+                        </ImageView>
+                     </content>
+                  </ScrollPane>
                </children></AnchorPane>
             <VBox alignment="TOP_CENTER" spacing="8.0">
                <children>
@@ -257,7 +267,7 @@
                         </Label>
                         <Line endX="50.0" startX="-50.0" />
                         <ListView fx:id="listObjectList" />
-                        <HBox alignment="CENTER" prefHeight="20.0" prefWidth="200.0" spacing="8.0">
+                        <HBox alignment="CENTER" prefHeight="20.0" prefWidth="200.0" spacing="8.0" visible="false">
                            <children>
                               <Label text="Width:">
                                  <HBox.margin>

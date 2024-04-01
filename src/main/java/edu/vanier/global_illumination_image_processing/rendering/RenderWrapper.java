@@ -228,11 +228,11 @@ public class RenderWrapper {
      * 
      * @return int 1 if error. 0 if success
      */
-    public int save() {
+    public BufferedImage save() {
         System.out.println("Saving...");
         // check if valid
         if (this.imagePieces.isEmpty() || this.threadCount == 0) {
-            return 1;
+            return null;
         }
         
         System.out.println(threadCount);
@@ -263,9 +263,9 @@ public class RenderWrapper {
             ImageIO.write(output, "bmp", saveFile);
         }catch(IOException e) {
             e.printStackTrace(); // TODO deal with error
-            return 1;
+            return null;
         }
         System.out.println("Save completed as: " + name + ".bmp");
-        return 0;
+        return output;
     }
 }
