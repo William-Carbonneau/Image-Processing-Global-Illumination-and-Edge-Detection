@@ -9,7 +9,7 @@ package edu.vanier.global_illumination_image_processing.rendering;
  */
 public abstract class SceneObject {
     
-    /** Color of the object */
+    /** Color of the object (max value should be 12 for each component) */
     public DiffuseColor color;
     
     /** Emission value of the object */

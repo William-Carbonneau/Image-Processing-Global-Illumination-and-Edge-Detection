@@ -13,12 +13,15 @@ import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
+import javafx.scene.control.ColorPicker;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TextFormatter;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
 /**
@@ -37,11 +40,16 @@ public class FXMLRenderSceneController {
     @FXML TextField txtObjectYPos;
     @FXML TextField txtObjectZPos;
     @FXML TextField txtDTO;
+    @FXML TextField txtWidth;
+    @FXML TextField txtHeight;
     @FXML TextField txtEmissiveness;
     @FXML TextField txtIOR;
-    @FXML TextField txtSPP; // TODO get and set value from GUI
+    @FXML TextField txtThreads;
+    @FXML TextField txtSPP;
     @FXML ChoiceBox choiceMaterial;
     @FXML Button btnRender;
+    @FXML ColorPicker clrObjPicker;
+    @FXML HBox HboxDTO;
     Stage primaryStage;
 
     // construct this controller with the primary stage
@@ -50,7 +58,8 @@ public class FXMLRenderSceneController {
     }
     
     /** the regex expression to match any double number even negatives */
-    public final String textFormatterRegex = "\\-?\\d+\\.?\\d*";
+    public final String textFormatterDoubleRegex = "\\-?\\d+\\.?\\d*";
+    public final String textFormatterIntegerRegex = "[1-9][0-9]*";
     
     public void initialize(){
         /** create the render scene */
@@ -101,7 +110,34 @@ public class FXMLRenderSceneController {
             renderer.setSPP(Double.parseDouble(txtSPP.getText()));
         });
         // filters all incoming characters from getControlNewText() by the regex. Returns null new String is it does not match
-        txtSPP.setTextFormatter(new TextFormatter <> (input -> input.getControlNewText().matches(textFormatterRegex) ? input : null));
+        txtSPP.setTextFormatter(new TextFormatter <> (input -> input.getControlNewText().matches(textFormatterDoubleRegex) ? input : null));
+        
+        /**
+         * Update the image width - only numbers allowed by textFormatter
+         */
+        txtWidth.setOnKeyTyped((event) -> {
+            renderer.setWidth((int)Double.parseDouble(txtWidth.getText()));
+        });
+        // filters all incoming characters from getControlNewText() by the regex. Returns null new String is it does not match
+        txtWidth.setTextFormatter(new TextFormatter <> (input -> input.getControlNewText().matches(textFormatterIntegerRegex) ? input : null));
+        
+        /**
+         * Update the Image Height - only numbers allowed by textFormatter
+         */
+        txtHeight.setOnKeyTyped((event) -> {
+            renderer.setHeight((int)Double.parseDouble(txtHeight.getText()));
+        });
+        // filters all incoming characters from getControlNewText() by the regex. Returns null new String is it does not match
+        txtHeight.setTextFormatter(new TextFormatter <> (input -> input.getControlNewText().matches(textFormatterIntegerRegex) ? input : null));
+
+        /**
+         * Update the threads to be spared
+         */
+        txtThreads.setOnKeyTyped((event) -> {
+            renderer.setSparedProcessors((int)Double.parseDouble(txtThreads.getText()));
+        });
+        // filters all incoming characters from getControlNewText() by the regex. Returns null new String is it does not match
+        txtThreads.setTextFormatter(new TextFormatter <> (input -> input.getControlNewText().matches(textFormatterIntegerRegex) ? input : null));
         
         /**
          * Update view of current object from list
@@ -120,11 +156,30 @@ public class FXMLRenderSceneController {
             txtDTO.setText("" + item.getObj().getDistanceOrigin());
             txtIOR.setText("" + item.getObj().getRefractiveIndex());
             txtEmissiveness.setText("" + item.getObj().getEmission());
+            clrObjPicker.setValue(new Color((float) item.getObj().getColor().getR()/12, (float) item.getObj().getColor().getG()/12, (float) item.getObj().getColor().getB()/12, 1.0));
             switch (item.getObj().getType()) {
                 case 1 -> choiceMaterial.setValue(typeChoiceBoxList.get(0));
                 case 2 -> choiceMaterial.setValue(typeChoiceBoxList.get(1));
                 case 3 -> choiceMaterial.setValue(typeChoiceBoxList.get(2));
             }
+            switch(item.getObj().getClass().getSimpleName()) {
+                case "Plane":
+                    HboxDTO.setVisible(true);
+                    break;
+                case "Sphere":
+                    HboxDTO.setVisible(false);
+                    break;
+            }
+        });
+        
+        /** Update the color of the current object */
+        clrObjPicker.setOnAction((event) -> {
+            ObjWrapper item = (ObjWrapper) listObjectList.getSelectionModel().getSelectedItem();
+            Color color = clrObjPicker.getValue();
+            if (item == null) return;
+            System.out.println(color.getGreen());
+            // update object in list
+            item.getObj().setColor(new DiffuseColor(color.getRed()*10, color.getGreen()*10, color.getBlue()*10));
         });
         
         /**
@@ -150,7 +205,7 @@ public class FXMLRenderSceneController {
             // update object in list
             item.getObj().setDistanceOrigin(Double.parseDouble(txtDTO.getText()));
         });
-        txtDTO.setTextFormatter(new TextFormatter <> (input -> input.getControlNewText().matches(textFormatterRegex) ? input : null));
+        txtDTO.setTextFormatter(new TextFormatter <> (input -> input.getControlNewText().matches(textFormatterDoubleRegex) ? input : null));
         
         /**
          * Update selected object's Emissiveness - only numbers allowed by textFormatter
@@ -163,7 +218,7 @@ public class FXMLRenderSceneController {
             // update object in list
             item.getObj().setEmission(Double.parseDouble(txtEmissiveness.getText()));
         });
-        txtEmissiveness.setTextFormatter(new TextFormatter <> (input -> input.getControlNewText().matches(textFormatterRegex) ? input : null));
+        txtEmissiveness.setTextFormatter(new TextFormatter <> (input -> input.getControlNewText().matches(textFormatterDoubleRegex) ? input : null));
         
         /**
          * Update selected object's IOR - only numbers allowed by textFormatter
@@ -176,7 +231,7 @@ public class FXMLRenderSceneController {
             // update object in list
             item.getObj().setRefractiveIndex(Double.parseDouble(txtIOR.getText()));
         });
-        txtIOR.setTextFormatter(new TextFormatter <> (input -> input.getControlNewText().matches(textFormatterRegex) ? input : null));
+        txtIOR.setTextFormatter(new TextFormatter <> (input -> input.getControlNewText().matches(textFormatterDoubleRegex) ? input : null));
         
         /**
          * Update selected object's X position - only numbers allowed by textFormatter
@@ -189,7 +244,7 @@ public class FXMLRenderSceneController {
             // update object in list
             item.getObj().getNormal().setX((Double.parseDouble(txtObjectXPos.getText())));
         });
-        txtObjectXPos.setTextFormatter(new TextFormatter <> (input -> input.getControlNewText().matches(textFormatterRegex) ? input : null));
+        txtObjectXPos.setTextFormatter(new TextFormatter <> (input -> input.getControlNewText().matches(textFormatterDoubleRegex) ? input : null));
         
         /**
          * Update selected object's Y position - only numbers allowed by textFormatter
@@ -202,7 +257,7 @@ public class FXMLRenderSceneController {
             // update object in list
             item.getObj().getNormal().setY((Double.parseDouble(txtObjectYPos.getText())));
         });
-        txtObjectYPos.setTextFormatter(new TextFormatter <> (input -> input.getControlNewText().matches(textFormatterRegex) ? input : null));
+        txtObjectYPos.setTextFormatter(new TextFormatter <> (input -> input.getControlNewText().matches(textFormatterDoubleRegex) ? input : null));
         
         /**
          * Update selected object's Z position - only numbers allowed by textFormatter
@@ -215,7 +270,7 @@ public class FXMLRenderSceneController {
             // update object in list
             item.getObj().getNormal().setZ((Double.parseDouble(txtObjectZPos.getText())));
         });
-        txtObjectZPos.setTextFormatter(new TextFormatter <> (input -> input.getControlNewText().matches(textFormatterRegex) ? input : null));
+        txtObjectZPos.setTextFormatter(new TextFormatter <> (input -> input.getControlNewText().matches(textFormatterDoubleRegex) ? input : null));
         
         choiceMaterial.setOnAction((event) -> {
             ObjWrapper item = (ObjWrapper) listObjectList.getSelectionModel().getSelectedItem();

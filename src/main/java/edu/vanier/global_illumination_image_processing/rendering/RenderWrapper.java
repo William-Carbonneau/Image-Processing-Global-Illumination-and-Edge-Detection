@@ -117,6 +117,27 @@ public class RenderWrapper {
     public void setSPP(double SPP) {
         this.SPP = SPP;
     }
+
+    /** 
+     * get processors requested to not be used by user
+     * 
+     * @return int spared processors  
+     */
+    public int getSparedProcessors() {
+        return sparedProcessors;
+    }
+    
+    /** 
+     * Set processors requested to not be used by user
+     * 
+     * @param sparedProcessors int spared processors  
+     */
+    public void setSparedProcessors(int sparedProcessors) {
+        this.sparedProcessors = sparedProcessors;
+    }
+
+    
+    
     
     /**
      * Render the scene MultiThreaded
@@ -216,7 +237,7 @@ public class RenderWrapper {
         
         System.out.println(threadCount);
         
-        final int pieceSize = (int) height/threadCount;
+        final int pieceSize = Integer.max((int) height/threadCount,1);
         final int lastPieceSize = height-(pieceSize*threadCount) + pieceSize;
         
         // create buffered image
