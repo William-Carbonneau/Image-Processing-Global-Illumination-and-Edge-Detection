@@ -11,6 +11,7 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.fxml.FXML;
@@ -569,23 +570,27 @@ public class FXMLConvolutionsSceneController {
             String getResultSetFromDB = "Select *from "+tableName;
             ResultSet rs = stmt.executeQuery(getResultSetFromDB);
             print("rs created");
-            File temp = new File("src\\main\\resources\\Images\\Convolutions\\temp.bmp");
             System.out.println("File temp created");
-            FileOutputStream FOS = new FileOutputStream(temp);
+            FileOutputStream FOS;
             Image image;
             ImageView imageview;
             System.out.println(rs.getFetchSize());
+            ArrayList<File> filesTemp = new ArrayList<>();
+            File temp;
             while(rs.next()){
-                FOS.flush();
                 String titleImage = rs.getString("title");
                 byte[] b = rs.getBytes("image");
+                temp = new File("src\\main\\resources\\Images\\Convolutions\\"+titleImage+".bmp");
+                FOS = new FileOutputStream(temp);
                 FOS.write(b);
                 System.out.println("FOS written");
+                filesTemp.add(temp);
                 image  = new Image(temp.getAbsolutePath());
                 imageview = new ImageView();
                 imageview.setImage(image);
                 root.getChildren().add(imageview);
                 imageview.setImage(image);
+                
             }
             //System.out.println("File temp has been deleted: "+temp.delete());
             //Read from the table
