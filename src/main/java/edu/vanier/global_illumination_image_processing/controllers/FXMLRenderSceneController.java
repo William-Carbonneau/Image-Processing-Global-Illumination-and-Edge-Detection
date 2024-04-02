@@ -35,7 +35,12 @@ import javafx.embed.swing.SwingFXUtils;
 public class FXMLRenderSceneController {
     // FXML objects
     @FXML VBox RootVBox;
-    @FXML MenuItem BackToTitleMenuItem;
+    @FXML MenuItem menuItemBackToTitle;
+    @FXML MenuItem menuItemAddSphere;
+    @FXML MenuItem menuItemAddPlaneX;
+    @FXML MenuItem menuItemAddPlaneY;
+    @FXML MenuItem menuItemAddPlaneZ;
+    @FXML MenuItem menuItemRemoveSelected;
     @FXML ListView listObjectList;
     @FXML Label lblObjectType;
     @FXML TextField txtObjectName;
@@ -99,9 +104,60 @@ public class FXMLRenderSceneController {
             mainScene.addObj(obj.getName(), obj.getObj());
         }
         
-        BackToTitleMenuItem.setOnAction((event)->{
+        /**
+         * Set event handler to go back to main window
+         */
+        menuItemBackToTitle.setOnAction((event)->{
             
             MainApp.switchScene(MainApp.FXMLTitleScene, new FXMLTitleSceneController(primaryStage));
+        });
+        
+        // TODO UNIQUE NAMES FOR OBJECTS OR THEY BECOME THE SAME ONE
+        
+        /**
+         * Add a new sphere to the scene
+         */
+        menuItemAddSphere.setOnAction((event) -> {
+            ObjWrapper obj = new ObjWrapper("New Sphere", new Sphere(new Vec3D(0,0,1), 1.0, new DiffuseColor(8, 0, 0), 0,1));
+            objectList.add(obj);
+            mainScene.addObj(obj.getName(), obj.getObj());
+        });
+        
+        /**
+         * Add a new Plane facing the X direction to the Scene
+         */
+        menuItemAddPlaneX.setOnAction((event) -> {
+            ObjWrapper obj = new ObjWrapper("New Plane X", new Plane(new Vec3D(1,0,0), 1, new DiffuseColor(0, 8, 0), 0,1));
+            objectList.add(obj);
+            mainScene.addObj(obj.getName(), obj.getObj());
+        });
+        
+        /**
+         * Add a new Plane facing the Y direction to the Scene
+         */
+        menuItemAddPlaneY.setOnAction((event) -> {
+            ObjWrapper obj = new ObjWrapper("New Plane Y", new Plane(new Vec3D(0,1,0), 1, new DiffuseColor(0, 0, 8), 0,1));
+            objectList.add(obj);
+            mainScene.addObj(obj.getName(), obj.getObj());
+        });
+        
+        /**
+         * Add a new Plane facing the Z direction to the Scene
+         */
+        menuItemAddPlaneZ.setOnAction((event) -> {
+            ObjWrapper obj = new ObjWrapper("New Plane Z", new Plane(new Vec3D(0,0,1), 3, new DiffuseColor(8, 0, 8), 0,1));
+            objectList.add(obj);
+            mainScene.addObj(obj.getName(), obj.getObj());
+        });
+        
+        /**
+         * Remove the selected item from the scene
+         */
+        menuItemRemoveSelected.setOnAction((event) -> {
+            ObjWrapper item = (ObjWrapper) listObjectList.getSelectionModel().getSelectedItem();
+            if (item == null) return;
+            mainScene.removeObj(item.getName());
+            objectList.remove(item);
         });
         
         /**

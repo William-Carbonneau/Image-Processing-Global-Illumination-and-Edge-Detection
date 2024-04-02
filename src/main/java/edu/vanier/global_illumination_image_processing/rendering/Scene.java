@@ -31,7 +31,7 @@ public class Scene {
      * @return return 1 if the key exists and no object was added, else 0 for success
      */
     public int removeObj(String objName) {
-        if (objects.containsKey(objName)) {
+        if (!objects.containsKey(objName)) {
             return 1;
         }
         objects.remove(objName);
