@@ -26,6 +26,7 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.TilePane;
@@ -110,7 +111,7 @@ public class FXMLConvolutionsSceneController {
     }
     @FXML
     public void initialize(){
-        convolutionCB.getItems().addAll("Custom Kernel", "Gaussian Blur", "Sharpening","Grayscale", "Sobel X", "Sobel Y", "Sobel Complete","Prewitt","Laplacian", "Reset");
+        convolutionCB.getItems().addAll("Custom Kernel","Kernels With Different Dimensions", "Gaussian Blur", "Sharpening","Grayscale", "Sobel X", "Sobel Y", "Sobel Complete","Prewitt","Laplacian", "Reset");
         convolutionCB.setOnAction((event)->{
             //Get the value of the convolution
             String choice = convolutionCB.getValue().toString();
@@ -367,6 +368,28 @@ public class FXMLConvolutionsSceneController {
                 } catch (IOException | NullPointerException ex) {
                     System.out.println("Error caught");
                 }
+            }
+            else if(choice.equals("Kernels With Different Dimensions")){
+                primaryStage.setAlwaysOnTop(false);
+                System.out.println("Done1");
+                Stage stage = new Stage();
+                FXMLLoader loaderCK = new FXMLLoader(getClass().getResource("/fxml/FXMLCustomKernel.fxml"));
+                System.out.println("Done2");
+                FXMLCustomKernelController controllerCK = new FXMLCustomKernelController();
+                loaderCK.setController(controllerCK);
+                System.out.println("Done3");
+                    try {
+                        BorderPane rootBP = loaderCK.load();
+                        Scene scene = new Scene(rootBP);
+                        stage.setScene(scene);
+                        stage.setAlwaysOnTop(true);
+                        stage.showAndWait();
+                        
+                    } catch (IOException ex) {
+                        Logger.getLogger("Could not load FXML");
+                    }
+                    primaryStage.setAlwaysOnTop(true);
+                
             }
             else if(choice.equals("Reset")){
                 System.out.println("Reset");
