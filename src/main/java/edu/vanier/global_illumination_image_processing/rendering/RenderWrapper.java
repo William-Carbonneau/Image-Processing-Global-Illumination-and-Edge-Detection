@@ -27,6 +27,8 @@ public class RenderWrapper {
     private int threadCount = 0;
     /** processors to be spared during the render */
     private int sparedProcessors = 1;
+    /** threads requested */
+    private int threadsRequested = 0;
     
     /** lost of array references */
     ArrayList<DiffuseColor[][]> imagePieces = new ArrayList<>();
@@ -117,6 +119,42 @@ public class RenderWrapper {
     public void setSPP(double SPP) {
         this.SPP = SPP;
     }
+
+    /** 
+     * get processors requested to not be used by user
+     * 
+     * @return int spared processors  
+     */
+    public int getSparedProcessors() {
+        return sparedProcessors;
+    }
+    
+    /** 
+     * Set processors to spare
+     * 
+     * @param sparedProcessors int spared processors  
+     */
+    public void setSparedProcessors(int sparedProcessors) {
+        this.sparedProcessors = sparedProcessors;
+    }
+
+    /**
+     * Set processors to use
+     * 
+     * @param threadsRequested int
+     */
+    public void setThreadsRequested(int threadsRequested) {
+        this.threadsRequested = threadsRequested;
+    }
+
+    /**
+     * Get the amount of threads requested to be used
+     * 
+     * @return threads requested int
+     */
+    public int getThreadsRequested() {
+        return threadsRequested;
+    }
     
     /**
      * Render the scene MultiThreaded
@@ -125,22 +163,19 @@ public class RenderWrapper {
      * @param stratified boolean stratified sampling yes/no (true/false)
      * @param threads threads requested to use, <= 0 for maximum
      */
-    public void render(boolean multithread, boolean stratified, int threads) {
+    public void render(boolean multithread, boolean stratified) {
         System.out.printf("Rendering: %2.0f samples%n", SPP);
         // start a clock
         final long startTime = System.currentTimeMillis();
         
         // deal with many processor types - get maximum available threads 
-        // TODO make spared processors modifiable (requires error handling)
         int maxThreads = Runtime.getRuntime().availableProcessors() - sparedProcessors; // use max threads-1 to leave a thread for other processes (including the app itself)
-        // handle maxThreads or 1
+        
+        // handle maxThreads or 1 and requested threads
+        if (threadsRequested > 0) maxThreads = Integer.min(maxThreads, threadsRequested);
         maxThreads = Integer.max(maxThreads, 1);
         
-        final int threadCountLocal;
-        
-        // if the threads requested exceeds the maximum available (-1), or it is 0, provide maximum available
-        if (threads > maxThreads || threads <= 0) threadCountLocal = (multithread && maxThreads > 1) ? maxThreads : 1;
-        else threadCountLocal = threads;
+        final int threadCountLocal = maxThreads;
 
         // update previous threadcount
         this.threadCount = threadCountLocal;
@@ -168,7 +203,7 @@ public class RenderWrapper {
         
          // create thread-pool
         ExecutorService execServ = Executors.newFixedThreadPool(threadCountLocal);
-        ArrayList<CompletableFuture<Void>> tasks = new ArrayList<>();
+        ArrayList<CompletableFuture<Void>> tasks = new ArrayList<>(threadCountLocal);
         
         for (int rowPiece = 0; rowPiece < threadCountLocal; rowPiece++) {
             // create array managers
@@ -207,16 +242,16 @@ public class RenderWrapper {
      * 
      * @return int 1 if error. 0 if success
      */
-    public int save() {
+    public BufferedImage save() {
         System.out.println("Saving...");
         // check if valid
         if (this.imagePieces.isEmpty() || this.threadCount == 0) {
-            return 1;
+            return null;
         }
         
         System.out.println(threadCount);
         
-        final int pieceSize = (int) height/threadCount;
+        final int pieceSize = Integer.max((int) height/threadCount,1);
         final int lastPieceSize = height-(pieceSize*threadCount) + pieceSize;
         
         // create buffered image
@@ -242,9 +277,9 @@ public class RenderWrapper {
             ImageIO.write(output, "bmp", saveFile);
         }catch(IOException e) {
             e.printStackTrace(); // TODO deal with error
-            return 1;
+            return null;
         }
         System.out.println("Save completed as: " + name + ".bmp");
-        return 0;
+        return output;
     }
 }
