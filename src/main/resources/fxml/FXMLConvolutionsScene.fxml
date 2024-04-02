@@ -149,7 +149,6 @@
                                                 <Insets />
                                              </HBox.margin>
                                           </TextField>
-                                          <Button fx:id="convolveAgainBtn" mnemonicParsing="false" text="Convolve Again" />
                                        </children>
                                     </HBox>
                                     <HBox alignment="CENTER_LEFT" prefHeight="49.0" prefWidth="266.0">

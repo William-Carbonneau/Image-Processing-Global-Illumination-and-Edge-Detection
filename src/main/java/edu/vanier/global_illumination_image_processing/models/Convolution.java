@@ -161,7 +161,6 @@ public class Convolution {
                 //If not, colour it black
                 else{
                     color = new Color(0,0,0);
-                    System.out.println(gFinal[w][h]);
                 }
                 //Set the value of the colour
                 finalImage.setRGB(w, h, color.getRGB());
@@ -217,7 +216,6 @@ public class Convolution {
                 // If not, colour it black
                 else{
                     color = new Color(0,0,0);
-                    System.out.println(finalGradient);
                 }
                 //Set the value of the colour
                 finalImage.setRGB(w, h, color.getRGB());
@@ -227,6 +225,106 @@ public class Convolution {
         File file = new File(filePathOut);
         ImageIO.write(finalImage, "bmp", file);
         
+    }
+    public static void performLaplacianOperator(String filePathIn, String filePathOut) throws IOException{
+        //Source for the kernel: https://youtu.be/uNP6ZwQ3r6A?si=Lg2Q0SyxrTAA6Qcw
+        float[][] laplacianKernel = {{0,1,0},
+                             {1,-4,1},
+                             {0,1,0}};
+        BufferedImage BI = createBI(filePathIn);
+        // Create the array gray corresponding to the average values of the pixels
+        float[][] g = new float[BI.getWidth()][BI.getHeight()];
+        //Initialize the values of g
+        Color color;
+        //The values of a geayscale image are uniform, meaning that the values for red, blue, and green are all the same
+        // Therefore, we can take any one of these three to initialize the array g (g)
+        for(int w=0; w<BI.getWidth(); w++){
+            for(int h=0; h<BI.getHeight(); h++){
+                color = new Color(BI.getRGB(w, h));
+                g[w][h] = color.getGreen();
+            }
+        }
+        //Perform the convolution on the gray array, in order to get the final one
+        // gFinal contains the floating numbers describing how much the colour values change up to down. (It does not represent the grayscale value, but the difference in the grayscale)
+        float[][] laplacianResult = performConvolutionOnArray(laplacianKernel, g);
+        //Make a new image
+        BufferedImage finalImage = new BufferedImage(g.length, g[0].length, BufferedImage.TYPE_INT_RGB);
+        for(int w=0; w<BI.getWidth(); w++){
+            for(int h=0; h<BI.getHeight(); h++){
+                if(laplacianResult[w][h]!=0){
+                    color = new Color(0,0,0);
+                }
+                else
+                    color = new Color(255,255,255);
+                /*
+                try{
+                    int result = (int) (128+laplacianResult[w][h]);
+                    color =new Color(result, result, result);
+                }catch(Exception e){
+                    if(laplacianResult[w][h]>127){
+                        color =new Color(255,255,255);
+                    }
+                    else{
+                        color =new Color(0,0,0);
+                    }
+                    System.out.println(laplacianResult[w][h]);
+                }
+                */
+                
+                finalImage.setRGB(w, h, color.getRGB());
+            }
+        }
+        // Create and write the output file
+        File file = new File(filePathOut);
+        ImageIO.write(finalImage, "bmp", file);
+    }
+    public static void performPrewitt(String filePathIn, String filePathOut, float threshold) throws IOException{
+        //Source for the kernel: https://en.wikipedia.org/wiki/Prewitt_operator
+        float[][] rulesPrewittX = {{-1,-1,-1},
+                             {0,0,0},
+                             {1,1,1}};
+        //Source for the kernel: https://en.wikipedia.org/wiki/Prewitt_operator
+        float[][] rulesPrewittY = {{-1,0,1},
+                             {-1,0,1},
+                             {-1,0,1}};
+        BufferedImage BI = createBI(filePathIn);
+        // Create the array gray corresponding to the average values of the pixels
+        float[][] g = new float[BI.getWidth()][BI.getHeight()];
+        //Initialize the values of g
+        Color color;
+        //The values of a geayscale image are uniform, meaning that the values for red, blue, and green are all the same
+        // Therefore, we can take any one of these three to initialize the array g (g)
+        for(int w=0; w<BI.getWidth(); w++){
+            for(int h=0; h<BI.getHeight(); h++){
+                color = new Color(BI.getRGB(w, h));
+                g[w][h] = color.getGreen();
+            }
+        }
+        //Perform the convolution on the gray array, in order to get the final one
+        // gFinal contains the floating numbers describing how much the colour values change up to down. (It does not represent the grayscale value, but the difference in the grayscale)
+        float[][] gradientX = performConvolutionOnArray(rulesPrewittX, g);
+        float[][] gradientY = performConvolutionOnArray(rulesPrewittY, g);
+        //Make a new image
+        BufferedImage finalImage = new BufferedImage(g.length, g[0].length, BufferedImage.TYPE_INT_RGB);
+        for(int w=0; w<BI.getWidth(); w++){
+            for(int h=0; h<BI.getHeight(); h++){
+                //Calculate the final gradient using Pythagora
+                float finalGradient = (float)Math.sqrt(gradientX[w][h]*gradientX[w][h]+gradientY[w][h]*gradientY[w][h]);
+                //If the difference is bigger than the threshold, color that spot white
+                if(finalGradient>threshold){
+                    color =new Color(255,255,255);
+                }
+                // If not, colour it black
+                else{
+                    color = new Color(0,0,0);
+                }
+                //Set the value of the colour
+                finalImage.setRGB(w, h, color.getRGB());
+            }
+        }
+        // Create and write the output file
+        File file = new File(filePathOut);
+        ImageIO.write(finalImage, "bmp", file);
     }
     /**
      * This method performs Sobel edge detection along the y axis for an image.
@@ -270,7 +368,6 @@ public class Convolution {
                 // If not, colour it black
                 else{
                     color = new Color(0,0,0);
-                    System.out.println(gFinal[w][h]);
                 }
                 //Set the value of the colour
                 finalImage.setRGB(w, h, color.getRGB());
@@ -369,7 +466,6 @@ public class Convolution {
                 try{
                 color = new Color(rFinal[w][h]/256, gFinal[w][h]/256, bFinal[w][h]/256);
                 }catch(Exception e){
-                    System.out.println("red="+r[w][h]+"green="+g[w][h]+"blue="+b[w][h]);
                     color= new Color(0,0,0);
                 }
                 finalImage.setRGB(w, h, color.getRGB());

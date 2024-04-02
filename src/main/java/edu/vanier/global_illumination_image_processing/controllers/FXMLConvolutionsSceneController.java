@@ -60,8 +60,6 @@ public class FXMLConvolutionsSceneController {
     @FXML
     TextField thresholdTxtBox;
     @FXML
-    Button convolveAgainBtn;
-    @FXML
     Button saveToDatabaseBtn;
     float defaultThreshold=100;
     @FXML
@@ -112,10 +110,7 @@ public class FXMLConvolutionsSceneController {
     }
     @FXML
     public void initialize(){
-        convolutionCB.getItems().addAll("Custom Kernel", "Gaussian Blur", "Sharpening","Grayscale", "Sobel X", "Sobel Y", "Sobel Complete", "Reset");
-        convolveAgainBtn.setOnAction((event)->{
-            
-        });
+        convolutionCB.getItems().addAll("Custom Kernel", "Gaussian Blur", "Sharpening","Grayscale", "Sobel X", "Sobel Y", "Sobel Complete","Prewitt","Laplacian", "Reset");
         convolutionCB.setOnAction((event)->{
             //Get the value of the convolution
             String choice = convolutionCB.getValue().toString();
@@ -155,6 +150,7 @@ public class FXMLConvolutionsSceneController {
                 Scene scene = new Scene(root);
                 stage.setScene(scene);
                 stage.setAlwaysOnTop(true);
+                stage.setTitle("Database Viewer");
                 stage.show();
                 String titleDatabase;
                 titleDatabase = "Images";
@@ -326,6 +322,47 @@ public class FXMLConvolutionsSceneController {
                     Convolution.performConvolution(this.imageBeingDisplayedOnIV.getAbsolutePath(), this.imageBeingDisplayedOnIV.getAbsolutePath(), rulesGaussian);
                     Convolution.performGrayscale(this.imageBeingDisplayedOnIV.getAbsolutePath(), this.imageBeingDisplayedOnIV.getAbsolutePath());
                     Convolution.performSobel(this.imageBeingDisplayedOnIV.getAbsolutePath(), this.imageBeingDisplayedOnIV.getAbsolutePath(), threshold);
+                    displayImage(this.imageBeingDisplayedOnIV.getAbsolutePath());
+                } catch (IOException | NullPointerException ex) {
+                    System.out.println("Error caught");
+                }
+            }
+            else if(choice.equals("Prewitt")){
+                try {
+                    float threshold=100;
+                    if(thresholdTxtBox.getText()==null){
+                        threshold=defaultThreshold;
+                    }
+                    else{
+                        try{
+                        threshold = Float.parseFloat(thresholdTxtBox.getText());
+                        }catch(Exception e){
+                            threshold=defaultThreshold;
+                        }
+                    }
+                    Convolution.performConvolution(this.imageBeingDisplayedOnIV.getAbsolutePath(), this.imageBeingDisplayedOnIV.getAbsolutePath(), rulesGaussian);
+                    Convolution.performGrayscale(this.imageBeingDisplayedOnIV.getAbsolutePath(), this.imageBeingDisplayedOnIV.getAbsolutePath());
+                    Convolution.performPrewitt(this.imageBeingDisplayedOnIV.getAbsolutePath(), this.imageBeingDisplayedOnIV.getAbsolutePath(), threshold);
+                    displayImage(this.imageBeingDisplayedOnIV.getAbsolutePath());
+                } catch (IOException | NullPointerException ex) {
+                    System.out.println("Error caught");
+                }
+            }
+            else if(choice.equals("Laplacian")){
+                try {
+                    if(thresholdTxtBox.getText()==null){
+                        threshold=defaultThreshold;
+                    }
+                    else{
+                        try{
+                        threshold = Float.parseFloat(thresholdTxtBox.getText());
+                        }catch(Exception e){
+                            threshold=defaultThreshold;
+                        }
+                    }
+                    Convolution.performConvolution(this.imageBeingDisplayedOnIV.getAbsolutePath(), this.imageBeingDisplayedOnIV.getAbsolutePath(), rulesGaussian);
+                    Convolution.performGrayscale(this.imageBeingDisplayedOnIV.getAbsolutePath(), this.imageBeingDisplayedOnIV.getAbsolutePath());
+                    Convolution.performLaplacianOperator(this.imageBeingDisplayedOnIV.getAbsolutePath(), this.imageBeingDisplayedOnIV.getAbsolutePath());
                     displayImage(this.imageBeingDisplayedOnIV.getAbsolutePath());
                 } catch (IOException | NullPointerException ex) {
                     System.out.println("Error caught");
