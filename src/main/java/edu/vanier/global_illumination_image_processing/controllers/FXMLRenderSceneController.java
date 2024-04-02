@@ -65,6 +65,11 @@ public class FXMLRenderSceneController {
     public final String textFormatterDoubleRegex = "\\-?\\d+\\.?\\d*";
     public final String textFormatterIntegerRegex = "[1-9][0-9]*";
     
+    public String doubleFormatterRemoveTrailingPeriod(String input) {
+        if (input.endsWith(".")) return input.replace(".", "");
+        return input;
+    }
+    
     public void initialize(){
         /** create the render scene */
         Scene mainScene = new Scene();
@@ -103,7 +108,8 @@ public class FXMLRenderSceneController {
          * Render the scene based on user-created parameters
          */
         btnRender.setOnAction((event) -> {
-            renderer.render(true, true, 0);
+            System.out.println(renderer.getThreadsRequested());
+            renderer.render(true, true);
             BufferedImage image = renderer.save();
             // output image converted from buferedimage to javafx image
             if (image != null) imgResult.setImage(SwingFXUtils.toFXImage(image, null));
@@ -113,7 +119,7 @@ public class FXMLRenderSceneController {
          * Update the current SPP - only numbers allowed by textFormatter
          */
         txtSPP.setOnKeyTyped((event) -> {
-            renderer.setSPP(Double.parseDouble(txtSPP.getText()));
+            renderer.setSPP(Double.parseDouble(doubleFormatterRemoveTrailingPeriod(txtSPP.getText())));
         });
         // filters all incoming characters from getControlNewText() by the regex. Returns null new String is it does not match
         txtSPP.setTextFormatter(new TextFormatter <> (input -> input.getControlNewText().matches(textFormatterDoubleRegex) ? input : null));
@@ -141,7 +147,7 @@ public class FXMLRenderSceneController {
          * Update the threads to be spared
          */
         txtThreads.setOnKeyTyped((event) -> {
-            renderer.setSparedProcessors((int)Double.parseDouble(txtThreads.getText()));
+            renderer.setThreadsRequested((int)Double.parseDouble(doubleFormatterRemoveTrailingPeriod(txtThreads.getText())));
         });
         // filters all incoming characters from getControlNewText() by the regex. Returns null new String is it does not match
         txtThreads.setTextFormatter(new TextFormatter <> (input -> input.getControlNewText().matches(textFormatterIntegerRegex) ? input : null));
@@ -209,7 +215,7 @@ public class FXMLRenderSceneController {
             if (item == null) return;
             
             // update object in list
-            item.getObj().setDistanceOrigin(Double.parseDouble(txtDTO.getText()));
+            item.getObj().setDistanceOrigin(Double.parseDouble(doubleFormatterRemoveTrailingPeriod(txtDTO.getText())));
         });
         txtDTO.setTextFormatter(new TextFormatter <> (input -> input.getControlNewText().matches(textFormatterDoubleRegex) ? input : null));
         
@@ -222,7 +228,7 @@ public class FXMLRenderSceneController {
             if (item == null) return;
             
             // update object in list
-            item.getObj().setEmission(Double.parseDouble(txtEmissiveness.getText()));
+            item.getObj().setEmission(Double.parseDouble(doubleFormatterRemoveTrailingPeriod(txtEmissiveness.getText())));
         });
         txtEmissiveness.setTextFormatter(new TextFormatter <> (input -> input.getControlNewText().matches(textFormatterDoubleRegex) ? input : null));
         
@@ -235,7 +241,7 @@ public class FXMLRenderSceneController {
             if (item == null) return;
             
             // update object in list
-            item.getObj().setRefractiveIndex(Double.parseDouble(txtIOR.getText()));
+            item.getObj().setRefractiveIndex(Double.parseDouble(doubleFormatterRemoveTrailingPeriod(txtIOR.getText())));
         });
         txtIOR.setTextFormatter(new TextFormatter <> (input -> input.getControlNewText().matches(textFormatterDoubleRegex) ? input : null));
         
@@ -248,7 +254,7 @@ public class FXMLRenderSceneController {
             if (item == null) return;
             
             // update object in list
-            item.getObj().getNormal().setX((Double.parseDouble(txtObjectXPos.getText())));
+            item.getObj().getNormal().setX(Double.parseDouble(doubleFormatterRemoveTrailingPeriod(txtObjectXPos.getText())));
         });
         txtObjectXPos.setTextFormatter(new TextFormatter <> (input -> input.getControlNewText().matches(textFormatterDoubleRegex) ? input : null));
         
@@ -261,7 +267,7 @@ public class FXMLRenderSceneController {
             if (item == null) return;
             
             // update object in list
-            item.getObj().getNormal().setY((Double.parseDouble(txtObjectYPos.getText())));
+            item.getObj().getNormal().setY((Double.parseDouble(doubleFormatterRemoveTrailingPeriod(txtObjectYPos.getText()))));
         });
         txtObjectYPos.setTextFormatter(new TextFormatter <> (input -> input.getControlNewText().matches(textFormatterDoubleRegex) ? input : null));
         
