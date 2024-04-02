@@ -79,10 +79,9 @@ public class FXMLConvolutionsSceneController {
                              {0,0,0},
                              {1,2,1}};
     Stage primaryStage;
-    File inputFile;
+    File imageBeingDisplayedOnIV;
     String nameFileOut;
     float threshold = 50;
-    File fileOut;
 
     public FXMLConvolutionsSceneController(Stage primaryStage) {
         this.primaryStage = primaryStage;
@@ -115,310 +114,27 @@ public class FXMLConvolutionsSceneController {
     public void initialize(){
         convolutionCB.getItems().addAll("Custom Kernel", "Gaussian Blur", "Sharpening","Grayscale", "Sobel X", "Sobel Y", "Sobel Complete", "Reset");
         convolveAgainBtn.setOnAction((event)->{
-            if(fileOut!=null){
-                inputFile = fileOut;
-                String choice = convolutionCB.getValue().toString();
-                System.out.println(choice+" clicked");
-                if(choice.equals("Custom Kernel")){
-                    TextField[][] txtRules = getCustomKernelTxtField();
-                    float[][] rulesCustom = getCustomKernelFloat(txtRules);
-                    
-                // Let the user choose a directory to create the image
-                // Choose the directory in which the user wants to save the image
-                Stage stage = new Stage();
-                DirectoryChooser dc = new DirectoryChooser();
-                primaryStage.setAlwaysOnTop(false);
-                stage.setAlwaysOnTop(true);
-                dc.setInitialDirectory(dc.showDialog(stage));
-                stage.setAlwaysOnTop(false);
-                primaryStage.setAlwaysOnTop(true);
-                try {
-                    dc.getInitialDirectory().createNewFile();
-                    // Make a dialog appear for the user to choose a name for the file
-                    String nameFileOut = chooseNameFileDialog();
-                    // Create a file with the name
-                    fileOut = new File(dc.getInitialDirectory()+"\\"+nameFileOut+".bmp");
-                    Convolution.performConvolution(this.inputFile.getAbsolutePath(), fileOut.getAbsolutePath(), rulesCustom);
-                    displayImage(fileOut.getAbsolutePath());
-                } catch (IOException | NullPointerException ex) {
-                    System.out.println("Error caught");
-                }
-                inputFile=null;
-                
-            }
-                if(choice.equals("Gaussian Blur")){
-                    // Let the user choose a directory to create the image
-                    // Choose the directory in which the user wants to save the image
-                    Stage stage = new Stage();
-                    DirectoryChooser dc = new DirectoryChooser();
-                    primaryStage.setAlwaysOnTop(false);
-                    stage.setAlwaysOnTop(true);
-                    dc.setInitialDirectory(dc.showDialog(stage));
-                    stage.setAlwaysOnTop(false);
-                    primaryStage.setAlwaysOnTop(true);
-                    try {
-                        dc.getInitialDirectory().createNewFile();
-                        // Make a dialog appear for the user to choose a name for the file
-                        String nameFileOut = chooseNameFileDialog();
-                        // Create a file with the name
-                        fileOut = new File(dc.getInitialDirectory()+"\\"+nameFileOut+".bmp");
-                        Convolution.performConvolution(this.inputFile.getAbsolutePath(), fileOut.getAbsolutePath(), rulesGaussian);
-                        displayImage(fileOut.getAbsolutePath());
-                    } catch (IOException | NullPointerException ex) {
-                        System.out.println("Error caught");
-                    }
-                    inputFile=null;
-                    
-                }
-            }
-            else{
-                System.out.println("The output file is null");
-            }
             
         });
         convolutionCB.setOnAction((event)->{
             //Get the value of the convolution
             String choice = convolutionCB.getValue().toString();
-            //If the user wants the custom kernel, we need to get the values from the textfields and initialize the rulesCustom 2D array
-            if(choice.equals("Custom Kernel")){
-                System.out.println("Custom Kernel Clicked");
-                float[][] rulesCustom = new float[3][3];
-                TextField[][] txtRules = {{txt11,txt12,txt13},
-                                          {txt21,txt22,txt23},
-                                          {txt31,txt32,txt33}};
-                for(int i=0; i<txtRules.length; i++){
-                    for(int j=0; j<txtRules[0].length;j++){
-                        try{
-                            rulesCustom[i][j] = Float.valueOf(txtRules[i][j].getText());
-                        }catch(Exception e){
-                            rulesCustom[i][j] = 0f;
-                        }
-                        System.out.print(rulesCustom[i][j]+" ");
-                    }
-                    System.out.println();
-                }
-                //Get the image the user wants to convolve
-                if(inputFile==null){
-                    this.inputFile = getFileFromFChooser();
-                }
-                // Let the user choose a directory to create the image
-                // Choose the directory in which the user wants to save the image
-                Stage stage = new Stage();
-                DirectoryChooser dc = new DirectoryChooser();
-                primaryStage.setAlwaysOnTop(false);
-                stage.setAlwaysOnTop(true);
-                dc.setInitialDirectory(dc.showDialog(stage));
-                stage.setAlwaysOnTop(false);
-                primaryStage.setAlwaysOnTop(true);
-                try {
-                    dc.getInitialDirectory().createNewFile();
-                    // Make a dialog appear for the user to choose a name for the file
-                    String nameFileOut = chooseNameFileDialog();
-                    // Create a file with the name
-                    fileOut = new File(dc.getInitialDirectory()+"\\"+nameFileOut+".bmp");
-                    Convolution.performConvolution(this.inputFile.getAbsolutePath(), fileOut.getAbsolutePath(), rulesCustom);
-                    displayImage(fileOut.getAbsolutePath());
-                } catch (IOException | NullPointerException ex) {
-                    System.out.println("Error caught");
-                }
-                inputFile=null;
-                
-            }
-            else if(choice.equals("Gaussian Blur")){
-                System.out.println("Gaussian Blur Clicked");
-                //Get the image the user wants to convolve
-                if(inputFile==null){
-                    this.inputFile = getFileFromFChooser();
-                }
-                // Let the user choose a directory to create the image
-                // Choose the directory in which the user wants to save the image
-                Stage stage = new Stage();
-                DirectoryChooser dc = new DirectoryChooser();
-                primaryStage.setAlwaysOnTop(false);
-                stage.setAlwaysOnTop(true);
-                dc.setInitialDirectory(dc.showDialog(stage));
-                stage.setAlwaysOnTop(false);
-                primaryStage.setAlwaysOnTop(true);
-                try {
-                    dc.getInitialDirectory().createNewFile();
-                    // Make a dialog appear for the user to choose a name for the file
-                    String nameFileOut = chooseNameFileDialog();
-                    // Create a file with the name
-                    fileOut = new File(dc.getInitialDirectory()+"\\"+nameFileOut+".bmp");
-                    Convolution.performConvolution(this.inputFile.getAbsolutePath(), fileOut.getAbsolutePath(), rulesGaussian);
-                    displayImage(fileOut.getAbsolutePath());
-                } catch (IOException | NullPointerException ex) {
-                    System.out.println("Error caught");
-                }
-                inputFile=null;
-            }
-            else if(choice.equals("Sharpening")){
-                System.out.println("Sharpening Clicked");
-                //Get the image the user wants to convolve
-                if(inputFile==null){
-                    this.inputFile = getFileFromFChooser();
-                }
-                // Let the user choose a directory to create the image
-                // Choose the directory in which the user wants to save the image
-                Stage stage = new Stage();
-                DirectoryChooser dc = new DirectoryChooser();
-                primaryStage.setAlwaysOnTop(false);
-                stage.setAlwaysOnTop(true);
-                dc.setInitialDirectory(dc.showDialog(stage));
-                stage.setAlwaysOnTop(false);
-                primaryStage.setAlwaysOnTop(true);
-                try {
-                    dc.getInitialDirectory().createNewFile();
-                    // Make a dialog appear for the user to choose a name for the file
-                    String nameFileOut = chooseNameFileDialog();
-                    // Create a file with the name
-                    fileOut = new File(dc.getInitialDirectory()+"\\"+nameFileOut+".bmp");
-                    Convolution.performConvolution(this.inputFile.getAbsolutePath(), fileOut.getAbsolutePath(), rulesSharp1);
-                    displayImage(fileOut.getAbsolutePath());
-                } catch (IOException | NullPointerException ex) {
-                    System.out.println("Error caught");
-                }
-                inputFile=null;
-            }
-            else if(choice.equals("Grayscale")){
-                System.out.println("Sharpening Clicked");
-                //Get the image the user wants to convolve
-                if(inputFile==null){
-                    this.inputFile = getFileFromFChooser();
-                }
-                // Let the user choose a directory to create the image
-                // Choose the directory in which the user wants to save the image
-                Stage stage = new Stage();
-                DirectoryChooser dc = new DirectoryChooser();
-                primaryStage.setAlwaysOnTop(false);
-                stage.setAlwaysOnTop(true);
-                dc.setInitialDirectory(dc.showDialog(stage));
-                stage.setAlwaysOnTop(false);
-                primaryStage.setAlwaysOnTop(true);
-                try {
-                    dc.getInitialDirectory().createNewFile();
-                    // Make a dialog appear for the user to choose a name for the file
-                    String nameFileOut = chooseNameFileDialog();
-                    // Create a file with the name
-                    fileOut = new File(dc.getInitialDirectory()+"\\"+nameFileOut+".bmp");
-                    Convolution.performGrayscale(this.inputFile.getAbsolutePath(), fileOut.getAbsolutePath());
-                    displayImage(fileOut.getAbsolutePath());
-                } catch (IOException | NullPointerException ex) {
-                    System.out.println("Error caught");
-                }
-                inputFile=null;
-            }
-            else if(choice.equals("Sobel X")){
-                System.out.println("Sobel X clicked");
-                //Get the image the user wants to convolve
-                if(inputFile==null){
-                    this.inputFile = getFileFromFChooser();
-                }
-                // Let the user choose a directory to create the image
-                // Choose the directory in which the user wants to save the image
-                Stage stage = new Stage();
-                DirectoryChooser dc = new DirectoryChooser();
-                primaryStage.setAlwaysOnTop(false);
-                stage.setAlwaysOnTop(true);
-                dc.setInitialDirectory(dc.showDialog(stage));
-                stage.setAlwaysOnTop(false);
-                primaryStage.setAlwaysOnTop(true);
-                try {
-                    dc.getInitialDirectory().createNewFile();
-                    // Make a dialog appear for the user to choose a name for the file
-                    String nameFileOut = chooseNameFileDialog();
-                    // Create a file with the name
-                    fileOut = new File(dc.getInitialDirectory()+"\\"+nameFileOut+".bmp");
-                    Convolution.performConvolution(this.inputFile.getAbsolutePath(), fileOut.getAbsolutePath(), rulesGaussian);
-                    Convolution.performGrayscale(fileOut.getAbsolutePath(), fileOut.getAbsolutePath());
-                    Convolution.performSobelX(fileOut.getAbsolutePath(),fileOut.getAbsolutePath());
-                    displayImage(fileOut.getAbsolutePath());
-                } catch (IOException | NullPointerException ex) {
-                    System.out.println("Error caught");
-                }
-                inputFile=null;
-            }
-            else if(choice.equals("Sobel Y")){
-                System.out.println("Sobel Y clicked");
-                //Get the image the user wants to convolve
-                if(inputFile==null){
-                    this.inputFile = getFileFromFChooser();
-                }
-                // Let the user choose a directory to create the image
-                // Choose the directory in which the user wants to save the image
-                Stage stage = new Stage();
-                DirectoryChooser dc = new DirectoryChooser();
-                primaryStage.setAlwaysOnTop(false);
-                stage.setAlwaysOnTop(true);
-                dc.setInitialDirectory(dc.showDialog(stage));
-                stage.setAlwaysOnTop(false);
-                primaryStage.setAlwaysOnTop(true);
-                try {
-                    dc.getInitialDirectory().createNewFile();
-                    // Make a dialog appear for the user to choose a name for the file
-                    String nameFileOut = chooseNameFileDialog();
-                    // Create a file with the name
-                    fileOut = new File(dc.getInitialDirectory()+"\\"+nameFileOut+".bmp");
-                    Convolution.performConvolution(this.inputFile.getAbsolutePath(), fileOut.getAbsolutePath(), rulesGaussian);
-                    Convolution.performGrayscale(fileOut.getAbsolutePath(), fileOut.getAbsolutePath());
-                    Convolution.performSobelY(fileOut.getAbsolutePath(),fileOut.getAbsolutePath());
-                    displayImage(fileOut.getAbsolutePath());
-                } catch (IOException | NullPointerException ex) {
-                    System.out.println("Error caught");
-                }
-                inputFile=null;
-            }
-            else if(choice.equals("Sobel Complete")){
-                System.out.println("Sobel Complete clicked");
-                //Get the image the user wants to convolve
-                if(inputFile==null){
-                    chooseFileDialog();
-                    this.inputFile = getFileFromFChooser();
-                }
-                // Let the user choose a directory to create the image
-                // Choose the directory in which the user wants to save the image
-                chooseDirectoryDialog();
-                DirectoryChooser dc = getDirectoryChooser();
-                try {
-                    dc.getInitialDirectory().createNewFile();
-                    // Make a dialog appear for the user to choose a name for the file
-                    String nameFileOut = chooseNameFileDialog();
-                    //Get the threshold from the FXML
-                    float threshold=100;
-                    if(thresholdTxtBox.getText()==null){
-                        threshold=defaultThreshold;
-                    }
-                    else{
-                        try{
-                        threshold = Float.parseFloat(thresholdTxtBox.getText());
-                        }catch(Exception e){
-                            threshold=defaultThreshold;
-                        }
-                    }
-                    // Create a file with the name
-                    fileOut = new File(dc.getInitialDirectory()+"\\"+nameFileOut+".bmp");
-                    Convolution.performConvolution(this.inputFile.getAbsolutePath(), fileOut.getAbsolutePath(), rulesGaussian);
-                    Convolution.performGrayscale(fileOut.getAbsolutePath(), fileOut.getAbsolutePath());
-                    Convolution.performSobel(fileOut.getAbsolutePath(),fileOut.getAbsolutePath(), threshold);
-                    displayImage(fileOut.getAbsolutePath());
-                } catch (IOException | NullPointerException ex) {
-                    System.out.println("Error caught");
-                }
-                inputFile=null;
-            }
-            else if(choice.equals("Reset")){
-                System.out.println("Reset");
-                inputFile=null;
-            }
-            else{
-                System.out.println("Else");
-            }
+            
         });
         getFromFileBtn.setOnAction((event)->{
             System.out.println("Get from file clicked");
-            inputFile = getFileFromFChooser();
+            File temp = new File("src\\main\\resources\\Images\\Convolutions\\temp.bmp");
+            File chosen = getFileFromFChooser();
             try{
-                displayImage(inputFile.getAbsolutePath());
+            FileInputStream FIS = new FileInputStream(chosen);
+            FileOutputStream FOS = new FileOutputStream(temp);
+            FOS.write(FIS.readAllBytes());
+            }catch(Exception e){
+                System.out.println("The system could not get the file from the file chooser");
+            }
+            imageBeingDisplayedOnIV = temp;
+            try{
+                displayImage(imageBeingDisplayedOnIV.getAbsolutePath());
             }catch(Exception e){
                 System.out.println("Error caught");
             }
@@ -448,6 +164,22 @@ public class FXMLConvolutionsSceneController {
             }catch(Exception e){
             }
             
+        });
+        SaveToFileBtn.setOnAction((event)->{
+            //To save the file, we need a directory and a name for the file
+            String name = chooseNameFileDialog();
+            DirectoryChooser dc = getDirectoryChooser();
+            File file = new File(dc.getInitialDirectory().getAbsolutePath()+"//"+name+".bmp");
+            try {
+                //Cipy the data from the temporary file
+                FileInputStream FIS = new FileInputStream(imageBeingDisplayedOnIV.getAbsolutePath());
+                FileOutputStream FOS = new FileOutputStream(file);
+                FOS.write(FIS.readAllBytes());
+            } catch (FileNotFoundException ex) {
+                System.out.println("No file is being displayed");
+            } catch (IOException ex) {
+                System.out.println("Could not write in the file");
+            }
         });
         saveToDatabaseBtn.setOnAction((event)->{
             System.out.println("Save to Database clicked");
@@ -480,8 +212,134 @@ public class FXMLConvolutionsSceneController {
             }
             
         });
-        
-        convolveBtn.setOnAction(convolutionCB.getOnAction());
+        convolveBtn.setOnAction((event)->{
+            //To convolve an image, we need an image and a convolution choice
+            //Convolution choice
+            boolean convolutionIsSelected = false;
+            String choice =convolutionCB.getValue().toString();
+            if(convolutionCB.getValue()!=null){
+                choice = convolutionCB.getValue().toString();
+                System.out.println(choice+" selected");
+                convolutionIsSelected = true;
+            }
+            else{
+                System.out.println("No choice selected");
+                //Show message to user to choose a convolution
+            }
+            //Image
+            boolean imageIsSelected = false;
+            Image image = imageImgView.getImage();
+            if(image!=null){
+                imageIsSelected = true;
+                System.out.println("imageIsSelected: "+imageIsSelected);
+            }
+            else{
+                System.out.println("No image selected");
+                //Show message to user to choose an image
+            }
+            if(convolutionIsSelected==true&&imageIsSelected==true){
+                System.out.println("Necessary conditions for convolution to be carried are respected");
+                //If the user wants the custom kernel, we need to get the values from the textfields and initialize the rulesCustom 2D array
+                if(choice.equals("Custom Kernel")){
+                    System.out.println("Custom Kernel Clicked");
+                    float[][] rulesCustom = new float[3][3];
+                    TextField[][] txtRules = {{txt11,txt12,txt13},
+                                             {txt21,txt22,txt23},
+                                             {txt31,txt32,txt33}};
+                    for(int i=0; i<txtRules.length; i++){
+                        for(int j=0; j<txtRules[0].length;j++){
+                            try{
+                                rulesCustom[i][j] = Float.valueOf(txtRules[i][j].getText());
+                            }catch(Exception e){
+                              rulesCustom[i][j] = 0f;
+                            }
+                            System.out.print(rulesCustom[i][j]+" ");
+                        }
+                        System.out.println();
+                    }
+                    try {
+                        Convolution.performConvolution(this.imageBeingDisplayedOnIV.getAbsolutePath(), this.imageBeingDisplayedOnIV.getAbsolutePath(), rulesCustom);
+                        displayImage(this.imageBeingDisplayedOnIV.getAbsolutePath());
+                    } catch (IOException | NullPointerException ex) {
+                        System.out.println("Error caught");
+                    }
+                }
+            
+            else if(choice.equals("Gaussian Blur")){
+                System.out.println("Gaussian Blur Clicked");
+                try {
+                    Convolution.performConvolution(this.imageBeingDisplayedOnIV.getAbsolutePath(), this.imageBeingDisplayedOnIV.getAbsolutePath(), rulesGaussian);
+                    displayImage(this.imageBeingDisplayedOnIV.getAbsolutePath());
+                } catch (IOException | NullPointerException ex) {
+                    System.out.println("Error caught");
+                }
+            }
+            else if(choice.equals("Sharpening")){
+                try {
+                    Convolution.performConvolution(this.imageBeingDisplayedOnIV.getAbsolutePath(), this.imageBeingDisplayedOnIV.getAbsolutePath(), rulesSharp1);
+                    displayImage(this.imageBeingDisplayedOnIV.getAbsolutePath());
+                } catch (IOException | NullPointerException ex) {
+                    System.out.println("Error caught");
+                }
+            }
+            else if(choice.equals("Grayscale")){
+                try {
+                    Convolution.performGrayscale(this.imageBeingDisplayedOnIV.getAbsolutePath(), this.imageBeingDisplayedOnIV.getAbsolutePath());
+                    displayImage(this.imageBeingDisplayedOnIV.getAbsolutePath());
+                } catch (IOException | NullPointerException ex) {
+                    System.out.println("Error caught");
+                }
+            }
+            else if(choice.equals("Sobel X")){
+                try {
+                    Convolution.performConvolution(this.imageBeingDisplayedOnIV.getAbsolutePath(), this.imageBeingDisplayedOnIV.getAbsolutePath(), rulesGaussian);
+                    Convolution.performGrayscale(this.imageBeingDisplayedOnIV.getAbsolutePath(), this.imageBeingDisplayedOnIV.getAbsolutePath());
+                    Convolution.performSobelX(this.imageBeingDisplayedOnIV.getAbsolutePath(), this.imageBeingDisplayedOnIV.getAbsolutePath());
+                    displayImage(this.imageBeingDisplayedOnIV.getAbsolutePath());
+                } catch (IOException | NullPointerException ex) {
+                    System.out.println("Error caught");
+                }
+            }
+            else if(choice.equals("Sobel Y")){
+                try {
+                    Convolution.performConvolution(this.imageBeingDisplayedOnIV.getAbsolutePath(), this.imageBeingDisplayedOnIV.getAbsolutePath(), rulesGaussian);
+                    Convolution.performGrayscale(this.imageBeingDisplayedOnIV.getAbsolutePath(), this.imageBeingDisplayedOnIV.getAbsolutePath());
+                    Convolution.performSobelX(this.imageBeingDisplayedOnIV.getAbsolutePath(), this.imageBeingDisplayedOnIV.getAbsolutePath());
+                    displayImage(this.imageBeingDisplayedOnIV.getAbsolutePath());
+                } catch (IOException | NullPointerException ex) {
+                    System.out.println("Error caught");
+                }
+            }
+            else if(choice.equals("Sobel Complete")){
+                try {
+                    float threshold=100;
+                    if(thresholdTxtBox.getText()==null){
+                        threshold=defaultThreshold;
+                    }
+                    else{
+                        try{
+                        threshold = Float.parseFloat(thresholdTxtBox.getText());
+                        }catch(Exception e){
+                            threshold=defaultThreshold;
+                        }
+                    }
+                    Convolution.performConvolution(this.imageBeingDisplayedOnIV.getAbsolutePath(), this.imageBeingDisplayedOnIV.getAbsolutePath(), rulesGaussian);
+                    Convolution.performGrayscale(this.imageBeingDisplayedOnIV.getAbsolutePath(), this.imageBeingDisplayedOnIV.getAbsolutePath());
+                    Convolution.performSobel(this.imageBeingDisplayedOnIV.getAbsolutePath(), this.imageBeingDisplayedOnIV.getAbsolutePath(), threshold);
+                    displayImage(this.imageBeingDisplayedOnIV.getAbsolutePath());
+                } catch (IOException | NullPointerException ex) {
+                    System.out.println("Error caught");
+                }
+            }
+            else if(choice.equals("Reset")){
+                System.out.println("Reset");
+            }
+            else{
+                System.out.println("Else");
+            }
+            }
+            
+        });
         BackToTitleMenuItem.setOnAction((event)->{
             MainApp.switchScene(MainApp.FXMLTitleScene, new FXMLTitleSceneController(primaryStage));
             
@@ -633,9 +491,10 @@ public class FXMLConvolutionsSceneController {
                     if(rs2.getString("title").equals(choiceOfImage)){
                         byte[] b = rs2.getBytes("image");
                         System.out.println(b.length);
-                        temp = new File("src\\main\\resources\\Images\\Convolutions\\"+choiceOfImage+".bmp");
+                        temp = new File("src\\main\\resources\\Images\\Convolutions\\temp.bmp");
                         FOS = new FileOutputStream(temp);
                         FOS.write(b);
+                        imageBeingDisplayedOnIV = temp;
                         imageImgView.setImage(new Image(temp.getAbsolutePath()));
                         
                     }

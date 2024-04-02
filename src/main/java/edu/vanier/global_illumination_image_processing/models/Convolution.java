@@ -379,6 +379,7 @@ public class Convolution {
         File file = new File(fileNameOut);
         //Writes the output file with the data of the BufferedImage
         ImageIO.write(finalImage, "bmp", file);
+        System.out.println("Done");
     }
     /**
      * This method applies a kernel to an array. 
