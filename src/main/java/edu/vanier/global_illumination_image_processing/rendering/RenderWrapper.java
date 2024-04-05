@@ -161,9 +161,9 @@ public class RenderWrapper {
      * 
      * @param multithread boolean MultiThread yes/no (true/false)
      * @param stratified boolean stratified sampling yes/no (true/false)
-     * @param threads threads requested to use, <= 0 for maximum
+     * @return long render time
      */
-    public void render(boolean multithread, boolean stratified) {
+    public long render(boolean multithread, boolean stratified) {
         System.out.printf("Rendering: %2.0f samples%n", SPP);
         // start a clock
         final long startTime = System.currentTimeMillis();
@@ -235,6 +235,7 @@ public class RenderWrapper {
         
         System.out.println("Render finished");
         System.out.println("Final time (milliseconnds): " + (System.currentTimeMillis() - startTime));
+        return System.currentTimeMillis() - startTime;
     }
     
     /** 

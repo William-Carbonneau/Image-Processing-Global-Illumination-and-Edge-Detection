@@ -50,6 +50,7 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.paint.Color?>
 <?import javafx.scene.shape.Line?>
@@ -91,13 +92,17 @@
       <items>
         <AnchorPane>
                <children>
-                  <ScrollPane AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                  <ScrollPane fx:id="scrollImageHolder" pannable="true" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                      <content>
-                        <ImageView fx:id="imgResult" pickOnBounds="true" preserveRatio="true" smooth="false">
-                           <viewport>
-                              <Rectangle2D />
-                           </viewport>
-                        </ImageView>
+                        <StackPane fx:id="stackImageHolder">
+                           <children>
+                              <ImageView fx:id="imgResult" pickOnBounds="true" preserveRatio="true" smooth="false">
+                                 <viewport>
+                                    <Rectangle2D />
+                                 </viewport>
+                              </ImageView>
+                           </children>
+                        </StackPane>
                      </content>
                   </ScrollPane>
                </children></AnchorPane>
@@ -238,18 +243,6 @@
                         </Label>
                         <Line endX="50.0" startX="-50.0" />
                         <ListView fx:id="listObjectList" />
-                        <HBox alignment="CENTER" prefHeight="20.0" prefWidth="200.0" spacing="8.0" visible="false">
-                           <children>
-                              <Label text="Width:">
-                                 <HBox.margin>
-                                    <Insets left="4.0" right="4.0" />
-                                 </HBox.margin>
-                              </Label>
-                              <TextField fx:id="txtWidth" prefHeight="25.0" prefWidth="75.0" promptText="800 WIP" />
-                              <Label text="Height:" />
-                              <TextField fx:id="txtHeight" prefHeight="25.0" prefWidth="75.0" promptText="800 WIP" />
-                           </children>
-                        </HBox>
                         <HBox alignment="CENTER" prefHeight="20.0" prefWidth="200.0" spacing="8.0">
                            <VBox.margin>
                               <Insets />
@@ -281,7 +274,7 @@
     </SplitPane>
     <HBox id="HBox" alignment="CENTER_LEFT" spacing="5.0" VBox.vgrow="NEVER">
       <children>
-        <Label maxHeight="1.7976931348623157E308" maxWidth="-1.0" text="Left status" HBox.hgrow="ALWAYS">
+        <Label fx:id="lblLeftStatus" maxHeight="1.7976931348623157E308" maxWidth="-1.0" text="Left status" HBox.hgrow="ALWAYS">
           <font>
             <Font size="11.0" fx:id="x3" />
           </font>
@@ -290,7 +283,7 @@
           </textFill>
         </Label>
         <Pane prefHeight="-1.0" prefWidth="-1.0" HBox.hgrow="ALWAYS" />
-        <Label font="$x3" maxWidth="-1.0" text="Right status" textFill="$x4" HBox.hgrow="NEVER" />
+        <Label fx:id="lblRightStatus" font="$x3" maxWidth="-1.0" text="Right status" textFill="$x4" HBox.hgrow="NEVER" />
       </children>
       <padding>
         <Insets bottom="3.0" left="3.0" right="3.0" top="3.0" />
