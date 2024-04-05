@@ -65,6 +65,11 @@ public class FXMLRenderSceneController {
     @FXML ScrollPane scrollImageHolder;
     @FXML StackPane stackImageHolder;
     Stage primaryStage;
+    
+    /** create the render scene */
+    Scene mainScene = new Scene();
+    /** The renderer instance TODO modify width/height */
+    RenderWrapper renderer = new RenderWrapper(800, 800, mainScene, 8.0);
 
     // construct this controller with the primary stage
     public FXMLRenderSceneController(Stage primaryStage) {
@@ -80,12 +85,24 @@ public class FXMLRenderSceneController {
         return input;
     }
     
-    public void initialize(){
-        /** create the render scene */
-        Scene mainScene = new Scene();
-        /** The renderer instance TODO modify width/height */
-        RenderWrapper renderer = new RenderWrapper(800, 800, mainScene, 8.0);
-        
+    /**
+     * Recursive algorithm to get a unique name
+     * 
+     * @param key the string got be accessed
+     * @param depth the recursion depth
+     * @return String unique name
+     */
+    private String modifyKeyString(String key, int depth) {
+        String temp = key;
+        if (mainScene.getObjectByName(key) != null && key.charAt(key.length()-1) == ' ') {
+            temp = modifyKeyString(key + (depth + 1), depth + 1);
+        }else if (mainScene.getObjectByName(key) != null) {
+            temp = modifyKeyString(key.substring(0, key.length()-1) + (depth + 1), depth + 1);
+        }
+        return temp;
+    }
+    
+    public void initialize(){        
         // create list of elements - needs a new class wrapper
         ObservableList<ObjWrapper> objectList = FXCollections.observableArrayList();
         ObservableList<String> typeChoiceBoxList = FXCollections.observableArrayList("Diffuse","Reflective","Refractive");
@@ -133,7 +150,7 @@ public class FXMLRenderSceneController {
          * Add a new sphere to the scene
          */
         menuItemAddSphere.setOnAction((event) -> {
-            ObjWrapper obj = new ObjWrapper("New Sphere", new Sphere(new Vec3D(0,0,1), 1.0, new DiffuseColor(8, 0, 0), 0,1));
+            ObjWrapper obj = new ObjWrapper(modifyKeyString("New Sphere ", 0), new Sphere(new Vec3D(0,0,-3), 1.0, new DiffuseColor(8, 0, 0), 0,1));
             objectList.add(obj);
             mainScene.addObj(obj.getName(), obj.getObj());
         });
@@ -142,7 +159,7 @@ public class FXMLRenderSceneController {
          * Add a new Plane facing the X direction to the Scene
          */
         menuItemAddPlaneX.setOnAction((event) -> {
-            ObjWrapper obj = new ObjWrapper("New Plane X", new Plane(new Vec3D(1,0,0), 1, new DiffuseColor(0, 8, 0), 0,1));
+            ObjWrapper obj = new ObjWrapper(modifyKeyString("New Plane X ", 0), new Plane(new Vec3D(1,0,0), 1, new DiffuseColor(0, 8, 0), 0,1));
             objectList.add(obj);
             mainScene.addObj(obj.getName(), obj.getObj());
         });
@@ -151,7 +168,7 @@ public class FXMLRenderSceneController {
          * Add a new Plane facing the Y direction to the Scene
          */
         menuItemAddPlaneY.setOnAction((event) -> {
-            ObjWrapper obj = new ObjWrapper("New Plane Y", new Plane(new Vec3D(0,1,0), 1, new DiffuseColor(0, 0, 8), 0,1));
+            ObjWrapper obj = new ObjWrapper(modifyKeyString("New Plane Y ", 0), new Plane(new Vec3D(0,1,0), 1, new DiffuseColor(0, 0, 8), 0,1));
             objectList.add(obj);
             mainScene.addObj(obj.getName(), obj.getObj());
         });
@@ -160,7 +177,7 @@ public class FXMLRenderSceneController {
          * Add a new Plane facing the Z direction to the Scene
          */
         menuItemAddPlaneZ.setOnAction((event) -> {
-            ObjWrapper obj = new ObjWrapper("New Plane Z", new Plane(new Vec3D(0,0,1), 3, new DiffuseColor(8, 0, 8), 0,1));
+            ObjWrapper obj = new ObjWrapper(modifyKeyString("New Plane Z ", 0), new Plane(new Vec3D(0,0,1), 3, new DiffuseColor(8, 0, 8), 0,1));
             objectList.add(obj);
             mainScene.addObj(obj.getName(), obj.getObj());
         });
