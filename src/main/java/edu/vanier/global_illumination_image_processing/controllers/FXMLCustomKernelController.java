@@ -18,11 +18,17 @@ public class FXMLCustomKernelController {
     @FXML
     Button generateBtn;
     @FXML
-    Button getKernelBtn;
+    Button setKernelBtn;
     @FXML
     BorderPane BPane;
     TextField[][] kernel;
     float[][] kernelFloat;
+
+    public float[][] getKernelFloat() {
+        return kernelFloat;
+    }
+
+    
     @FXML
     public void initialize(){
         choiceBoxCK.getItems().addAll("1x1","3x3","5x5","7x7","9x9");
@@ -81,7 +87,7 @@ public class FXMLCustomKernelController {
             }
             
         });
-        getKernelBtn.setOnAction((event)->{
+        setKernelBtn.setOnAction((event)->{
             kernelFloat = new float[kernel.length][kernel[0].length];
             //verify that all values have been initialized
             boolean kernelValid = verifyKernel();

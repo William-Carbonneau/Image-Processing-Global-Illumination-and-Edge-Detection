@@ -66,7 +66,11 @@ public class FXMLConvolutionsSceneController {
     @FXML
     TextField txt11,txt12,txt13,txt21,txt22,txt23,txt31,txt32,txt33;
     // Source for the kernel to implement: https://youtu.be/C_zFhWdM4ic?si=CH3JvuO9mSfVmleJ
-    float[][] rulesGaussian = {{1,2,1},{2,4,2},{1,2,1}};
+    float[][] rulesGaussian3x3 = {{1,2,1},{2,4,2},{1,2,1}};
+    //Taken from https://www.researchgate.net/figure/Discrete-approximation-of-the-Gaussian-kernels-3x3-5x5-7x7_fig2_325768087
+    float[][] rulesGaussian5x5 = {{1,4,7,4,1},{4,16,26,16,4},{7,26,41,26,7},{4,16,26,16,4},{1,4,7,4,1}};
+    //Taken from https://www.researchgate.net/figure/Discrete-approximation-of-the-Gaussian-kernels-3x3-5x5-7x7_fig2_325768087
+    float[][] rulesGaussian7x7 = {{0,0,1,2,1,0,0},{0,3,13,22,13,3,0},{1,13,59,97,59,13,1},{2,22,97,159,97,22,2},{1,13,59,97,59,13,1},{0,3,13,22,13,3,0},{0,0,1,2,1,0,0}};
     //Source for the kernel to implement: https://pro.arcgis.com/en/pro-app/latest/help/analysis/raster-functions/convolution-function.htm#:~:text=The%20Convolution%20function%20performs%20filtering,or%20other%20kernel%2Dbased%20enhancements.
     float[][] rulesSharp1 = {{0f,-0.25f,0f},{-0.25f,2f,-0.25f},{0f,-0.25f,0f}};
     //Source for the kernel: https://en.wikipedia.org/wiki/Sobel_operator
@@ -81,6 +85,7 @@ public class FXMLConvolutionsSceneController {
     File imageBeingDisplayedOnIV;
     String nameFileOut;
     float threshold = 50;
+    float[][] kernelWithMoreDimensions;
 
     public FXMLConvolutionsSceneController(Stage primaryStage) {
         this.primaryStage = primaryStage;
@@ -111,7 +116,7 @@ public class FXMLConvolutionsSceneController {
     }
     @FXML
     public void initialize(){
-        convolutionCB.getItems().addAll("Custom Kernel","Kernels With Different Dimensions", "Gaussian Blur", "Sharpening","Grayscale", "Sobel X", "Sobel Y", "Sobel Complete","Prewitt","Laplacian", "Reset");
+        convolutionCB.getItems().addAll("Custom Kernel","Kernels With Different Dimensions", "Gaussian Blur 3x3","Gaussian Blur 5x5","Gaussian Blur 7x7", "Sharpening","Grayscale", "Sobel X", "Sobel Y", "Sobel Complete","Prewitt","Laplacian", "Reset");
         convolutionCB.setOnAction((event)->{
             //Get the value of the convolution
             String choice = convolutionCB.getValue().toString();
@@ -262,10 +267,28 @@ public class FXMLConvolutionsSceneController {
                     }
                 }
             
-            else if(choice.equals("Gaussian Blur")){
-                System.out.println("Gaussian Blur Clicked");
+            else if(choice.equals("Gaussian Blur 3x3")){
+                System.out.println("Gaussian Blur 3x3 Clicked");
                 try {
-                    Convolution.performConvolution(this.imageBeingDisplayedOnIV.getAbsolutePath(), this.imageBeingDisplayedOnIV.getAbsolutePath(), rulesGaussian);
+                    Convolution.performConvolution(this.imageBeingDisplayedOnIV.getAbsolutePath(), this.imageBeingDisplayedOnIV.getAbsolutePath(), rulesGaussian3x3);
+                    displayImage(this.imageBeingDisplayedOnIV.getAbsolutePath());
+                } catch (IOException | NullPointerException ex) {
+                    System.out.println("Error caught");
+                }
+            }
+            else if(choice.equals("Gaussian Blur 5x5")){
+                System.out.println("Gaussian Blur 5x5 Clicked");
+                try {
+                    Convolution.performConvolution(this.imageBeingDisplayedOnIV.getAbsolutePath(), this.imageBeingDisplayedOnIV.getAbsolutePath(), rulesGaussian5x5);
+                    displayImage(this.imageBeingDisplayedOnIV.getAbsolutePath());
+                } catch (IOException | NullPointerException ex) {
+                    System.out.println("Error caught");
+                }
+            }
+            else if(choice.equals("Gaussian Blur 7x7")){
+                System.out.println("Gaussian Blur 7x7 Clicked");
+                try {
+                    Convolution.performConvolution(this.imageBeingDisplayedOnIV.getAbsolutePath(), this.imageBeingDisplayedOnIV.getAbsolutePath(), rulesGaussian7x7);
                     displayImage(this.imageBeingDisplayedOnIV.getAbsolutePath());
                 } catch (IOException | NullPointerException ex) {
                     System.out.println("Error caught");
@@ -289,7 +312,7 @@ public class FXMLConvolutionsSceneController {
             }
             else if(choice.equals("Sobel X")){
                 try {
-                    Convolution.performConvolution(this.imageBeingDisplayedOnIV.getAbsolutePath(), this.imageBeingDisplayedOnIV.getAbsolutePath(), rulesGaussian);
+                    Convolution.performConvolution(this.imageBeingDisplayedOnIV.getAbsolutePath(), this.imageBeingDisplayedOnIV.getAbsolutePath(), rulesGaussian7x7);
                     Convolution.performGrayscale(this.imageBeingDisplayedOnIV.getAbsolutePath(), this.imageBeingDisplayedOnIV.getAbsolutePath());
                     Convolution.performSobelX(this.imageBeingDisplayedOnIV.getAbsolutePath(), this.imageBeingDisplayedOnIV.getAbsolutePath());
                     displayImage(this.imageBeingDisplayedOnIV.getAbsolutePath());
@@ -299,7 +322,7 @@ public class FXMLConvolutionsSceneController {
             }
             else if(choice.equals("Sobel Y")){
                 try {
-                    Convolution.performConvolution(this.imageBeingDisplayedOnIV.getAbsolutePath(), this.imageBeingDisplayedOnIV.getAbsolutePath(), rulesGaussian);
+                    Convolution.performConvolution(this.imageBeingDisplayedOnIV.getAbsolutePath(), this.imageBeingDisplayedOnIV.getAbsolutePath(), rulesGaussian7x7);
                     Convolution.performGrayscale(this.imageBeingDisplayedOnIV.getAbsolutePath(), this.imageBeingDisplayedOnIV.getAbsolutePath());
                     Convolution.performSobelX(this.imageBeingDisplayedOnIV.getAbsolutePath(), this.imageBeingDisplayedOnIV.getAbsolutePath());
                     displayImage(this.imageBeingDisplayedOnIV.getAbsolutePath());
@@ -320,7 +343,7 @@ public class FXMLConvolutionsSceneController {
                             threshold=defaultThreshold;
                         }
                     }
-                    Convolution.performConvolution(this.imageBeingDisplayedOnIV.getAbsolutePath(), this.imageBeingDisplayedOnIV.getAbsolutePath(), rulesGaussian);
+                    Convolution.performConvolution(this.imageBeingDisplayedOnIV.getAbsolutePath(), this.imageBeingDisplayedOnIV.getAbsolutePath(), rulesGaussian7x7);
                     Convolution.performGrayscale(this.imageBeingDisplayedOnIV.getAbsolutePath(), this.imageBeingDisplayedOnIV.getAbsolutePath());
                     Convolution.performSobel(this.imageBeingDisplayedOnIV.getAbsolutePath(), this.imageBeingDisplayedOnIV.getAbsolutePath(), threshold);
                     displayImage(this.imageBeingDisplayedOnIV.getAbsolutePath());
@@ -341,7 +364,7 @@ public class FXMLConvolutionsSceneController {
                             threshold=defaultThreshold;
                         }
                     }
-                    Convolution.performConvolution(this.imageBeingDisplayedOnIV.getAbsolutePath(), this.imageBeingDisplayedOnIV.getAbsolutePath(), rulesGaussian);
+                    Convolution.performConvolution(this.imageBeingDisplayedOnIV.getAbsolutePath(), this.imageBeingDisplayedOnIV.getAbsolutePath(), rulesGaussian7x7);
                     Convolution.performGrayscale(this.imageBeingDisplayedOnIV.getAbsolutePath(), this.imageBeingDisplayedOnIV.getAbsolutePath());
                     Convolution.performPrewitt(this.imageBeingDisplayedOnIV.getAbsolutePath(), this.imageBeingDisplayedOnIV.getAbsolutePath(), threshold);
                     displayImage(this.imageBeingDisplayedOnIV.getAbsolutePath());
@@ -361,7 +384,7 @@ public class FXMLConvolutionsSceneController {
                             threshold=defaultThreshold;
                         }
                     }
-                    Convolution.performConvolution(this.imageBeingDisplayedOnIV.getAbsolutePath(), this.imageBeingDisplayedOnIV.getAbsolutePath(), rulesGaussian);
+                    Convolution.performConvolution(this.imageBeingDisplayedOnIV.getAbsolutePath(), this.imageBeingDisplayedOnIV.getAbsolutePath(), rulesGaussian7x7);
                     Convolution.performGrayscale(this.imageBeingDisplayedOnIV.getAbsolutePath(), this.imageBeingDisplayedOnIV.getAbsolutePath());
                     Convolution.performLaplacianOperator(this.imageBeingDisplayedOnIV.getAbsolutePath(), this.imageBeingDisplayedOnIV.getAbsolutePath());
                     displayImage(this.imageBeingDisplayedOnIV.getAbsolutePath());
@@ -384,6 +407,14 @@ public class FXMLConvolutionsSceneController {
                         stage.setScene(scene);
                         stage.setAlwaysOnTop(true);
                         stage.showAndWait();
+                        kernelWithMoreDimensions = controllerCK.getKernelFloat();
+                        Convolution.print2DArray(kernelWithMoreDimensions);
+                        try {
+                            Convolution.performConvolution(this.imageBeingDisplayedOnIV.getAbsolutePath(), this.imageBeingDisplayedOnIV.getAbsolutePath(), kernelWithMoreDimensions);
+                            displayImage(this.imageBeingDisplayedOnIV.getAbsolutePath());
+                        } catch (IOException | NullPointerException ex) {
+                            System.out.println("Error caught");
+                        }
                         
                     } catch (IOException ex) {
                         Logger.getLogger("Could not load FXML");
