@@ -63,8 +63,6 @@ public class FXMLConvolutionsSceneController {
     @FXML
     Button saveToDatabaseBtn;
     float defaultThreshold=100;
-    @FXML
-    TextField txt11,txt12,txt13,txt21,txt22,txt23,txt31,txt32,txt33;
     // Source for the kernel to implement: https://youtu.be/C_zFhWdM4ic?si=CH3JvuO9mSfVmleJ
     float[][] rulesGaussian3x3 = {{1,2,1},{2,4,2},{1,2,1}};
     //Taken from https://www.researchgate.net/figure/Discrete-approximation-of-the-Gaussian-kernels-3x3-5x5-7x7_fig2_325768087
@@ -95,12 +93,6 @@ public class FXMLConvolutionsSceneController {
     FXMLConvolutionsSceneController() {
         
     }
-    public TextField[][] getCustomKernelTxtField(){
-        TextField[][] txtRules = {{txt11,txt12,txt13},
-                                          {txt21,txt22,txt23},
-                                          {txt31,txt32,txt33}};
-        return txtRules;
-    }
     public float[][] getCustomKernelFloat(TextField[][] txtRules){
         float[][] rulesCustom = new float[3][3];
         for(int i=0; i<txtRules.length; i++){
@@ -116,7 +108,7 @@ public class FXMLConvolutionsSceneController {
     }
     @FXML
     public void initialize(){
-        convolutionCB.getItems().addAll("Custom Kernel","Kernels With Different Dimensions", "Gaussian Blur 3x3","Gaussian Blur 5x5","Gaussian Blur 7x7", "Sharpening","Grayscale", "Sobel X", "Sobel Y", "Sobel Complete","Prewitt","Laplacian", "Reset");
+        convolutionCB.getItems().addAll("Kernels With Different Dimensions", "Gaussian Blur 3x3","Gaussian Blur 5x5","Gaussian Blur 7x7", "Sharpening","Grayscale", "Sobel X", "Sobel Y", "Sobel Complete","Prewitt","Laplacian");
         convolutionCB.setOnAction((event)->{
             //Get the value of the convolution
             String choice = convolutionCB.getValue().toString();
@@ -242,32 +234,8 @@ public class FXMLConvolutionsSceneController {
             if(convolutionIsSelected==true&&imageIsSelected==true){
                 System.out.println("Necessary conditions for convolution to be carried are respected");
                 //If the user wants the custom kernel, we need to get the values from the textfields and initialize the rulesCustom 2D array
-                if(choice.equals("Custom Kernel")){
-                    System.out.println("Custom Kernel Clicked");
-                    float[][] rulesCustom = new float[3][3];
-                    TextField[][] txtRules = {{txt11,txt12,txt13},
-                                             {txt21,txt22,txt23},
-                                             {txt31,txt32,txt33}};
-                    for(int i=0; i<txtRules.length; i++){
-                        for(int j=0; j<txtRules[0].length;j++){
-                            try{
-                                rulesCustom[i][j] = Float.valueOf(txtRules[i][j].getText());
-                            }catch(Exception e){
-                              rulesCustom[i][j] = 0f;
-                            }
-                            System.out.print(rulesCustom[i][j]+" ");
-                        }
-                        System.out.println();
-                    }
-                    try {
-                        Convolution.performConvolution(this.imageBeingDisplayedOnIV.getAbsolutePath(), this.imageBeingDisplayedOnIV.getAbsolutePath(), rulesCustom);
-                        displayImage(this.imageBeingDisplayedOnIV.getAbsolutePath());
-                    } catch (IOException | NullPointerException ex) {
-                        System.out.println("Error caught");
-                    }
-                }
             
-            else if(choice.equals("Gaussian Blur 3x3")){
+            if(choice.equals("Gaussian Blur 3x3")){
                 System.out.println("Gaussian Blur 3x3 Clicked");
                 try {
                     Convolution.performConvolution(this.imageBeingDisplayedOnIV.getAbsolutePath(), this.imageBeingDisplayedOnIV.getAbsolutePath(), rulesGaussian3x3);
@@ -421,9 +389,6 @@ public class FXMLConvolutionsSceneController {
                     }
                     primaryStage.setAlwaysOnTop(true);
                 
-            }
-            else if(choice.equals("Reset")){
-                System.out.println("Reset");
             }
             else{
                 System.out.println("Else");
