@@ -9,6 +9,7 @@ import edu.vanier.global_illumination_image_processing.rendering.Vec3D;
 import edu.vanier.global_illumination_image_processing.rendering.objects.Plane;
 import edu.vanier.global_illumination_image_processing.rendering.objects.Sphere;
 import java.awt.image.BufferedImage;
+import javafx.beans.binding.Bindings;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -26,6 +27,8 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import javafx.embed.swing.SwingFXUtils;
+import javafx.scene.control.ScrollPane;
+import javafx.scene.layout.StackPane;
 
 /**
  * The controller for the rendering scene
@@ -43,13 +46,13 @@ public class FXMLRenderSceneController {
     @FXML MenuItem menuItemRemoveSelected;
     @FXML ListView listObjectList;
     @FXML Label lblObjectType;
+    @FXML Label lblRightStatus;
+    @FXML Label lblLeftStatus;
     @FXML TextField txtObjectName;
     @FXML TextField txtObjectXPos;
     @FXML TextField txtObjectYPos;
     @FXML TextField txtObjectZPos;
     @FXML TextField txtDTO;
-//    @FXML TextField txtWidth;
-//    @FXML TextField txtHeight;
     @FXML TextField txtEmissiveness;
     @FXML TextField txtIOR;
     @FXML TextField txtThreads;
@@ -59,6 +62,8 @@ public class FXMLRenderSceneController {
     @FXML ColorPicker clrObjPicker;
     @FXML HBox HboxDTO;
     @FXML ImageView imgResult;
+    @FXML ScrollPane scrollImageHolder;
+    @FXML StackPane stackImageHolder;
     Stage primaryStage;
 
     // construct this controller with the primary stage
@@ -97,7 +102,7 @@ public class FXMLRenderSceneController {
         objectList.add(new ObjWrapper("right plane", new Plane(new Vec3D(-1,0,0), 2.75, new DiffuseColor(2, 10, 2), 0,1)));
         objectList.add(new ObjWrapper("ceiling plane", new Plane(new Vec3D(0,-1,0), 3.0, new DiffuseColor(6, 6, 6), 0,1)));
         objectList.add(new ObjWrapper("front plane", new Plane(new Vec3D(0,0,-1), 0.5, new DiffuseColor(6, 6, 6), 0,1)));
-        objectList.add(new ObjWrapper("light sphere 1", new Sphere(new Vec3D(0,1.9,-3), 0.5, new DiffuseColor(0, 0, 0), 10000,1)));
+        objectList.add(new ObjWrapper("light sphere 1", new Sphere(new Vec3D(0,1.9,-3), 0.5, new DiffuseColor(12, 12, 12), 10000,1)));
         objectList.get(9).getObj().setRefractiveIndex(1.9);   
         
         for (ObjWrapper obj: objectList) {
@@ -111,6 +116,16 @@ public class FXMLRenderSceneController {
             
             MainApp.switchScene(MainApp.FXMLTitleScene, new FXMLTitleSceneController(primaryStage));
         });
+        
+        // bind image holder to center it using double binding to get value of viewport dimensions as function of viewport modified
+        stackImageHolder.minHeightProperty().bind(Bindings.createDoubleBinding(() -> 
+        scrollImageHolder.getViewportBounds().getHeight(), scrollImageHolder.viewportBoundsProperty()));
+        stackImageHolder.minWidthProperty().bind(Bindings.createDoubleBinding(() -> 
+        scrollImageHolder.getViewportBounds().getWidth(), scrollImageHolder.viewportBoundsProperty()));
+        
+        // set status text to none
+        lblLeftStatus.setText("");
+        lblRightStatus.setText("");
         
         // TODO UNIQUE NAMES FOR OBJECTS OR THEY BECOME THE SAME ONE
         
@@ -165,7 +180,10 @@ public class FXMLRenderSceneController {
          */
         btnRender.setOnAction((event) -> {
             System.out.println(renderer.getThreadsRequested());
-            renderer.render(true, true);
+            // render and return the time it took
+            long time;
+            time = renderer.render(true, true);
+            lblRightStatus.setText("Time "+time+" milliseconds");
             BufferedImage image = renderer.save();
             // output image converted from buferedimage to javafx image
             if (image != null) imgResult.setImage(SwingFXUtils.toFXImage(image, null));
@@ -180,25 +198,6 @@ public class FXMLRenderSceneController {
         // filters all incoming characters from getControlNewText() by the regex. Returns null new String is it does not match
         txtSPP.setTextFormatter(new TextFormatter <> (input -> input.getControlNewText().matches(textFormatterDoubleRegex) ? input : null));
         
-        // temp removal for testing
-                            //        /**
-                            //         * Update the image width - only numbers allowed by textFormatter
-                            //         */
-                            //        txtWidth.setOnKeyTyped((event) -> {
-                            //            renderer.setWidth((int)Double.parseDouble(txtWidth.getText()));
-                            //        });
-                            //        // filters all incoming characters from getControlNewText() by the regex. Returns null new String is it does not match
-                            //        txtWidth.setTextFormatter(new TextFormatter <> (input -> input.getControlNewText().matches(textFormatterIntegerRegex) ? input : null));
-                            //        
-                            //        /**
-                            //         * Update the Image Height - only numbers allowed by textFormatter
-                            //         */
-                            //        txtHeight.setOnKeyTyped((event) -> {
-                            //            renderer.setHeight((int)Double.parseDouble(txtHeight.getText()));
-                            //        });
-                            //        // filters all incoming characters from getControlNewText() by the regex. Returns null new String is it does not match
-                            //        txtHeight.setTextFormatter(new TextFormatter <> (input -> input.getControlNewText().matches(textFormatterIntegerRegex) ? input : null));
-
         /**
          * Update the threads to be spared
          */
