@@ -169,8 +169,8 @@ public class RenderingEquation {
         
         // next handle emission from rendering equation [Le(x,w)], weighted by the roulette probability weight
         double emission = intersect.getObject().getEmission();
-        DiffuseColor emissionColor = new DiffuseColor(emission, emission, emission);
-        color.addToObject(emissionColor.multiply(rouletteFactor));
+        DiffuseColor emissionFactor = new DiffuseColor(emission, emission, emission);
+        color.addToObject(emissionFactor.multiply(rouletteFactor));
         
         // calculate the diffuse color by the hemisphere sampler
         // type 1 is diffuse material

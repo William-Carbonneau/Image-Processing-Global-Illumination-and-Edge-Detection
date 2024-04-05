@@ -247,7 +247,7 @@ public class FXMLRenderSceneController {
             Color color = clrObjPicker.getValue();
             if (item == null) return;
             // update object in list
-            item.getObj().setColor(new DiffuseColor(color.getRed()*10, color.getGreen()*10, color.getBlue()*10));
+            item.getObj().setColor(new DiffuseColor(color.getRed()*12, color.getGreen()*12, color.getBlue()*12));
         });
         
         /**
