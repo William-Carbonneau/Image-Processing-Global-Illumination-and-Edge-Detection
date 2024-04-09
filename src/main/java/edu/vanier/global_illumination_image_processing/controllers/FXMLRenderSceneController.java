@@ -27,6 +27,7 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import javafx.embed.swing.SwingFXUtils;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.StackPane;
 
@@ -38,6 +39,7 @@ import javafx.scene.layout.StackPane;
 public class FXMLRenderSceneController {
     // FXML objects
     @FXML VBox RootVBox;
+    @FXML VBox vboxPropertyList;
     @FXML MenuItem menuItemBackToTitle;
     @FXML MenuItem menuItemAddSphere;
     @FXML MenuItem menuItemAddPlaneX;
@@ -53,23 +55,30 @@ public class FXMLRenderSceneController {
     @FXML TextField txtObjectYPos;
     @FXML TextField txtObjectZPos;
     @FXML TextField txtDTO;
+    @FXML TextField txtRadius;
     @FXML TextField txtEmissiveness;
     @FXML TextField txtIOR;
     @FXML TextField txtThreads;
     @FXML TextField txtSPP;
     @FXML ChoiceBox choiceMaterial;
+    @FXML ChoiceBox choiceEngine;
+    @FXML CheckBox checkStratified;
     @FXML Button btnRender;
+    @FXML Button btnObjDelete;
     @FXML ColorPicker clrObjPicker;
     @FXML HBox HboxDTO;
+    @FXML HBox HboxRadius;
     @FXML ImageView imgResult;
     @FXML ScrollPane scrollImageHolder;
     @FXML StackPane stackImageHolder;
     Stage primaryStage;
     
     /** create the render scene */
-    Scene mainScene = new Scene();
+    private final Scene mainScene = new Scene();
     /** The renderer instance TODO modify width/height */
-    RenderWrapper renderer = new RenderWrapper(800, 800, mainScene, 8.0);
+    private final RenderWrapper renderer = new RenderWrapper(800, 800, mainScene, 8.0);
+    private int renderEngine = 0;
+    private boolean stratified = true;
 
     // construct this controller with the primary stage
     public FXMLRenderSceneController(Stage primaryStage) {
@@ -106,8 +115,13 @@ public class FXMLRenderSceneController {
         // create list of elements - needs a new class wrapper
         ObservableList<ObjWrapper> objectList = FXCollections.observableArrayList();
         ObservableList<String> typeChoiceBoxList = FXCollections.observableArrayList("Diffuse","Reflective","Refractive");
+        ObservableList<String> engineList = FXCollections.observableArrayList("Normal", "Banded", "Psycho");
         listObjectList.setItems(objectList);
         choiceMaterial.setItems(typeChoiceBoxList);
+        choiceEngine.setItems(engineList);
+        choiceEngine.setValue(engineList.get(0));
+        vboxPropertyList.getChildren().remove(HboxRadius);
+        vboxPropertyList.getChildren().remove(HboxDTO);
         
         // temporary list of default objects
         objectList.add(new ObjWrapper("Metal Sphere 1", new Sphere(new Vec3D(-0.75,-1.45,-4.4), 1.05, new DiffuseColor(4, 8, 4), 0,2)));
@@ -143,8 +157,6 @@ public class FXMLRenderSceneController {
         // set status text to none
         lblLeftStatus.setText("");
         lblRightStatus.setText("");
-        
-        // TODO UNIQUE NAMES FOR OBJECTS OR THEY BECOME THE SAME ONE
         
         /**
          * Add a new sphere to the scene
@@ -193,17 +205,34 @@ public class FXMLRenderSceneController {
         });
         
         /**
+         * Remove the selected item from the scene
+         */
+        btnObjDelete.setOnAction((event) -> {
+            ObjWrapper item = (ObjWrapper) listObjectList.getSelectionModel().getSelectedItem();
+            if (item == null) return;
+            mainScene.removeObj(item.getName());
+            objectList.remove(item);
+        });
+        
+        /**
          * Render the scene based on user-created parameters
          */
         btnRender.setOnAction((event) -> {
-            System.out.println(renderer.getThreadsRequested());
             // render and return the time it took
             long time;
-            time = renderer.render(true, true);
-            lblRightStatus.setText("Time "+time+" milliseconds");
+            System.out.println("Engine: "+renderEngine);
+            time = renderer.render(true, stratified,renderEngine);
+            lblRightStatus.setText("Time: "+time+" milliseconds");
             BufferedImage image = renderer.save();
             // output image converted from buferedimage to javafx image
             if (image != null) imgResult.setImage(SwingFXUtils.toFXImage(image, null));
+        });
+        
+        /**
+         * On action, set the value of stratified to checkbox value 
+         */
+        checkStratified.setOnAction((event) -> {
+            stratified = checkStratified.selectedProperty().get();
         });
         
         /**
@@ -239,6 +268,7 @@ public class FXMLRenderSceneController {
             txtObjectYPos.setText("" + item.getObj().getNormal().getY());
             txtObjectZPos.setText("" + item.getObj().getNormal().getZ());
             txtDTO.setText("" + item.getObj().getDistanceOrigin());
+            txtRadius.setText("" + item.getObj().getRadius());
             txtIOR.setText("" + item.getObj().getRefractiveIndex());
             txtEmissiveness.setText("" + item.getObj().getEmission());
             clrObjPicker.setValue(new Color((float) item.getObj().getColor().getR()/12, (float) item.getObj().getColor().getG()/12, (float) item.getObj().getColor().getB()/12, 1.0));
@@ -248,12 +278,18 @@ public class FXMLRenderSceneController {
                 case 3 -> choiceMaterial.setValue(typeChoiceBoxList.get(2));
             }
             switch(item.getObj().getClass().getSimpleName()) {
-                case "Plane":
+                case "Plane" -> {
+                    if (!vboxPropertyList.getChildren().contains(HboxDTO)) vboxPropertyList.getChildren().add(HboxDTO);
                     HboxDTO.setVisible(true);
-                    break;
-                case "Sphere":
+                    HboxRadius.setVisible(false);
+                    vboxPropertyList.getChildren().remove(HboxRadius);
+                }
+                case "Sphere" -> {
                     HboxDTO.setVisible(false);
-                    break;
+                    vboxPropertyList.getChildren().remove(HboxDTO);
+                    if (!vboxPropertyList.getChildren().contains(HboxRadius)) vboxPropertyList.getChildren().add(HboxRadius);
+                    HboxRadius.setVisible(true);
+                }
             }
         });
         
@@ -290,6 +326,19 @@ public class FXMLRenderSceneController {
             item.getObj().setDistanceOrigin(Double.parseDouble(doubleFormatterRemoveTrailingPeriod(txtDTO.getText())));
         });
         txtDTO.setTextFormatter(new TextFormatter <> (input -> input.getControlNewText().matches(textFormatterDoubleRegex) ? input : null));
+        
+        /**
+         * Update selected object's radius - only numbers allowed by textFormatter
+         */
+        txtRadius.setOnKeyTyped((event) -> {
+            ObjWrapper item = (ObjWrapper) listObjectList.getSelectionModel().getSelectedItem();
+            
+            if (item == null) return;
+            
+            // update object in list
+            item.getObj().setRadius(Double.parseDouble(doubleFormatterRemoveTrailingPeriod(txtRadius.getText())));
+        });
+        txtRadius.setTextFormatter(new TextFormatter <> (input -> input.getControlNewText().matches(textFormatterDoubleRegex) ? input : null));
         
         /**
          * Update selected object's Emissiveness - only numbers allowed by textFormatter
@@ -356,6 +405,9 @@ public class FXMLRenderSceneController {
         });
         txtObjectZPos.setTextFormatter(new TextFormatter <> (input -> input.getControlNewText().matches(textFormatterDoubleRegex) ? input : null));
         
+        /**
+         * On action get value of the material choice for the selected object and modify it
+         */
         choiceMaterial.setOnAction((event) -> {
             ObjWrapper item = (ObjWrapper) listObjectList.getSelectionModel().getSelectedItem();
             
@@ -368,6 +420,17 @@ public class FXMLRenderSceneController {
                 item.getObj().setType(3);
             } 
         });
+        
+        choiceEngine.setOnAction((event) -> {
+            if (choiceEngine.getValue() == "Normal") {
+                renderEngine = 0;
+            }else if (choiceEngine.getValue() == "Banded") {
+               renderEngine = 1;
+            }else if (choiceEngine.getValue() == "Psycho") {
+                renderEngine = 2;
+            }
+        });
+        
     }
     
     /**

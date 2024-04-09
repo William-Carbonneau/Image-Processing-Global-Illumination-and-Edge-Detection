@@ -161,9 +161,10 @@ public class RenderWrapper {
      * 
      * @param multithread boolean MultiThread yes/no (true/false)
      * @param stratified boolean stratified sampling yes/no (true/false)
+     * @param engine int engine to render with 1 banded, 2 psychedelic, anything else normal
      * @return long render time
      */
-    public long render(boolean multithread, boolean stratified) {
+    public long render(boolean multithread, boolean stratified, int engine) {
         System.out.printf("Rendering: %2.0f samples%n", SPP);
         // start a clock
         final long startTime = System.currentTimeMillis();
@@ -220,7 +221,7 @@ public class RenderWrapper {
             // loop sampler
             for (int row = myStart; row < myEnd; row++) {
                 for (int column = 0; column < width; column++) {
-                    renderer.simulatePerPixel(column, row, row - myStart, samples, renderer.halton1, renderer.halton2, scene, imagePieces.get(rowPieceFinal), stratified);
+                    renderer.simulatePerPixel(column, row, row - myStart, samples, renderer.halton1, renderer.halton2, scene, imagePieces.get(rowPieceFinal), stratified,engine);
                 }
             }
                 System.out.println("Finish executor "+rowPieceFinal);

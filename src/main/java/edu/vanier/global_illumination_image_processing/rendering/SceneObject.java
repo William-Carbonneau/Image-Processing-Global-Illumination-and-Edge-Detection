@@ -24,6 +24,9 @@ public abstract class SceneObject {
     /** Distance to origin used by Plane */
     public double distanceOrigin = 0;
     
+    /** radius used by Sphere */
+    public double radius = 0;
+    
     /** Base coordinate used by all objects */
     public Vec3D normal;
     
@@ -51,6 +54,16 @@ public abstract class SceneObject {
     public void setNormal(Vec3D newNormal) {
         this.normal = newNormal;
     }
+
+    /**
+     * Set the radius for Spheres
+     * 
+     * @param radius double
+     */
+    public void setRadius(double radius) {
+        this.radius = radius;
+    }
+    
 
     /**
      * Set the emission value
@@ -103,6 +116,15 @@ public abstract class SceneObject {
      */
     public DiffuseColor getColor() {
         return color;
+    }
+
+    /**
+     * Get the radius for Sphere
+     * 
+     * @return double radius
+     */
+    public double getRadius() {
+        return radius;
     }
         
     /**

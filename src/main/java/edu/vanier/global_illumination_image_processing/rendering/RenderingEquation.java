@@ -127,15 +127,16 @@ public class RenderingEquation {
     * Traces a ray through the scene, calculating the color contribution of each intersected object recursively.
     * Traces rays from the camera's viewpoint and calculates how they interact with objects in the scene.
     * 
-    * @param ray             The ray to be traced.
-    * @param scene           The scene containing the objects to be intersected by the ray.
-    * @param recursionDepth  The current recursion depth, the number of recursive calls made by the method.
-    * @param color           The color of the ray, which accumulates contributions from intersected objects.
-    * @param parameterList   A HashMap containing additional parameters needed for certain calculations.
-    * @param halton1         The first Halton sequence generator used for random number generation.
-    * @param halton2         The second Halton sequence generator used for random number generation.
+    * @param ray Ray - The ray to be traced.
+    * @param scene Scene - The scene containing the objects to be intersected by the ray.
+    * @param recursionDepth int - The current recursion depth, the number of recursive calls made by the method.
+    * @param color DiffuseColor - The color of the ray, which accumulates contributions from intersected objects.
+    * @param halton1 Halton - The first Halton sequence generator used for random number generation.
+    * @param halton2 Halton - The second Halton sequence generator used for random number generation.
+    * @param stratified boolean - should the render be stratified true/false
+    * @param engine int - the type of engine to be used - 1 bands, 3 psychedelic, anything else normal
     */
-    private void trace(Ray ray, Scene scene, int recursionDepth, DiffuseColor color, Halton halton1, Halton halton2, boolean stratified) {
+    private void trace(Ray ray, Scene scene, int recursionDepth, DiffuseColor color, Halton halton1, Halton halton2, boolean stratified, int engine) {
         
         // russian roulette recursion
         double rouletteFactor = 1.0;
@@ -158,7 +159,7 @@ public class RenderingEquation {
         // at this point we are sure to have an intersection
                 
         
-        //// trace a ray to the nearest intersction point then bounce
+        // trace a ray to the nearest intersection point then bounce
         Vec3D hitPoint = ray.getOrigin().add(ray.getDirection().multiply(intersect.getIntersectDistance()));
         // get the object normal at the intersection point
         Vec3D normal = intersect.getObject().normal(hitPoint);
@@ -180,29 +181,30 @@ public class RenderingEquation {
             Vec3D rotationY = new Vec3D(0,0,0);
             Vec3D.orthonormalSystem(normal, rotationX, rotationY);
             
+            // increment halton for next iteration
             halton1.next();
             halton2.next();
             
             // intentional bug for line effect (reduce orthonormal system)
-//            rotationY = new Vec3D(0,0,0);
+            if (engine == 1) rotationY = new Vec3D(0,0,0);
             
+            Vec3D sampleDirection;
+
             // get new direction from hemisphere sampler
-            Vec3D sampleDirection = Hemisphere(rand.uniformRand2(),rand.uniformRand2(), stratified);
-            
-            // intentional bug for swirl effect
-//            Vec3D sampleDirection = Hemisphere(halton1.get(),halton2.get());
-            
-            // get new rotated ray direction from orthonormal system
-            Vec3D rotatedDirection = new Vec3D(0,0,0);
-            
-            rotatedDirection.setX(new Vec3D(rotationX.getX(), rotationY.getX(), normal.getX()).dot(sampleDirection));
-            rotatedDirection.setY(new Vec3D(rotationX.getY(), rotationY.getY(), normal.getY()).dot(sampleDirection));
-            rotatedDirection.setZ(new Vec3D(rotationX.getZ(), rotationY.getZ(), normal.getZ()).dot(sampleDirection));
-            
-            ray.setDirection(rotatedDirection); // already normalized, no need for costly square root operation
+            sampleDirection = Hemisphere(rand.uniformRand2(),rand.uniformRand2(), stratified);
             
             // intentional bug for psychedelic effect
-//            ray.setDirection(normal);
+            if (engine == 2) ray.setDirection(normal);
+            else {
+                // get new rotated ray direction from orthonormal system
+                Vec3D rotatedDirection = new Vec3D(0,0,0);
+
+                rotatedDirection.setX(new Vec3D(rotationX.getX(), rotationY.getX(), normal.getX()).dot(sampleDirection));
+                rotatedDirection.setY(new Vec3D(rotationX.getY(), rotationY.getY(), normal.getY()).dot(sampleDirection));
+                rotatedDirection.setZ(new Vec3D(rotationX.getZ(), rotationY.getZ(), normal.getZ()).dot(sampleDirection));
+
+                ray.setDirection(rotatedDirection); // already normalized, no need for costly square root operation
+            }
 
             double cosineDirection = ray.getDirection().dot(normal);
             
@@ -210,7 +212,7 @@ public class RenderingEquation {
             DiffuseColor tempColor = new DiffuseColor(0,0,0);
 
             // call recursive trace
-            trace(ray,scene,recursionDepth+1,tempColor,halton1,halton2,stratified);
+            trace(ray,scene,recursionDepth+1,tempColor,halton1,halton2,stratified,engine);
             
             // recursive collection/aggregation
             color.addToObject(tempColor.multiplyColor(intersect.getObject().getColor()).multiply(cosineDirection * 0.1 * rouletteFactor));
@@ -226,7 +228,7 @@ public class RenderingEquation {
             DiffuseColor tempColor = new DiffuseColor(0,0,0);
             
             // call recursive trace
-            trace(ray,scene,recursionDepth+1,tempColor,halton1,halton2,stratified);
+            trace(ray,scene,recursionDepth+1,tempColor,halton1,halton2,stratified,engine);
             
             // recursive collection/aggregation
             color.addToObject(tempColor.multiply(rouletteFactor));
@@ -268,7 +270,7 @@ public class RenderingEquation {
             DiffuseColor tempColor = new DiffuseColor(0,0,0);
             
             // call recursive trace
-            trace(ray,scene,recursionDepth+1,tempColor,halton1,halton2,stratified);
+            trace(ray,scene,recursionDepth+1,tempColor,halton1,halton2,stratified,engine);
             
             // recursive collection/aggregation
             color.addToObject(tempColor.multiply(1.15*rouletteFactor));
@@ -288,7 +290,7 @@ public class RenderingEquation {
      * @param scene the scene containing simulation, type Scene
      * @param pixels array of image pixels, type: DiffuseColor[][]
      */
-    public void simulatePerPixel(int column, int rowCam, int rowAdjusted, double SPP, Halton halton1, Halton halton2, Scene scene, DiffuseColor[][] pixels, boolean stratified) {
+    public void simulatePerPixel(int column, int rowCam, int rowAdjusted, double SPP, Halton halton1, Halton halton2, Scene scene, DiffuseColor[][] pixels, boolean stratified, int engine) {
         
         // loop over samples per pixel
         for (int samples = 0; samples < SPP; samples++) {
@@ -303,7 +305,7 @@ public class RenderingEquation {
             Ray ray = new Ray(new Vec3D(0,0,0), camera.subtract(new Vec3D(0,0,0)).norm());
 
             // trace the ray recursively
-            trace(ray, scene, 0,colorMaster, halton1, halton2, stratified);
+            trace(ray, scene, 0,colorMaster, halton1, halton2, stratified,engine);
 
             // set the appropriate pixel
             pixels[column][rowAdjusted] = pixels[column][rowAdjusted].add(colorMaster.multiply(1/SPP));
