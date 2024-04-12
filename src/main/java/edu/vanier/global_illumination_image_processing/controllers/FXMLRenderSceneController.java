@@ -80,16 +80,18 @@ public class FXMLRenderSceneController {
     @FXML ScrollPane scrollImageHolder;
     @FXML StackPane stackImageHolder;
     Stage primaryStage;
+    private boolean autoRender;
     
     /** create the render scene */
     private final RenderScene mainScene = new RenderScene();
     /** The renderer instance TODO modify width/height */
-    private final RenderWrapper renderer = new RenderWrapper(800, 800, mainScene, 8.0);
+    private final RenderWrapper renderer = new RenderWrapper(800, 800, mainScene, 8);
     private int renderEngine = 0;
     private boolean stratified = true;
 
     // construct this controller with the primary stage
     public FXMLRenderSceneController(Stage primaryStage) {
+        this.autoRender = false;
         this.primaryStage = primaryStage;
     }
     
@@ -119,6 +121,20 @@ public class FXMLRenderSceneController {
         return temp;
     }
     
+    /**
+     * Render the image
+     */
+    private void render() {
+        // render and return the time it took
+        long time;
+        System.out.println("Engine: "+renderEngine);
+        time = renderer.render(true, stratified,renderEngine);
+        lblRightStatus.setText("Time: "+time+" milliseconds");
+        BufferedImage image = renderer.save();
+        // output image converted from buferedimage to javafx image
+        if (image != null) imgResult.setImage(SwingFXUtils.toFXImage(image, null));
+    }
+    
     public void initialize(){        
         // create list of elements - needs a new class wrapper
         ObservableList<ObjWrapper> objectList = FXCollections.observableArrayList();
@@ -135,11 +151,11 @@ public class FXMLRenderSceneController {
         objectList.add(new ObjWrapper("Metal Sphere 1", new Sphere(new Vec3D(-0.75,-1.45,-4.4), 1.05, new DiffuseColor(4, 8, 4), 0,2)));
         objectList.add(new ObjWrapper("Glass sphere 1", new Sphere(new Vec3D(2.0,-2.05,-3.7), 0.5, new DiffuseColor(10, 10, 1), 0,3)));
         objectList.add(new ObjWrapper("Diffuse sphere 1", new Sphere(new Vec3D(-1.75,-1.95,-3.1), 0.6, new DiffuseColor(4, 4, 12), 0,1)));
-        objectList.add(new ObjWrapper("bottom plane", new Plane(new Vec3D(0,1,0), 2.5, new DiffuseColor(6, 6, 6), 0,1)));
+        objectList.add(new ObjWrapper("bottom plane", new Plane(new Vec3D(0,1,0), 2.5, new DiffuseColor(4.5, 4.5, 4.5), 0,1)));
         objectList.add(new ObjWrapper("back plane", new Plane(new Vec3D(0,0,1), 5.5, new DiffuseColor(6, 6, 6), 0,1)));
         objectList.add(new ObjWrapper("left plane", new Plane(new Vec3D(1,0,0), 2.75, new DiffuseColor(10, 2, 2), 0,1)));
         objectList.add(new ObjWrapper("right plane", new Plane(new Vec3D(-1,0,0), 2.75, new DiffuseColor(2, 10, 2), 0,1)));
-        objectList.add(new ObjWrapper("ceiling plane", new Plane(new Vec3D(0,-1,0), 3.0, new DiffuseColor(6, 6, 6), 0,1)));
+        objectList.add(new ObjWrapper("ceiling plane", new Plane(new Vec3D(0,-1,0), 3.0, new DiffuseColor(7, 7, 7), 0,1)));
         objectList.add(new ObjWrapper("front plane", new Plane(new Vec3D(0,0,-1), 0.5, new DiffuseColor(6, 6, 6), 0,1)));
         objectList.add(new ObjWrapper("light sphere 1", new Sphere(new Vec3D(0,1.9,-3), 0.5, new DiffuseColor(12, 12, 12), 10000,1))); 
         
@@ -172,6 +188,7 @@ public class FXMLRenderSceneController {
             ObjWrapper obj = new ObjWrapper(modifyKeyString("New Sphere ", 0), new Sphere(new Vec3D(0,0,-3), 1.0, new DiffuseColor(8, 0, 0), 0,1));
             objectList.add(obj);
             mainScene.addObj(obj.getName(), obj.getObj());
+            if (autoRender) render();
         });
         
         /**
@@ -181,6 +198,7 @@ public class FXMLRenderSceneController {
             ObjWrapper obj = new ObjWrapper(modifyKeyString("New Plane X ", 0), new Plane(new Vec3D(1,0,0), 1, new DiffuseColor(0, 8, 0), 0,1));
             objectList.add(obj);
             mainScene.addObj(obj.getName(), obj.getObj());
+            if (autoRender) render();
         });
         
         /**
@@ -190,6 +208,7 @@ public class FXMLRenderSceneController {
             ObjWrapper obj = new ObjWrapper(modifyKeyString("New Plane Y ", 0), new Plane(new Vec3D(0,1,0), 1, new DiffuseColor(0, 0, 8), 0,1));
             objectList.add(obj);
             mainScene.addObj(obj.getName(), obj.getObj());
+            if (autoRender) render();
         });
         
         /**
@@ -199,6 +218,7 @@ public class FXMLRenderSceneController {
             ObjWrapper obj = new ObjWrapper(modifyKeyString("New Plane Z ", 0), new Plane(new Vec3D(0,0,1), 3, new DiffuseColor(8, 0, 8), 0,1));
             objectList.add(obj);
             mainScene.addObj(obj.getName(), obj.getObj());
+            if (autoRender) render();
         });
         
         /**
@@ -209,6 +229,7 @@ public class FXMLRenderSceneController {
             if (item == null) return;
             mainScene.removeObj(item.getName());
             objectList.remove(item);
+            if (autoRender) render();
         });
         
         /**
@@ -240,6 +261,7 @@ public class FXMLRenderSceneController {
             if (item == null) return;
             mainScene.removeObj(item.getName());
             objectList.remove(item);
+            if (autoRender) render();
         });
         
         /**
@@ -247,13 +269,7 @@ public class FXMLRenderSceneController {
          */
         btnRender.setOnAction((event) -> {
             // render and return the time it took
-            long time;
-            System.out.println("Engine: "+renderEngine);
-            time = renderer.render(true, stratified,renderEngine);
-            lblRightStatus.setText("Time: "+time+" milliseconds");
-            BufferedImage image = renderer.save();
-            // output image converted from buferedimage to javafx image
-            if (image != null) imgResult.setImage(SwingFXUtils.toFXImage(image, null));
+            render();
         });
         
         /**
@@ -267,10 +283,10 @@ public class FXMLRenderSceneController {
          * Update the current SPP - only numbers allowed by textFormatter
          */
         txtSPP.setOnKeyTyped((event) -> {
-            renderer.setSPP(Double.parseDouble(doubleFormatterRemoveTrailingPeriod(txtSPP.getText())));
+            renderer.setSPP(Integer.parseInt(doubleFormatterRemoveTrailingPeriod(txtSPP.getText())));
         });
         // filters all incoming characters from getControlNewText() by the regex. Returns null new String is it does not match
-        txtSPP.setTextFormatter(new TextFormatter <> (input -> input.getControlNewText().matches(textFormatterDoubleRegex) ? input : null));
+        txtSPP.setTextFormatter(new TextFormatter <> (input -> input.getControlNewText().matches(textFormatterIntegerRegex) ? input : null));
         
         /**
          * Update the threads to be spared
@@ -328,6 +344,7 @@ public class FXMLRenderSceneController {
             if (item == null) return;
             // update object in list
             item.getObj().setColor(new DiffuseColor(color.getRed()*12, color.getGreen()*12, color.getBlue()*12));
+            if (autoRender) render();
         });
         
         /**
@@ -352,6 +369,7 @@ public class FXMLRenderSceneController {
             
             // update object in list
             item.getObj().setDistanceOrigin(Double.parseDouble(doubleFormatterRemoveTrailingPeriod(txtDTO.getText())));
+            if (autoRender) render();
         });
         txtDTO.setTextFormatter(new TextFormatter <> (input -> input.getControlNewText().matches(textFormatterDoubleRegex) ? input : null));
         
@@ -365,6 +383,7 @@ public class FXMLRenderSceneController {
             
             // update object in list
             item.getObj().setRadius(Double.parseDouble(doubleFormatterRemoveTrailingPeriod(txtRadius.getText())));
+            if (autoRender) render();
         });
         txtRadius.setTextFormatter(new TextFormatter <> (input -> input.getControlNewText().matches(textFormatterDoubleRegex) ? input : null));
         
@@ -404,6 +423,7 @@ public class FXMLRenderSceneController {
             
             // update object in list
             item.getObj().getNormal().setX(Double.parseDouble(doubleFormatterRemoveTrailingPeriod(txtObjectXPos.getText())));
+            if (autoRender) render();
         });
         txtObjectXPos.setTextFormatter(new TextFormatter <> (input -> input.getControlNewText().matches(textFormatterDoubleRegex) ? input : null));
         
@@ -417,6 +437,7 @@ public class FXMLRenderSceneController {
             
             // update object in list
             item.getObj().getNormal().setY((Double.parseDouble(doubleFormatterRemoveTrailingPeriod(txtObjectYPos.getText()))));
+            if (autoRender) render();
         });
         txtObjectYPos.setTextFormatter(new TextFormatter <> (input -> input.getControlNewText().matches(textFormatterDoubleRegex) ? input : null));
         
@@ -430,6 +451,7 @@ public class FXMLRenderSceneController {
             
             // update object in list
             item.getObj().getNormal().setZ((Double.parseDouble(txtObjectZPos.getText())));
+            if (autoRender) render();
         });
         txtObjectZPos.setTextFormatter(new TextFormatter <> (input -> input.getControlNewText().matches(textFormatterDoubleRegex) ? input : null));
         
@@ -452,12 +474,16 @@ public class FXMLRenderSceneController {
         choiceEngine.setOnAction((event) -> {
             if (choiceEngine.getValue() == "Normal") {
                 renderEngine = 0;
+                autoRender = false;
             }else if (choiceEngine.getValue() == "Banded") {
                renderEngine = 1;
+               autoRender = false;
             }else if (choiceEngine.getValue() == "Psycho") {
                 renderEngine = 2;
+                autoRender = false;
             }else if (choiceEngine.getValue() == "Rasterized") {
                 renderEngine = 3;
+                autoRender = true;
             }
         });     
     }

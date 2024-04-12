@@ -157,8 +157,10 @@ public class RenderingEquation {
         // check if interscetion exists, otherwise return
         if(!intersect.containsObjectBool()) return;
         // at this point we are sure to have an intersection
+        
+        // short render for rasterized engine
         if (engine == 3) {
-            color.addToObject(intersect.getObject().getColor());
+            color.addToObject(intersect.getObject().getColor().multiply(255/12));
             return;
         }        
         
@@ -293,7 +295,7 @@ public class RenderingEquation {
      * @param scene the scene containing simulation, type Scene
      * @param pixels array of image pixels, type: DiffuseColor[][]
      * @param stratified boolean should the render use stratified diffuse sampling true/false
-     * @param engine int the engine type to use 1 banded, 2 psychedelic, anything else - normal
+     * @param engine int the engine type to use 1 banded, 2 psychedelic, 3 rasterized, anything else - normal
      */
     public void simulatePerPixel(int column, int rowCam, int rowAdjusted, double SPP, Halton halton1, Halton halton2, RenderScene scene, DiffuseColor[][] pixels, boolean stratified, int engine) {
         
@@ -304,21 +306,20 @@ public class RenderingEquation {
             // create camera plane coordinates
             Vec3D camera = CamPlaneCoordinate(column, rowCam);
             // anti-aliasing of the camera coordinates
-            camera.setX(camera.getX() + rand.uniformRand()/700);
-            camera.setY(camera.getY() + rand.uniformRand()/700);
+            if (engine == 3) {
+                camera.setX(camera.getX());
+                camera.setY(camera.getY());
+            }else {
+                camera.setX(camera.getX() + rand.uniformRand()/700);
+                camera.setY(camera.getY() + rand.uniformRand()/700);
+            }
             // ray with direction from the origin to the camera plane (Where the camera is placed relative to its plane or lens)
             Ray ray = new Ray(new Vec3D(0,0,0), camera.subtract(new Vec3D(0,0,0)).norm());
 
             // trace the ray recursively
             trace(ray, scene, 0,colorMaster, halton1, halton2, stratified,engine);
-            // short the recursion if engine 3
-            if (engine  == 3) {
-                samples += SPP;
-                pixels[column][rowAdjusted] = pixels[column][rowAdjusted].add(colorMaster);
-            }else {
-                // set the appropriate pixel
-                pixels[column][rowAdjusted] = pixels[column][rowAdjusted].add(colorMaster.multiply(1/SPP));
-            }
+            // set the appropriate pixel
+            pixels[column][rowAdjusted] = pixels[column][rowAdjusted].add(colorMaster.multiply(1/SPP));
         }
     }
 }
