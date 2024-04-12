@@ -160,7 +160,8 @@ public class RenderingEquation {
         
         // short render for rasterized engine
         if (engine == 3) {
-            color.addToObject(intersect.getObject().getColor().multiply(255/12));
+            // 255/12 = 21.25, which is the scale factor of the color from 12 to 255
+            color.addToObject(intersect.getObject().getColor().multiply(21.25));
             return;
         }        
         
