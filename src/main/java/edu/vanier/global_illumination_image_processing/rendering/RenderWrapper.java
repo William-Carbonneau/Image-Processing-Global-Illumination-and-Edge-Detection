@@ -22,7 +22,7 @@ public class RenderWrapper {
     /** The Scene to render */
     private RenderScene scene;
     /** Samples per pixel */
-    private double SPP;
+    private int SPP;
     /** thread count of previous render */
     private int threadCount = 0;
     /** processors to be spared during the render */
@@ -41,7 +41,7 @@ public class RenderWrapper {
      * @param scene Scene
      * @param SPP double
      */
-    public RenderWrapper(int width, int height, RenderScene scene, double SPP) {
+    public RenderWrapper(int width, int height, RenderScene scene, int SPP) {
         this.width = width;
         this.height = height;
         this.scene = scene;
@@ -116,7 +116,7 @@ public class RenderWrapper {
     * 
     * @param SPP The samples per pixel (SPP) value.
     */
-    public void setSPP(double SPP) {
+    public void setSPP(int SPP) {
         this.SPP = SPP;
     }
 
@@ -161,11 +161,11 @@ public class RenderWrapper {
      * 
      * @param multithread boolean MultiThread yes/no (true/false)
      * @param stratified boolean stratified sampling yes/no (true/false)
-     * @param engine int engine to render with 1 banded, 2 psychedelic, anything else normal
+     * @param engine int engine to render with 1 banded, 2 psychedelic, 3 rasterized, anything else normal
      * @return long render time
      */
     public long render(boolean multithread, boolean stratified, int engine) {
-        System.out.printf("Rendering: %2.0f samples%n", SPP);
+        System.out.printf("Rendering: %d samples%n", SPP);
         // start a clock
         final long startTime = System.currentTimeMillis();
         
@@ -200,12 +200,11 @@ public class RenderWrapper {
             }
         }
         
-        System.out.println("Start Multithreading with "+threadCount+" threads");
         
          // create thread-pool
         ExecutorService execServ = Executors.newFixedThreadPool(threadCountLocal);
         ArrayList<CompletableFuture<Void>> tasks = new ArrayList<>(threadCountLocal);
-        
+        System.out.println("Start Multithreading with "+threadCount+" threads");
         for (int rowPiece = 0; rowPiece < threadCountLocal; rowPiece++) {
             // create array managers
             final int rowPieceFinal = rowPiece;
@@ -216,26 +215,26 @@ public class RenderWrapper {
             
             // create thread
             CompletableFuture<Void> task = CompletableFuture.runAsync(() -> {
-            System.out.println("Start executor "+rowPieceFinal);
             
             // loop sampler
             for (int row = myStart; row < myEnd; row++) {
                 for (int column = 0; column < width; column++) {
-                    renderer.simulatePerPixel(column, row, row - myStart, samples, renderer.halton1, renderer.halton2, scene, imagePieces.get(rowPieceFinal), stratified,engine);
+                    // set samples to 1 if using rasterizer
+                    double samplesTemp = (engine == 3) ? 1 : samples;
+                    renderer.simulatePerPixel(column, row, row - myStart, samplesTemp, renderer.halton1, renderer.halton2, scene, imagePieces.get(rowPieceFinal), stratified,engine);
                 }
-            }
-                System.out.println("Finish executor "+rowPieceFinal);
+                }
             }, execServ);
             // add thread to list of threads
             tasks.add(task);
         }
+        System.out.println("Finishing threads...");
         // collect threads and complete them.
         CompletableFuture.allOf(tasks.toArray(new CompletableFuture[0])).join();
         // those who live by the thread die by the thread
         execServ.shutdown();   
         
-        System.out.println("Render finished");
-        System.out.println("Final time (milliseconnds): " + (System.currentTimeMillis() - startTime));
+        System.out.println("Render finished, final time (milliseconds): " + (System.currentTimeMillis() - startTime));
         return System.currentTimeMillis() - startTime;
     }
     
@@ -250,9 +249,7 @@ public class RenderWrapper {
         if (this.imagePieces.isEmpty() || this.threadCount == 0) {
             return null;
         }
-        
-        System.out.println(threadCount);
-        
+                
         final int pieceSize = Integer.max((int) height/threadCount,1);
         final int lastPieceSize = height-(pieceSize*threadCount) + pieceSize;
         

@@ -6,6 +6,11 @@ import edu.vanier.global_illumination_image_processing.rendering.RenderScene;
 import edu.vanier.global_illumination_image_processing.rendering.Vec3D;
 import edu.vanier.global_illumination_image_processing.rendering.objects.Plane;
 import edu.vanier.global_illumination_image_processing.rendering.objects.Sphere;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * A test class for the rendering, test is qualitative
@@ -39,14 +44,14 @@ public class RenderTest {
             System.out.println("Object not found to modify");
         }
 
-        RenderWrapper renderer = new RenderWrapper(800, 800, scene, 16.0);
-        renderer.setSPP(16.0);
+        RenderWrapper renderer = new RenderWrapper(800, 800, scene, 16);
+        renderer.setSPP(16);
         renderer.render(true,true,0);
         renderer.save();
         
-        /*
+        
         // benchmark 10 threads 16 SPP
-        /*
+        
         long time1 = 0;
         long time2 = 0;
         long time3 = 0;
@@ -81,6 +86,5 @@ public class RenderTest {
             printWriter.println(""+time1+","+time3+","+time2+","+average);
         }
         printWriter.close();
-*/
     }
 }

@@ -134,7 +134,7 @@ public class RenderingEquation {
     * @param halton1 Halton - The first Halton sequence generator used for random number generation.
     * @param halton2 Halton - The second Halton sequence generator used for random number generation.
     * @param stratified boolean - should the render be stratified true/false
-    * @param engine int - the type of engine to be used - 1 bands, 3 psychedelic, anything else normal
+    * @param engine int - the type of engine to be used - 1 bands, 2 psychedelic, 3 rasterized, anything else normal
     */
     private void trace(Ray ray, RenderScene scene, int recursionDepth, DiffuseColor color, Halton halton1, Halton halton2, boolean stratified, int engine) {
         
@@ -157,7 +157,12 @@ public class RenderingEquation {
         // check if interscetion exists, otherwise return
         if(!intersect.containsObjectBool()) return;
         // at this point we are sure to have an intersection
-                
+        
+        // short render for rasterized engine
+        if (engine == 3) {
+            color.addToObject(intersect.getObject().getColor().multiply(255/12));
+            return;
+        }        
         
         // trace a ray to the nearest intersection point then bounce
         Vec3D hitPoint = ray.getOrigin().add(ray.getDirection().multiply(intersect.getIntersectDistance()));
@@ -290,7 +295,7 @@ public class RenderingEquation {
      * @param scene the scene containing simulation, type Scene
      * @param pixels array of image pixels, type: DiffuseColor[][]
      * @param stratified boolean should the render use stratified diffuse sampling true/false
-     * @param engine int the engine type to use 1 banded, 2 psychedelic, anything else - normal
+     * @param engine int the engine type to use 1 banded, 2 psychedelic, 3 rasterized, anything else - normal
      */
     public void simulatePerPixel(int column, int rowCam, int rowAdjusted, double SPP, Halton halton1, Halton halton2, RenderScene scene, DiffuseColor[][] pixels, boolean stratified, int engine) {
         
@@ -301,14 +306,18 @@ public class RenderingEquation {
             // create camera plane coordinates
             Vec3D camera = CamPlaneCoordinate(column, rowCam);
             // anti-aliasing of the camera coordinates
-            camera.setX(camera.getX() + rand.uniformRand()/700);
-            camera.setY(camera.getY() + rand.uniformRand()/700);
+            if (engine == 3) {
+                camera.setX(camera.getX());
+                camera.setY(camera.getY());
+            }else {
+                camera.setX(camera.getX() + rand.uniformRand()/700);
+                camera.setY(camera.getY() + rand.uniformRand()/700);
+            }
             // ray with direction from the origin to the camera plane (Where the camera is placed relative to its plane or lens)
             Ray ray = new Ray(new Vec3D(0,0,0), camera.subtract(new Vec3D(0,0,0)).norm());
 
             // trace the ray recursively
             trace(ray, scene, 0,colorMaster, halton1, halton2, stratified,engine);
-
             // set the appropriate pixel
             pixels[column][rowAdjusted] = pixels[column][rowAdjusted].add(colorMaster.multiply(1/SPP));
         }
