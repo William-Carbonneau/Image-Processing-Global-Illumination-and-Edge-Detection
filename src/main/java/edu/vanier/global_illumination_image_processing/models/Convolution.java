@@ -12,6 +12,8 @@ import javax.imageio.ImageIO;
 /**
  * This class is a collection of static methods that are useful for
  * convolutions.
+ * 
+ * This source was used to understand what is a convolution, what is a kernel, and how do they go hand in hand: https://youtu.be/C_zFhWdM4ic?si=nDnBCiZYqUB04SMO
  */
 public class Convolution {
 
@@ -104,9 +106,10 @@ public class Convolution {
      *
      * @param filePathIn - The path of the file input
      * @param filePathOut - The path of the file output
-     * @throws IOException Source used as a reference to use ImageIO:
-     * https://ramok.tech/2018/09/27/convolution-in-java/ A grayscale pixel is
-     * obtained by averaging the r, g, and b values:
+     * @throws IOException 
+     * Source used as a reference to use ImageIO:
+     * https://ramok.tech/2018/09/27/convolution-in-java/ 
+     * A grayscale pixel is obtained by averaging the r, g, and b values:
      * https://web.stanford.edu/class/cs101/image-6-grayscale-adva.html
      */
     public static void performGrayscale(String filePathIn, String filePathOut) throws IOException {
@@ -140,8 +143,8 @@ public class Convolution {
      *
      * @param filePathIn
      * @param filePathOut
-     * @throws IOException This source was used as a reference to use ImageIO in
-     * the context of performing a convolution:
+     * @throws IOException 
+     * This source was used as a reference to use ImageIO in the context of performing a convolution:
      * https://ramok.tech/2018/09/27/convolution-in-java/
      */
     public static void performEdgeAngles(String filePathIn, String filePathOut) throws IOException {
@@ -198,8 +201,8 @@ public class Convolution {
      *
      * @param filePathIn
      * @param filePathOut
-     * @throws IOException This source was used as a reference to use ImageIO in
-     * the context of performing a convolution:
+     * @throws IOException 
+     * This source was used as a reference to use ImageIO in the context of performing a convolution:
      * https://ramok.tech/2018/09/27/convolution-in-java/
      */
     public static void performSobelX(String filePathIn, String filePathOut) throws IOException {
@@ -250,7 +253,10 @@ public class Convolution {
      *
      * @param filePathIn
      * @param filePathOut
+     * @param threshold
      * @throws IOException
+     * This source was used as a reference to use ImageIO in the context of performing a convolution:
+     * https://ramok.tech/2018/09/27/convolution-in-java/
      */
     public static void performSobel(String filePathIn, String filePathOut, float threshold) throws IOException {
 
@@ -301,7 +307,14 @@ public class Convolution {
         ImageIO.write(finalImage, "bmp", file);
 
     }
-
+    /**
+     * This method applies the laplacian operator kernel on an image
+     * @param filePathIn
+     * @param filePathOut
+     * @throws IOException 
+     * This source was used as a reference to use ImageIO in the context of performing a convolution:
+     * https://ramok.tech/2018/09/27/convolution-in-java/
+     */
     public static void performLaplacianOperator(String filePathIn, String filePathOut) throws IOException {
         //Source for the kernel: https://youtu.be/uNP6ZwQ3r6A?si=Lg2Q0SyxrTAA6Qcw
         float[][] laplacianKernel = {{0, 1, 0},
@@ -354,7 +367,15 @@ public class Convolution {
         File file = new File(filePathOut);
         ImageIO.write(finalImage, "bmp", file);
     }
-
+    /**
+     * This method applies the Prewitt operator kernel on an image. This operator is very similar to Sobel, with the exception of the corners.
+     * @param filePathIn
+     * @param filePathOut
+     * @param threshold
+     * @throws IOException 
+     * This source was used as a reference to use ImageIO in the context of performing a convolution:
+     * https://ramok.tech/2018/09/27/convolution-in-java/
+     */
     public static void performPrewitt(String filePathIn, String filePathOut, float threshold) throws IOException {
         //Source for the kernel: https://en.wikipedia.org/wiki/Prewitt_operator
         float[][] rulesPrewittX = {{-1, -1, -1},
@@ -460,8 +481,8 @@ public class Convolution {
      *
      * @param filePathIn - The path of the path input
      * @param filePathOut - The path of the file output
-     * @throws IOException This source was used as a reference to use ImageIO in
-     * the context of performing a convolution:
+     * @throws IOException 
+     * This source was used as a reference to use ImageIO in the context of performing a convolution:
      * https://ramok.tech/2018/09/27/convolution-in-java/
      */
     public static void mergeSobels(String filePathIn, String filePathOut) throws IOException {
@@ -632,8 +653,8 @@ public class Convolution {
      *
      * @param filePath - The path to the image file
      * @return BufferedImage - The corresponding BufferedImage
-     * @throws IOException Source:
-     * https://ramok.tech/2018/09/27/convolution-in-java/
+     * @throws IOException 
+     * Source: https://ramok.tech/2018/09/27/convolution-in-java/
      */
     public static BufferedImage createBI(String filePath) throws IOException {
         File file = new File(filePath);
