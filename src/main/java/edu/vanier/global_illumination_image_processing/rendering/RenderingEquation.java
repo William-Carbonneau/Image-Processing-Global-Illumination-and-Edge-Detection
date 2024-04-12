@@ -10,7 +10,7 @@ public class RenderingEquation {
     /** width and height of render image/camera in pixels, cannot be static for dynamic adjustment */
     private int width, height;
     /** The Scene to render */
-    private Scene scene;
+    private RenderScene scene;
     /** random instance for general use */
     private UniformRandom rand;
     
@@ -25,7 +25,7 @@ public class RenderingEquation {
      * @param height int
      * @param scene Scene
      */
-    public RenderingEquation(int width, int height, Scene scene) {
+    public RenderingEquation(int width, int height, RenderScene scene) {
         this.width = width;
         this.height = height;
         this.scene = scene;
@@ -66,7 +66,7 @@ public class RenderingEquation {
      * 
      * @return 
      */
-    public Scene getScene() {
+    public RenderScene getScene() {
         return scene;
     }
 
@@ -136,7 +136,7 @@ public class RenderingEquation {
     * @param stratified boolean - should the render be stratified true/false
     * @param engine int - the type of engine to be used - 1 bands, 3 psychedelic, anything else normal
     */
-    private void trace(Ray ray, Scene scene, int recursionDepth, DiffuseColor color, Halton halton1, Halton halton2, boolean stratified, int engine) {
+    private void trace(Ray ray, RenderScene scene, int recursionDepth, DiffuseColor color, Halton halton1, Halton halton2, boolean stratified, int engine) {
         
         // russian roulette recursion
         double rouletteFactor = 1.0;
@@ -289,8 +289,10 @@ public class RenderingEquation {
      * @param halton2 Halton sequence 2, type: Halton
      * @param scene the scene containing simulation, type Scene
      * @param pixels array of image pixels, type: DiffuseColor[][]
+     * @param stratified boolean should the render use stratified diffuse sampling true/false
+     * @param engine int the engine type to use 1 banded, 2 psychedelic, anything else - normal
      */
-    public void simulatePerPixel(int column, int rowCam, int rowAdjusted, double SPP, Halton halton1, Halton halton2, Scene scene, DiffuseColor[][] pixels, boolean stratified, int engine) {
+    public void simulatePerPixel(int column, int rowCam, int rowAdjusted, double SPP, Halton halton1, Halton halton2, RenderScene scene, DiffuseColor[][] pixels, boolean stratified, int engine) {
         
         // loop over samples per pixel
         for (int samples = 0; samples < SPP; samples++) {

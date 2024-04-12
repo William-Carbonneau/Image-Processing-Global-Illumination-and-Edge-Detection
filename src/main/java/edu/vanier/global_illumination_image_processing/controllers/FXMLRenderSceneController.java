@@ -3,12 +3,15 @@ package edu.vanier.global_illumination_image_processing.controllers;
 import edu.vanier.global_illumination_image_processing.MainApp;
 import edu.vanier.global_illumination_image_processing.rendering.DiffuseColor;
 import edu.vanier.global_illumination_image_processing.rendering.RenderWrapper;
-import edu.vanier.global_illumination_image_processing.rendering.Scene;
+import edu.vanier.global_illumination_image_processing.rendering.RenderScene;
 import edu.vanier.global_illumination_image_processing.rendering.SceneObject;
 import edu.vanier.global_illumination_image_processing.rendering.Vec3D;
 import edu.vanier.global_illumination_image_processing.rendering.objects.Plane;
 import edu.vanier.global_illumination_image_processing.rendering.objects.Sphere;
 import java.awt.image.BufferedImage;
+import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.beans.binding.Bindings;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -27,9 +30,13 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import javafx.embed.swing.SwingFXUtils;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Scene;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
+import javafx.stage.Modality;
 
 /**
  * The controller for the rendering scene
@@ -46,6 +53,7 @@ public class FXMLRenderSceneController {
     @FXML MenuItem menuItemAddPlaneY;
     @FXML MenuItem menuItemAddPlaneZ;
     @FXML MenuItem menuItemRemoveSelected;
+    @FXML MenuItem menuItemAboutRendering;
     @FXML ListView listObjectList;
     @FXML Label lblObjectType;
     @FXML Label lblRightStatus;
@@ -74,7 +82,7 @@ public class FXMLRenderSceneController {
     Stage primaryStage;
     
     /** create the render scene */
-    private final Scene mainScene = new Scene();
+    private final RenderScene mainScene = new RenderScene();
     /** The renderer instance TODO modify width/height */
     private final RenderWrapper renderer = new RenderWrapper(800, 800, mainScene, 8.0);
     private int renderEngine = 0;
@@ -123,7 +131,7 @@ public class FXMLRenderSceneController {
         vboxPropertyList.getChildren().remove(HboxRadius);
         vboxPropertyList.getChildren().remove(HboxDTO);
         
-        // temporary list of default objects
+        // default objects
         objectList.add(new ObjWrapper("Metal Sphere 1", new Sphere(new Vec3D(-0.75,-1.45,-4.4), 1.05, new DiffuseColor(4, 8, 4), 0,2)));
         objectList.add(new ObjWrapper("Glass sphere 1", new Sphere(new Vec3D(2.0,-2.05,-3.7), 0.5, new DiffuseColor(10, 10, 1), 0,3)));
         objectList.add(new ObjWrapper("Diffuse sphere 1", new Sphere(new Vec3D(-1.75,-1.95,-3.1), 0.6, new DiffuseColor(4, 4, 12), 0,1)));
@@ -133,8 +141,7 @@ public class FXMLRenderSceneController {
         objectList.add(new ObjWrapper("right plane", new Plane(new Vec3D(-1,0,0), 2.75, new DiffuseColor(2, 10, 2), 0,1)));
         objectList.add(new ObjWrapper("ceiling plane", new Plane(new Vec3D(0,-1,0), 3.0, new DiffuseColor(6, 6, 6), 0,1)));
         objectList.add(new ObjWrapper("front plane", new Plane(new Vec3D(0,0,-1), 0.5, new DiffuseColor(6, 6, 6), 0,1)));
-        objectList.add(new ObjWrapper("light sphere 1", new Sphere(new Vec3D(0,1.9,-3), 0.5, new DiffuseColor(12, 12, 12), 10000,1)));
-        objectList.get(9).getObj().setRefractiveIndex(1.9);   
+        objectList.add(new ObjWrapper("light sphere 1", new Sphere(new Vec3D(0,1.9,-3), 0.5, new DiffuseColor(12, 12, 12), 10000,1))); 
         
         for (ObjWrapper obj: objectList) {
             mainScene.addObj(obj.getName(), obj.getObj());
@@ -202,6 +209,27 @@ public class FXMLRenderSceneController {
             if (item == null) return;
             mainScene.removeObj(item.getName());
             objectList.remove(item);
+        });
+        
+        /**
+         * Start the about page popup
+         */
+        menuItemAboutRendering.setOnAction((event) -> {
+            
+            try {
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/FXMLRenderAboutScene.fxml"));
+                Pane root = loader.load();
+                Stage stage = new Stage();
+                stage.initModality(Modality.APPLICATION_MODAL);
+                stage.initOwner(primaryStage);
+                Scene scene = new Scene(root);
+                stage.setScene(scene);
+                stage.setAlwaysOnTop(true);
+                stage.setTitle("About Render");
+                stage.show();
+            } catch (IOException ex) {
+                Logger.getLogger(FXMLRenderSceneController.class.getName()).log(Level.SEVERE, null, ex);
+            }    
         });
         
         /**

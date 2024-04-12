@@ -6,14 +6,14 @@ import java.util.HashMap;
  * A Scene for the object to live in 
  * @author William Carbonneau <2265724 at edu.vaniercollege.ca>
  */
-public class Scene {
+public class RenderScene {
     // TODO potentially change this to a hashset to only have unique elements and easy deletion
     private HashMap<String, SceneObject> objects;
 
     /**
      * Constructor to create the list of objects in the scene
      */
-    public Scene() {
+    public RenderScene() {
         this.objects = new HashMap<>();
     }
     

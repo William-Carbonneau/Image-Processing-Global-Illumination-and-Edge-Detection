@@ -2,7 +2,7 @@ package edu.vanier.global_illumination_image_processing.tests;
 
 import edu.vanier.global_illumination_image_processing.rendering.DiffuseColor;
 import edu.vanier.global_illumination_image_processing.rendering.RenderWrapper;
-import edu.vanier.global_illumination_image_processing.rendering.Scene;
+import edu.vanier.global_illumination_image_processing.rendering.RenderScene;
 import edu.vanier.global_illumination_image_processing.rendering.Vec3D;
 import edu.vanier.global_illumination_image_processing.rendering.objects.Plane;
 import edu.vanier.global_illumination_image_processing.rendering.objects.Sphere;
@@ -15,7 +15,7 @@ import edu.vanier.global_illumination_image_processing.rendering.objects.Sphere;
 public class RenderTest {
     public static void main(String[] args) {
         
-        final Scene scene = new Scene();
+        final RenderScene scene = new RenderScene();
         
         // add objects
         // Sphere: origin, radius, color, emission, type 
