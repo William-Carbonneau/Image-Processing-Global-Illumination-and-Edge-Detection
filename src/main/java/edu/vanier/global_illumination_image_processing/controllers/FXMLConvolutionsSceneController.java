@@ -26,6 +26,7 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.Pane;
@@ -62,6 +63,9 @@ public class FXMLConvolutionsSceneController {
     TextField thresholdTxtBox;
     @FXML
     Button saveToDatabaseBtn;
+    byte[] b;
+    File temp;
+    FileOutputStream FOS;
     float defaultThreshold=100;
     // Source for the kernel to implement: https://youtu.be/C_zFhWdM4ic?si=CH3JvuO9mSfVmleJ
     float[][] rulesGaussian3x3 = {{1,2,1},{2,4,2},{1,2,1}};
@@ -84,6 +88,10 @@ public class FXMLConvolutionsSceneController {
     String nameFileOut;
     float threshold = 50;
     float[][] kernelWithMoreDimensions;
+    ArrayList<ImageView> imvs = new ArrayList<>();
+    ArrayList<String> titles = new ArrayList<>();
+    ArrayList<byte[]> bs = new ArrayList<>();
+    ImageView iv;
 
     public FXMLConvolutionsSceneController(Stage primaryStage) {
         this.primaryStage = primaryStage;
@@ -515,6 +523,9 @@ public class FXMLConvolutionsSceneController {
     }
     private void getFromDBAndDisplay(String titleDatabase,String tableName,  FlowPane root) throws FileNotFoundException, IOException {
         Connection connection = null;
+        imvs = new ArrayList<>();
+        titles = new ArrayList<>();
+        bs = new ArrayList<>();
         try{
             connection  =DriverManager.getConnection("jdbc:sqlite:"+titleDatabase+".db");
             print("Connection established");
@@ -524,52 +535,58 @@ public class FXMLConvolutionsSceneController {
             ResultSet rs = stmt.executeQuery(getResultSetFromDB);
             print("rs created");
             System.out.println("File temp created");
-            FileOutputStream FOS;
             Image image;
             ImageView imageview;
             System.out.println(rs.getFetchSize());
-            File temp;
             Label title;
             VBox imageAndTitle;
+            String chosen;
             while(rs.next()){
                 imageAndTitle = new VBox();
                 String titleImage = rs.getString("title");
-                byte[] b = rs.getBytes("image");
+                titles.add(titleImage);
+                this.b = rs.getBytes("image");
+                bs.add(this.b);
                 temp = new File("src\\main\\resources\\Images\\Convolutions\\"+titleImage+".bmp");
                 FOS = new FileOutputStream(temp);
-                FOS.write(b);
+                FOS.write(this.b);
                 System.out.println("FOS written");
                 image  = new Image(temp.getAbsolutePath());
                 imageview = new ImageView();
                 imageview.setFitHeight(100);
                 imageview.setFitWidth(100);
                 imageview.setImage(image);
+                imvs.add(imageview);
                 title = new Label();
                 title.setText(titleImage);
                 imageAndTitle.getChildren().addAll(imageview,title);
                 root.getChildren().add(imageAndTitle);
                 FOS.flush();
             }
-            String choiceOfImage = chooseNameFileDialog();
-            //Retrive from the database
-            try{
-                ResultSet rs2 = stmt.executeQuery(getResultSetFromDB);
-                while(rs2.next()){
-                    if(rs2.getString("title").equals(choiceOfImage)){
-                        byte[] b = rs2.getBytes("image");
-                        System.out.println(b.length);
-                        temp = new File("src\\main\\resources\\Images\\Convolutions\\temp.bmp");
-                        FOS = new FileOutputStream(temp);
-                        FOS.write(b);
-                        imageBeingDisplayedOnIV = temp;
-                        imageImgView.setImage(new Image(temp.getAbsolutePath()));
-                        
-                    }
-                }
-                
-            }catch(SQLException e){
-                System.out.println("The image does not exist");
+            for(int i = 0; i<imvs.size(); i++){
+                imvs.get(i).setOnMouseClicked((event)->{
+                    System.out.println(imvs.indexOf(iv));
+                });
             }
+            imvs.forEach((i)->{
+                iv = i;
+                i.setOnMouseClicked((event)->{
+                System.out.println(imvs.indexOf(event.getPickResult().getIntersectedNode()));
+                temp = new File("src\\main\\resources\\Images\\Convolutions\\temp.bmp");
+                    try {
+                        FOS = new FileOutputStream(temp);
+                    } catch (FileNotFoundException ex) {
+                        Logger.getLogger(FXMLConvolutionsSceneController.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                    try {
+                        FOS.write(bs.get(imvs.indexOf(event.getPickResult().getIntersectedNode())));
+                    } catch (IOException ex) {
+                        Logger.getLogger(FXMLConvolutionsSceneController.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                imageBeingDisplayedOnIV = temp;
+                imageImgView.setImage(new Image(temp.getAbsolutePath()));
+                });
+            });
             
         }catch(SQLException e){
             System.out.println("SQLException caught");
