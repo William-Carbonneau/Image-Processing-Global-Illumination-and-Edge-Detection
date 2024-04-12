@@ -68,9 +68,7 @@
             </Menu>
         <Menu mnemonicParsing="false" text="File">
           <items>
-            <MenuItem mnemonicParsing="false" text="Preferences…" />
             <SeparatorMenuItem mnemonicParsing="false" />
-            <MenuItem mnemonicParsing="false" text="Quit" />
           </items>
         </Menu>
             <Menu mnemonicParsing="false" text="Object">
@@ -84,7 +82,7 @@
             </Menu>
         <Menu mnemonicParsing="false" text="Help">
           <items>
-            <MenuItem mnemonicParsing="false" text="About Rendering" />
+            <MenuItem fx:id="menuItemAboutRendering" mnemonicParsing="false" text="About Rendering" />
           </items>
         </Menu>
       </menus>

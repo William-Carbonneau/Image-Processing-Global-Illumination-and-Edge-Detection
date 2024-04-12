@@ -192,7 +192,7 @@ public class Vec3D {
      * @param v3 Another vector.
      */
     public static void orthonormalSystem(Vec3D v1, Vec3D v2, Vec3D v3) {
-
+        // create normal vectors
         if (Math.abs(v1.getX()) > Math.abs(v1.getY())) {
             double targetLength = 1.0 / Math.sqrt((v1.getX() * v1.getX()) + (v1.getZ() * v1.getZ()));
             v2.setX(-v1.getZ() * targetLength);
@@ -204,7 +204,9 @@ public class Vec3D {
             v2.setY(v1.getZ() * targetLength);
             v2.setZ(-v1.getY() * targetLength);
         }
+        // cross product to get third
         Vec3D v3temp = v1.cross(v2);
+        // set vector 3
         v3.setX(v3temp.getX());
         v3.setY(v3temp.getY());
         v3.setZ(v3temp.getZ());

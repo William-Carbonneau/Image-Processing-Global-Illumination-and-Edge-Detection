@@ -20,7 +20,7 @@ public class RenderWrapper {
     /** width and height of render image/camera in pixels, cannot be static for dynamic adjustment */
     private int width, height;
     /** The Scene to render */
-    private Scene scene;
+    private RenderScene scene;
     /** Samples per pixel */
     private double SPP;
     /** thread count of previous render */
@@ -41,7 +41,7 @@ public class RenderWrapper {
      * @param scene Scene
      * @param SPP double
      */
-    public RenderWrapper(int width, int height, Scene scene, double SPP) {
+    public RenderWrapper(int width, int height, RenderScene scene, double SPP) {
         this.width = width;
         this.height = height;
         this.scene = scene;
@@ -71,7 +71,7 @@ public class RenderWrapper {
     * 
     * @return The scene associated with the render.
     */
-    public Scene getScene() {
+    public RenderScene getScene() {
         return scene;
     }
 
@@ -107,7 +107,7 @@ public class RenderWrapper {
     * 
     * @param scene The scene associated with the render.
     */
-    public void setScene(Scene scene) {
+    public void setScene(RenderScene scene) {
         this.scene = scene;
     }
 
