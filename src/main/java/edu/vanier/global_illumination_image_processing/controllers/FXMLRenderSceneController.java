@@ -123,7 +123,7 @@ public class FXMLRenderSceneController {
         // create list of elements - needs a new class wrapper
         ObservableList<ObjWrapper> objectList = FXCollections.observableArrayList();
         ObservableList<String> typeChoiceBoxList = FXCollections.observableArrayList("Diffuse","Reflective","Refractive");
-        ObservableList<String> engineList = FXCollections.observableArrayList("Normal", "Banded", "Psycho");
+        ObservableList<String> engineList = FXCollections.observableArrayList("Normal", "Banded", "Psycho", "Rasterized");
         listObjectList.setItems(objectList);
         choiceMaterial.setItems(typeChoiceBoxList);
         choiceEngine.setItems(engineList);
@@ -456,9 +456,10 @@ public class FXMLRenderSceneController {
                renderEngine = 1;
             }else if (choiceEngine.getValue() == "Psycho") {
                 renderEngine = 2;
+            }else if (choiceEngine.getValue() == "Rasterized") {
+                renderEngine = 3;
             }
-        });
-        
+        });     
     }
     
     /**

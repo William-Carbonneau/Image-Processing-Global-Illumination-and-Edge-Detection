@@ -134,7 +134,7 @@ public class RenderingEquation {
     * @param halton1 Halton - The first Halton sequence generator used for random number generation.
     * @param halton2 Halton - The second Halton sequence generator used for random number generation.
     * @param stratified boolean - should the render be stratified true/false
-    * @param engine int - the type of engine to be used - 1 bands, 3 psychedelic, anything else normal
+    * @param engine int - the type of engine to be used - 1 bands, 2 psychedelic, 3 rasterized, anything else normal
     */
     private void trace(Ray ray, RenderScene scene, int recursionDepth, DiffuseColor color, Halton halton1, Halton halton2, boolean stratified, int engine) {
         
@@ -157,7 +157,10 @@ public class RenderingEquation {
         // check if interscetion exists, otherwise return
         if(!intersect.containsObjectBool()) return;
         // at this point we are sure to have an intersection
-                
+        if (engine == 3) {
+            color.addToObject(intersect.getObject().getColor());
+            return;
+        }        
         
         // trace a ray to the nearest intersection point then bounce
         Vec3D hitPoint = ray.getOrigin().add(ray.getDirection().multiply(intersect.getIntersectDistance()));
@@ -308,9 +311,14 @@ public class RenderingEquation {
 
             // trace the ray recursively
             trace(ray, scene, 0,colorMaster, halton1, halton2, stratified,engine);
-
-            // set the appropriate pixel
-            pixels[column][rowAdjusted] = pixels[column][rowAdjusted].add(colorMaster.multiply(1/SPP));
+            // short the recursion if engine 3
+            if (engine  == 3) {
+                samples += SPP;
+                pixels[column][rowAdjusted] = pixels[column][rowAdjusted].add(colorMaster);
+            }else {
+                // set the appropriate pixel
+                pixels[column][rowAdjusted] = pixels[column][rowAdjusted].add(colorMaster.multiply(1/SPP));
+            }
         }
     }
 }
