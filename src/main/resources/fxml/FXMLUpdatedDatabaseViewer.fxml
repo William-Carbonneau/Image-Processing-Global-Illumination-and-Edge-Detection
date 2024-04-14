@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.SplitPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.TilePane?>
+
+<SplitPane fx:id="SPane" dividerPositions="0.8341708542713567" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" orientation="VERTICAL" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1">
+  <items>
+      <ScrollPane fx:id="ScrollPaneItems" prefHeight="200.0" prefWidth="200.0">
+         <content>
+            <TilePane fx:id="tilePane" prefHeight="327.0" prefWidth="592.0" />
+         </content>
+      </ScrollPane>
+      <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="100.0">
+         <children>
+            <Button fx:id="takeBtn" mnemonicParsing="false" text="Take" />
+            <Button fx:id="deleteBtn" mnemonicParsing="false" text="Delete" />
+            <Button fx:id="createTableBtn" mnemonicParsing="false" text="Create Table" />
+         </children>
+         <opaqueInsets>
+            <Insets />
+         </opaqueInsets>
+      </HBox>
+  </items>
+</SplitPane>

@@ -2,6 +2,7 @@ package edu.vanier.global_illumination_image_processing.controllers;
 
 import edu.vanier.global_illumination_image_processing.MainApp;
 import edu.vanier.global_illumination_image_processing.models.Convolution;
+import edu.vanier.global_illumination_image_processing.models.Database;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -92,7 +93,6 @@ public class FXMLConvolutionsSceneController {
     ArrayList<String> titles = new ArrayList<>();
     ArrayList<byte[]> bs = new ArrayList<>();
     ImageView iv;
-
     public FXMLConvolutionsSceneController(Stage primaryStage) {
         this.primaryStage = primaryStage;
         
@@ -185,20 +185,12 @@ public class FXMLConvolutionsSceneController {
         });
         saveToDatabaseBtn.setOnAction((event)->{
             System.out.println("Save to Database clicked");
-            Connection connection = null;
             if(imageImgView.getImage()!=null){
                 Image imageToSave = imageImgView.getImage();
                 File temp = new File(imageToSave.getUrl());
                 System.out.println("URL "+imageToSave.getUrl());
                 try {
-                    FileInputStream FIS = new FileInputStream(temp.getAbsolutePath());
-                    byte[] b = FIS.readAllBytes();
-                    connection = DriverManager.getConnection("jdbc:sqlite:Images.db");
-                    PreparedStatement pstmt = connection.prepareStatement("INSERT INTO ImagesConvolutions(title, image) VALUES(?,?)");
-                    String titleImage = chooseNameFileDialog();
-                    pstmt.setString(1, titleImage);
-                    pstmt.setBytes(2, b);
-                    pstmt.execute();
+                    Database.insertRow("Images", "ImagesConvolutions",chooseNameFileDialog(),temp);
                     FileOutputStream FOS = new FileOutputStream(temp.getAbsolutePath());
                     FOS.flush();
                 } catch (FileNotFoundException ex) {
@@ -209,11 +201,13 @@ public class FXMLConvolutionsSceneController {
                     Logger.getLogger(FXMLConvolutionsSceneController.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }
+            
             else{
                 print("The image view is null");
             }
             
         });
+        
         convolveBtn.setOnAction((event)->{
             //To convolve an image, we need an image and a convolution choice
             //Convolution choice
