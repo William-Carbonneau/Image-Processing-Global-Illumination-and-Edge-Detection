@@ -86,12 +86,12 @@ public class FXMLRenderSceneController {
     private final RenderScene mainScene = new RenderScene();
     /** The renderer instance TODO modify width/height */
     private final RenderWrapper renderer = new RenderWrapper(800, 800, mainScene, 8);
-    private int renderEngine = 0;
+    private int renderEngine = 3;
     private boolean stratified = true;
 
     // construct this controller with the primary stage
     public FXMLRenderSceneController(Stage primaryStage) {
-        this.autoRender = false;
+        this.autoRender = true;
         this.primaryStage = primaryStage;
     }
     
@@ -139,7 +139,7 @@ public class FXMLRenderSceneController {
         // create list of elements - needs a new class wrapper
         ObservableList<ObjWrapper> objectList = FXCollections.observableArrayList();
         ObservableList<String> typeChoiceBoxList = FXCollections.observableArrayList("Diffuse","Reflective","Refractive");
-        ObservableList<String> engineList = FXCollections.observableArrayList("Normal", "Banded", "Psycho", "Rasterized");
+        ObservableList<String> engineList = FXCollections.observableArrayList("Rasterized","Global Illumination", "Banded", "Psycho");
         listObjectList.setItems(objectList);
         choiceMaterial.setItems(typeChoiceBoxList);
         choiceEngine.setItems(engineList);
@@ -472,7 +472,7 @@ public class FXMLRenderSceneController {
         });
         
         choiceEngine.setOnAction((event) -> {
-            if (choiceEngine.getValue() == "Normal") {
+            if (choiceEngine.getValue() == "Global Illumination") {
                 renderEngine = 0;
                 autoRender = false;
             }else if (choiceEngine.getValue() == "Banded") {
