@@ -24,6 +24,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
+import javafx.scene.control.SplitPane;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -150,20 +151,23 @@ public class FXMLConvolutionsSceneController {
                 //Set this primary stage off
                 primaryStage.setAlwaysOnTop(false);
                 //Create a window 
-                FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/FXMLDatabaseConvolutions.fxml"));
-                FlowPane root = loader.load();
                 Stage stage = new Stage();
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/FXMLUpdatedDatabaseViewer.fxml"));
+                FXMLDatabaseViewer databaseController = new FXMLDatabaseViewer(stage, temp);
+                loader.setController(databaseController);
+                SplitPane root = loader.load();
+                
+                
                 Scene scene = new Scene(root);
                 stage.setScene(scene);
                 stage.setAlwaysOnTop(true);
-                stage.setTitle("Database Viewer");
-                stage.show();
-                String titleDatabase;
-                titleDatabase = "Images";
-                String tableName ="ImagesConvolutions" ;
-                //Get the elements from the db and display them
-                getFromDBAndDisplay(titleDatabase, tableName, root);
+                stage.showAndWait();
+                Image tempImage = databaseController.getPassedImage();
+                imageImgView.setImage(tempImage);
+                imageBeingDisplayedOnIV = new File(tempImage.getUrl());
+                stage.close();
             }catch(Exception e){
+                System.out.println(e.getStackTrace().toString());
             }
             
         });

@@ -1,7 +1,5 @@
-package edu.vanier.global_illumination_image_processing.tests;
+package edu.vanier.global_illumination_image_processing.controllers;
 
-import ch.qos.logback.core.util.Loader;
-import edu.vanier.global_illumination_image_processing.controllers.FXMLConvolutionsSceneController;
 import static edu.vanier.global_illumination_image_processing.controllers.FXMLConvolutionsSceneController.print;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -15,13 +13,9 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javafx.application.Application;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.control.ScrollPane;
 import javafx.scene.control.SplitPane;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -30,57 +24,54 @@ import javafx.scene.layout.TilePane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
-
-public class UpdatedDatabaseViewer extends Application{
-    public static void main(String[] args) {
-        launch(args);
-    }
-    
-
-    @Override
-    public void start(Stage primaryStage) throws Exception {
-        try{
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/FXMLUpdatedDatabaseViewer.fxml"));
-            // Create the controller by calling the constructor of FXMLMainAppController
-            // Since the game has just begun, the level is 1, and the initial score of the player is 0
-            FXMLControllerViewerDatabase controller = new FXMLControllerViewerDatabase();
-            // Set the controller of the loader
-            loader.setController(controller);
-            // Load the pane from the fxml
-            SplitPane root = loader.load();
-            //-- 2) Create and set the scene to the stage.
-            Scene scene = new Scene(root, 800, 800);
-            // Set the scene of the primary stage
-            primaryStage.setScene(scene);
-            // Set the title of the application
-            primaryStage.setTitle("Test");
-            primaryStage.sizeToScene();
-            primaryStage.setAlwaysOnTop(true);
-            // Show the primary stage
-            primaryStage.show();
-        }
-        catch(Exception e){System.out.println("Error Caught");}
-    }
-}
-class FXMLControllerViewerDatabase{
-    @FXML ScrollPane ScrollPaneItems;
+public class FXMLDatabaseViewer {
+    private File temp;
+    private ImageView iv;
+    private ArrayList<ImageView> imvs = new ArrayList<>();
+    private int indexSelected=-1;
+    private Image passedImage;
+    private Stage stage;
+    @FXML
+    SplitPane SPane;
     @FXML TilePane tilePane;
     @FXML Button chooseBtn;
-    @FXML Button deleteBtn;
+    
     @FXML
-    public void initialize(){
-        chooseBtn.setOnAction((event)->{
-            System.out.println("Take button clicked");
+    public void initialize() throws IOException{
+        getFromDBAndDisplay("Images","ImagesConvolutions",tilePane);
+        
+        /**
+         * Load the currently selected image
+         */
+        chooseBtn.setOnAction((event) -> {
+            ImageView temp;
+            if (indexSelected == -1) return;
+            temp = imvs.get(indexSelected);
+            passedImage = temp.getImage();
+            this.stage.hide();
         });
-        deleteBtn.setOnAction((event)->{
-            System.out.println("Delete button clicked");
-        });
-        /*
-private void getFromDBAndDisplay(String titleDatabase,String tableName,  FlowPane root) throws FileNotFoundException, IOException {
+    }
+    public FXMLDatabaseViewer(Stage stage, File temp) {
+        this.stage = stage;
+        this.temp = temp;
+    }
+
+    /**
+     * TODO
+     * @return 
+     */
+    public Image getPassedImage() {
+        return passedImage;
+    }
+    
+    
+    
+    private void getFromDBAndDisplay(String titleDatabase,String tableName,  TilePane root) throws FileNotFoundException, IOException {
         Connection connection = null;
-        ArrayList<ImageView> imvs = new ArrayList<>();
+        imvs = new ArrayList<>();
         ArrayList<String> titles = new ArrayList<>();
         ArrayList<byte[]> bs = new ArrayList<>();
+        ArrayList<VBox> vBoxes = new ArrayList<>();
         try{
             connection  =DriverManager.getConnection("jdbc:sqlite:"+titleDatabase+".db");
             print("Connection established");
@@ -115,6 +106,7 @@ private void getFromDBAndDisplay(String titleDatabase,String tableName,  FlowPan
                 title = new Label();
                 title.setText(titleImage);
                 imageAndTitle.getChildren().addAll(imageview,title);
+                vBoxes.add(imageAndTitle);
                 root.getChildren().add(imageAndTitle);
                 FOS.flush();
             }
@@ -126,20 +118,11 @@ private void getFromDBAndDisplay(String titleDatabase,String tableName,  FlowPan
             imvs.forEach((i)->{
                 iv = i;
                 i.setOnMouseClicked((event)->{
-                System.out.println(imvs.indexOf(event.getPickResult().getIntersectedNode()));
-                temp = new File("src\\main\\resources\\Images\\Convolutions\\temp.bmp");
-                    try {
-                        FOS = new FileOutputStream(temp);
-                    } catch (FileNotFoundException ex) {
-                        Logger.getLogger(FXMLConvolutionsSceneController.class.getName()).log(Level.SEVERE, null, ex);
-                    }
-                    try {
-                        FOS.write(bs.get(imvs.indexOf(event.getPickResult().getIntersectedNode())));
-                    } catch (IOException ex) {
-                        Logger.getLogger(FXMLConvolutionsSceneController.class.getName()).log(Level.SEVERE, null, ex);
-                    }
-                imageBeingDisplayedOnIV = temp;
-                imageImgView.setImage(new Image(temp.getAbsolutePath()));
+                    int index = imvs.indexOf(event.getPickResult().getIntersectedNode());
+                    if (indexSelected!= -1) vBoxes.get(indexSelected).setStyle("");
+                    indexSelected=index;
+                    vBoxes.get(indexSelected).setStyle("-fx-border-color: BLACK;");
+                
                 });
             });
             
@@ -153,8 +136,5 @@ private void getFromDBAndDisplay(String titleDatabase,String tableName,  FlowPan
                 System.out.println("Could not close the connection");
             }
         }
-    }
-    
-    */
     }
 }
