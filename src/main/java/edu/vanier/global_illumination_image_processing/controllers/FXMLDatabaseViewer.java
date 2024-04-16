@@ -1,6 +1,7 @@
 package edu.vanier.global_illumination_image_processing.controllers;
 
 import static edu.vanier.global_illumination_image_processing.controllers.FXMLConvolutionsSceneController.print;
+import edu.vanier.global_illumination_image_processing.models.Database;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -31,10 +32,12 @@ public class FXMLDatabaseViewer {
     private int indexSelected=-1;
     private Image passedImage;
     private Stage stage;
+    private ArrayList<String> titles;
     @FXML
     SplitPane SPane;
     @FXML TilePane tilePane;
-    @FXML Button chooseBtn;
+    @FXML Button btnChoose;
+    @FXML Button btnDelete;
     
     @FXML
     public void initialize() throws IOException{
@@ -43,12 +46,27 @@ public class FXMLDatabaseViewer {
         /**
          * Load the currently selected image
          */
-        chooseBtn.setOnAction((event) -> {
-            ImageView temp;
+        btnChoose.setOnAction((event) -> {
+            ImageView tempImage;
             if (indexSelected == -1) return;
-            temp = imvs.get(indexSelected);
-            passedImage = temp.getImage();
+            tempImage = imvs.get(indexSelected);
+            passedImage = tempImage.getImage();
             this.stage.hide();
+        });
+        
+        /**
+         * deletes selected image from database
+         */
+        btnDelete.setOnAction((event) -> {
+            if(indexSelected!=-1 && (indexSelected>3))
+            try {
+                System.out.println(indexSelected);
+                Database.deleteRow("Images","ImagesConvolutions", titles.get(indexSelected));
+            } catch (IOException ex) {
+                Logger.getLogger(FXMLDatabaseViewer.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (SQLException ex) {
+                Logger.getLogger(FXMLDatabaseViewer.class.getName()).log(Level.SEVERE, null, ex);
+            }
         });
     }
     public FXMLDatabaseViewer(Stage stage, File temp) {
@@ -69,7 +87,7 @@ public class FXMLDatabaseViewer {
     private void getFromDBAndDisplay(String titleDatabase,String tableName,  TilePane root) throws FileNotFoundException, IOException {
         Connection connection = null;
         imvs = new ArrayList<>();
-        ArrayList<String> titles = new ArrayList<>();
+        titles = new ArrayList<>();
         ArrayList<byte[]> bs = new ArrayList<>();
         ArrayList<VBox> vBoxes = new ArrayList<>();
         try{
@@ -96,7 +114,6 @@ public class FXMLDatabaseViewer {
                 temp = new File("src\\main\\resources\\Images\\Convolutions\\"+titleImage+".bmp");
                 FileOutputStream FOS = new FileOutputStream(temp);
                 FOS.write(b);
-                System.out.println("FOS written");
                 image  = new Image(temp.getAbsolutePath());
                 imageview = new ImageView();
                 imageview.setFitHeight(100);
@@ -122,7 +139,7 @@ public class FXMLDatabaseViewer {
                     if (indexSelected!= -1) vBoxes.get(indexSelected).setStyle("");
                     indexSelected=index;
                     vBoxes.get(indexSelected).setStyle("-fx-border-color: BLACK;");
-                
+                    
                 });
             });
             

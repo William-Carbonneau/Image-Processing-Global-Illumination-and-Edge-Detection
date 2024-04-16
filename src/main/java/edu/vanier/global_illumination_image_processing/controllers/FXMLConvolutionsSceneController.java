@@ -162,9 +162,12 @@ public class FXMLConvolutionsSceneController {
                 stage.setScene(scene);
                 stage.setAlwaysOnTop(true);
                 stage.showAndWait();
+                
                 Image tempImage = databaseController.getPassedImage();
+                if(tempImage!=null){
                 imageImgView.setImage(tempImage);
                 imageBeingDisplayedOnIV = new File(tempImage.getUrl());
+                }
                 stage.close();
             }catch(Exception e){
                 System.out.println(e.getStackTrace().toString());

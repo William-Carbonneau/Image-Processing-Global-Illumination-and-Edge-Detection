@@ -35,13 +35,11 @@ public class Database {
             }
         
     }
-    public static void deleteRow(String databaseName, String tableName, String titleImage, File temp) throws IOException, SQLException{
+    public static void deleteRow(String databaseName, String tableName, String titleImage) throws IOException, SQLException{
         Connection connection = null;
-        FileInputStream FIS = new FileInputStream(temp);
-        byte[] data = FIS.readAllBytes();
         try{
             connection = DriverManager.getConnection("jdbc:sqlite:"+databaseName+".db");
-            String insertQuery = String.format("DELETE FROM %s WHERE id = ? ", tableName);
+            String insertQuery = String.format("DELETE FROM "+tableName+" WHERE title = ? ");
             PreparedStatement pstmt = connection.prepareStatement(insertQuery);
             pstmt.setString(1, titleImage);
             pstmt.executeUpdate();
@@ -49,7 +47,6 @@ public class Database {
             System.out.println("An error occured while trying to delete the file from the database.");
         }
         finally{
-            FIS.close();
             connection.close();
         }
     }

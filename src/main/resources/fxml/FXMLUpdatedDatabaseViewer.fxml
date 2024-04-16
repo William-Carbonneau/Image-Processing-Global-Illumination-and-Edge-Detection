@@ -16,8 +16,8 @@
       </ScrollPane>
       <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="100.0">
          <children>
-            <Button fx:id="chooseBtn" mnemonicParsing="false" text="Choose" />
-            <Button fx:id="deleteBtn" mnemonicParsing="false" text="Delete" />
+            <Button fx:id="btnChoose" mnemonicParsing="false" text="Choose" />
+            <Button fx:id="btnDelete" mnemonicParsing="false" text="Delete" />
          </children>
          <opaqueInsets>
             <Insets />
