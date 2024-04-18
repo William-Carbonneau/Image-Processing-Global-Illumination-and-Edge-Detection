@@ -16,6 +16,22 @@ import javax.imageio.ImageIO;
  * This source was used to understand what is a convolution, what is a kernel, and how do they go hand in hand: https://youtu.be/C_zFhWdM4ic?si=nDnBCiZYqUB04SMO
  */
 public class Convolution {
+    /**
+     * This method finds the biggest value in an array
+     * @param array
+     * @return 
+     */
+    private static float findBiggestValue(float[][] array) {
+        float max = 0;
+        for(int i=0; i<array.length;i++){
+            for(int j=0; j<array[0].length;j++){
+                if(max<array[i][j])
+                    max = array[i][j];
+            }
+        }
+        return max;
+        
+    }
 
     // Source for the kernel to implement: https://youtu.be/C_zFhWdM4ic?si=CH3JvuO9mSfVmleJ
     float[][] rulesGaussian = {{1, 2, 1}, {2, 4, 2}, {1, 2, 1}};
@@ -258,16 +274,16 @@ public class Convolution {
      * This source was used as a reference to use ImageIO in the context of performing a convolution:
      * https://ramok.tech/2018/09/27/convolution-in-java/
      */
-    public static void performSobel(String filePathIn, String filePathOut, float threshold) throws IOException {
+    public static void performSobel(String filePathIn, String filePathOut) throws IOException {
 
         //Source for the kernel: https://en.wikipedia.org/wiki/Sobel_operator
         float[][] rulesSobelX = {{-1, -2, -1},
-        {0, 0, 0},
-        {1, 2, 1}};
+                                 {0, 0, 0},
+                                 {1, 2, 1}};
         //Source for the kernel: https://en.wikipedia.org/wiki/Sobel_operator
         float[][] rulesSobelY = {{-1, 0, 1},
-        {-2, 0, 2},
-        {-1, 0, 1}};
+                                 {-2, 0, 2},
+                                 {-1, 0, 1}};
         BufferedImage BI = createBI(filePathIn);
         // Create the array gray corresponding to the average values of the pixels
         float[][] g = new float[BI.getWidth()][BI.getHeight()];
@@ -285,18 +301,31 @@ public class Convolution {
         // gFinal contains the floating numbers describing how much the colour values change up to down. (It does not represent the grayscale value, but the difference in the grayscale)
         float[][] gradientX = performConvolutionOnArray(rulesSobelX, g);
         float[][] gradientY = performConvolutionOnArray(rulesSobelY, g);
+        float[][] sobel = new float[BI.getWidth()][BI.getHeight()];
         //Make a new image
         BufferedImage finalImage = new BufferedImage(g.length, g[0].length, BufferedImage.TYPE_INT_RGB);
+        float maxGradient;//Maximum value that a pixel can return
+        float ratioGradient; //ratio between the final gradient and the max gradient
+        int colorFloat; //Value of the color that the pixel should have between 0 and 255
         for (int w = 0; w < BI.getWidth(); w++) {
             for (int h = 0; h < BI.getHeight(); h++) {
                 //Calculate the final gradient using Pythagora
-                float finalGradient = (float) Math.sqrt(gradientX[w][h] * gradientX[w][h] + gradientY[w][h] * gradientY[w][h]);
+                sobel[w][h] = (float) Math.sqrt(gradientX[w][h] * gradientX[w][h] + gradientY[w][h] * gradientY[w][h]);
+            }
+        }
+        //We can now find the maximum gradient detected
+        maxGradient = findBiggestValue(sobel);
+        System.out.println(maxGradient);
+        for (int w = 0; w < BI.getWidth(); w++) {
+            for (int h = 0; h < BI.getHeight(); h++) {
                 //If the difference is bigger than the threshold, color that spot white
-                if (finalGradient > threshold) {
-                    color = new Color(255, 255, 255);
-                } // If not, colour it black
-                else {
-                    color = new Color(0, 0, 0);
+                ratioGradient = sobel[w][h]/maxGradient;
+                colorFloat = (int)((int) 255*ratioGradient);
+                try{
+                    color = new Color(colorFloat, colorFloat, colorFloat);
+                }catch(Exception e){
+                    System.out.println(colorFloat);
+                    color = new Color(0,0,0);
                 }
                 //Set the value of the colour
                 finalImage.setRGB(w, h, color.getRGB());

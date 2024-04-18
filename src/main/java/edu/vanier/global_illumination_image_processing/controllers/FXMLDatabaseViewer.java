@@ -79,6 +79,9 @@ public class FXMLDatabaseViewer {
             try {
                 System.out.println(indexSelected);
                 Database.deleteRow("Images","ImagesConvolutions", titles.get(indexSelected));
+                //Update the viewer by eliminating all children and adding them if they are still in the database
+                tilePane.getChildren().removeAll(tilePane.getChildren());
+                getFromDBAndDisplay("Images","ImagesConvolutions",tilePane);
             } catch (IOException ex) {
                 Logger.getLogger(FXMLDatabaseViewer.class.getName()).log(Level.SEVERE, null, ex);
             } catch (SQLException ex) {
