@@ -3,6 +3,7 @@ package edu.vanier.global_illumination_image_processing.controllers;
 import static edu.vanier.global_illumination_image_processing.controllers.FXMLConvolutionsSceneController.print;
 import edu.vanier.global_illumination_image_processing.models.Database;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -26,13 +27,29 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 public class FXMLDatabaseViewer {
-    private File temp;
+    /**
+     * This refers to the image that was being displayed on the main image view of the main window, before that window was opened.
+     * It is important to have that data, because the user does not pick or choose any image from the database, we need an object that stored
+     * that data. However, we are using the temp file to show the images on the secondary and primary window. Therefore, we cannot count on 
+     * temp to preserve that data.
+     */
+    private byte[] imageBeingDisplayedOnIV;
+    /**
+     * temp refers to a temporary file. We are using a temporary file to create Image objects. To minimize space, we using one single file for the entire
+     * project, This file temp is recycled as many times as there are images from the database and as many convolutions are being performed on an image.
+     */
+    private File temp = new File("src\\main\\resources\\Images\\Convolutions\\temp.bmp");
     private ImageView iv;
     private ArrayList<ImageView> imvs = new ArrayList<>();
     private int indexSelected=-1;
-    private Image passedImage;
+    /**
+     * the passedImage refers to the data, in the form of bytes, of the selected image by the user from the database.
+     * If the user does not choose anything, for example, by closing the window, the initial image is passed.
+     */
+    private byte[] passedImage;
     private Stage stage;
     private ArrayList<String> titles;
+    private ArrayList<byte[]> bs;
     @FXML
     SplitPane SPane;
     @FXML TilePane tilePane;
@@ -47,11 +64,11 @@ public class FXMLDatabaseViewer {
          * Load the currently selected image
          */
         btnChoose.setOnAction((event) -> {
-            ImageView tempImage;
-            if (indexSelected == -1) return;
-            tempImage = imvs.get(indexSelected);
-            passedImage = tempImage.getImage();
-            this.stage.hide();
+            if (indexSelected == -1) 
+                passedImage = imageBeingDisplayedOnIV;
+            else
+                passedImage = bs.get(indexSelected);
+            this.stage.close();
         });
         
         /**
@@ -69,26 +86,62 @@ public class FXMLDatabaseViewer {
             }
         });
     }
-    public FXMLDatabaseViewer(Stage stage, File temp) {
+    public FXMLDatabaseViewer(Stage stage, File temp) throws FileNotFoundException, IOException {
         this.stage = stage;
-        this.temp = temp;
+        FileInputStream FIS = new FileInputStream(temp);
+        this.imageBeingDisplayedOnIV = FIS.readAllBytes();
+        passedImage = this.imageBeingDisplayedOnIV;
     }
 
     /**
      * TODO
      * @return 
      */
-    public Image getPassedImage() {
+    public byte[] getPassedImage() {
         return passedImage;
     }
     
-    
-    
+    /**
+     * 
+     * @param databaseName - The database we are using is called "Images"
+     * @param tableName - The table we are using is called "ImagesConvolutions"
+     * @param titleImage - The name of the image
+     * @return []data - the bytes representing the image, which can be passed to create an actual file
+     * @throws SQLException 
+     */
+    private byte[] getImageFromDB(String databaseName, String tableName, String titleImage) throws SQLException{
+        Connection connection =null;
+        byte[] data = null;
+        try{
+            connection  = DriverManager.getConnection("jdbc:sqlite:"+databaseName+".db");
+            Statement stmt = connection.createStatement();
+            ResultSet rs = stmt.executeQuery("Select *from "+tableName);
+            while(rs.next()){
+                String t = rs.getString("title");
+                if(t.equals(titleImage)){
+                    data = rs.getBytes("image");
+                }
+            }
+        }catch(Exception e){
+            System.out.println("Error caught");
+        }
+        finally{
+            connection.close();
+        }
+        if(data!=null){
+            System.out.println("Match found");
+            return data;
+        }
+        else{
+            System.out.println("No match found for the image");
+            return null;
+        }
+    }
     private void getFromDBAndDisplay(String titleDatabase,String tableName,  TilePane root) throws FileNotFoundException, IOException {
         Connection connection = null;
         imvs = new ArrayList<>();
         titles = new ArrayList<>();
-        ArrayList<byte[]> bs = new ArrayList<>();
+        bs = new ArrayList<>();
         ArrayList<VBox> vBoxes = new ArrayList<>();
         try{
             connection  =DriverManager.getConnection("jdbc:sqlite:"+titleDatabase+".db");
@@ -104,14 +157,13 @@ public class FXMLDatabaseViewer {
             System.out.println(rs.getFetchSize());
             Label title;
             VBox imageAndTitle;
-            String chosen;
             while(rs.next()){
                 imageAndTitle = new VBox();
                 String titleImage = rs.getString("title");
                 titles.add(titleImage);
                 byte[] b = rs.getBytes("image");
                 bs.add(b);
-                temp = new File("src\\main\\resources\\Images\\Convolutions\\"+titleImage+".bmp");
+                temp = new File("src\\main\\resources\\Images\\Convolutions\\temp.bmp");
                 FileOutputStream FOS = new FileOutputStream(temp);
                 FOS.write(b);
                 image  = new Image(temp.getAbsolutePath());
@@ -136,10 +188,12 @@ public class FXMLDatabaseViewer {
                 iv = i;
                 i.setOnMouseClicked((event)->{
                     int index = imvs.indexOf(event.getPickResult().getIntersectedNode());
+                    indexSelected = index;
                     if (indexSelected!= -1) vBoxes.get(indexSelected).setStyle("");
                     indexSelected=index;
                     vBoxes.get(indexSelected).setStyle("-fx-border-color: BLACK;");
-                    
+                    System.out.println(indexSelected);
+                    passedImage = bs.get(index);
                 });
             });
             

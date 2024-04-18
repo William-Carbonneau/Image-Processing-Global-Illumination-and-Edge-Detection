@@ -66,7 +66,7 @@ public class FXMLConvolutionsSceneController {
     @FXML
     Button saveToDatabaseBtn;
     byte[] b;
-    File temp;
+    File temp = new File("src\\main\\resources\\Images\\Convolutions\\temp.bmp");
     FileOutputStream FOS;
     float defaultThreshold=100;
     // Source for the kernel to implement: https://youtu.be/C_zFhWdM4ic?si=CH3JvuO9mSfVmleJ
@@ -116,7 +116,8 @@ public class FXMLConvolutionsSceneController {
         return rulesCustom;
     }
     @FXML
-    public void initialize(){
+    public void initialize() throws IOException{
+        initializeTempFile();
         convolutionCB.getItems().addAll("Kernels With Different Dimensions", "Gaussian Blur 3x3","Gaussian Blur 5x5","Gaussian Blur 7x7", "Sharpening","Grayscale", "Sobel X", "Sobel Y", "Sobel Complete","Prewitt","Laplacian", "Colored Edge Angles");
         convolutionCB.setOnAction((event)->{
             //Get the value of the convolution
@@ -156,17 +157,18 @@ public class FXMLConvolutionsSceneController {
                 FXMLDatabaseViewer databaseController = new FXMLDatabaseViewer(stage, temp);
                 loader.setController(databaseController);
                 SplitPane root = loader.load();
-                
-                
                 Scene scene = new Scene(root);
                 stage.setScene(scene);
                 stage.setAlwaysOnTop(true);
                 stage.showAndWait();
                 
-                Image tempImage = databaseController.getPassedImage();
+                byte[] tempImage = databaseController.getPassedImage();
                 if(tempImage!=null){
-                imageImgView.setImage(tempImage);
-                imageBeingDisplayedOnIV = new File(tempImage.getUrl());
+                    FileOutputStream FOS = new FileOutputStream(temp);
+                    FOS.write(tempImage);
+                    imageImgView.setImage(new Image(temp.getAbsolutePath()));
+                    System.out.println(temp.getAbsolutePath());
+                    imageBeingDisplayedOnIV = temp;
                 }
                 stage.close();
             }catch(Exception e){
@@ -599,5 +601,17 @@ public class FXMLConvolutionsSceneController {
                 System.out.println("Could not close the connection");
             }
         }
+    }
+    /**
+     * This method deletes everything that is in the temporary file. It is crucial, because a user may run the program multiple times.
+     * Every time the program closes, assuming the user has chosen some image to convolve, temp will not be null, which can lead to problems in the
+     * logic of the program.
+     * @throws FileNotFoundException
+     * @throws IOException 
+     */
+    private void initializeTempFile() throws FileNotFoundException, IOException {
+        FileOutputStream FOS = new FileOutputStream(temp);
+        FOS.flush();
+        FOS.close();
     }
 }
