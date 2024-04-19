@@ -15,6 +15,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.fxml.FXML;
@@ -151,13 +152,7 @@ public class FXMLConvolutionsSceneController {
      */
     File imageBeingDisplayedOnIV;
     /**
-     * Name of the file output as specified by the user, whenever he chooses to
-     * save a file in the database, or the computer.
-     */
-    String nameFileOut;
-    /**
-     * Custom user kernel that will be initialized once the user specifies its
-     * dimensions.
+     * Custom user kernel that will be initialized once the user specifies its dimensions.
      */
     float[][] kernelWithMoreDimensions;
     /**
@@ -502,7 +497,7 @@ public class FXMLConvolutionsSceneController {
         SaveToFileBtn.setOnAction((event) -> {
             //To save the file, we need a directory and a name for the file
             String name = chooseNameFileDialog();
-            DirectoryChooser dc = getDirectoryChooser();
+            DirectoryChooser dc = getDirectoryChooser(primaryStage);
             //Create the file at the location with the name chosen by the user
             File file = new File(dc.getInitialDirectory().getAbsolutePath() + "//" + name + ".bmp");
             try {
@@ -602,15 +597,16 @@ public class FXMLConvolutionsSceneController {
      *
      * @return nameFile, String which corresponds to the name of the file
      */
-    public String chooseNameFileDialog() {
+    public static String chooseNameFileDialog(){
+        AtomicReference<String> nameFileOut = new AtomicReference<String>();
         Stage stage = new Stage();
         VBox root = new VBox();
         Label nameLbl = new Label("Please write the name of your file");
         TextField nameTxtFld = new TextField("Name");
         nameTxtFld.setLayoutX(0);
         Button OkBtn = new Button("OK");
-        OkBtn.setOnAction((event) -> {
-            nameFileOut = nameTxtFld.getText();
+        OkBtn.setOnAction((event)->{
+            nameFileOut.set(nameTxtFld.getText()); 
             stage.close();
         });
         root.getChildren().addAll(nameLbl, nameTxtFld, OkBtn);
@@ -618,7 +614,7 @@ public class FXMLConvolutionsSceneController {
         Scene scene = new Scene(root, 300, 300);
         stage.setScene(scene);
         stage.showAndWait();
-        return nameFileOut;
+        return nameFileOut.get();
     }
 
     /**
@@ -674,8 +670,7 @@ public class FXMLConvolutionsSceneController {
     public void displayImage(String filePath) {
         imageImgView.setImage(new Image(filePath));
     }
-
-    public DirectoryChooser getDirectoryChooser() {
+    public static DirectoryChooser getDirectoryChooser(Stage primaryStage){
         Stage stage = new Stage();
         DirectoryChooser dc = new DirectoryChooser();
         primaryStage.setAlwaysOnTop(false);

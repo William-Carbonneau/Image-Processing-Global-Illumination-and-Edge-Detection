@@ -1,6 +1,8 @@
 package edu.vanier.global_illumination_image_processing.controllers;
 
 import edu.vanier.global_illumination_image_processing.MainApp;
+import static edu.vanier.global_illumination_image_processing.controllers.FXMLConvolutionsSceneController.chooseNameFileDialog;
+import edu.vanier.global_illumination_image_processing.models.Database;
 import edu.vanier.global_illumination_image_processing.rendering.DiffuseColor;
 import edu.vanier.global_illumination_image_processing.rendering.RenderWrapper;
 import edu.vanier.global_illumination_image_processing.rendering.RenderScene;
@@ -9,7 +11,12 @@ import edu.vanier.global_illumination_image_processing.rendering.Vec3D;
 import edu.vanier.global_illumination_image_processing.rendering.objects.Plane;
 import edu.vanier.global_illumination_image_processing.rendering.objects.Sphere;
 import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.beans.binding.Bindings;
@@ -34,9 +41,12 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.image.Image;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
+import javafx.stage.DirectoryChooser;
 import javafx.stage.Modality;
+import javax.imageio.ImageIO;
 
 /**
  * The controller for the rendering scene
@@ -54,6 +64,8 @@ public class FXMLRenderSceneController {
     @FXML MenuItem menuItemAddPlaneZ;
     @FXML MenuItem menuItemRemoveSelected;
     @FXML MenuItem menuItemAboutRendering;
+    @FXML MenuItem menuItemSaveToDatabase;
+    @FXML MenuItem menuItemSaveToFile;
     @FXML ListView listObjectList;
     @FXML Label lblObjectType;
     @FXML Label lblRightStatus;
@@ -80,6 +92,7 @@ public class FXMLRenderSceneController {
     @FXML ScrollPane scrollImageHolder;
     @FXML StackPane stackImageHolder;
     Stage primaryStage;
+    private BufferedImage image;
     private boolean autoRender;
     
     /** create the render scene */
@@ -130,7 +143,7 @@ public class FXMLRenderSceneController {
         System.out.println("Engine: "+renderEngine);
         time = renderer.render(true, stratified,renderEngine);
         lblRightStatus.setText("Time: "+time+" milliseconds");
-        BufferedImage image = renderer.save();
+        image = renderer.save();
         // output image converted from buferedimage to javafx image
         if (image != null) imgResult.setImage(SwingFXUtils.toFXImage(image, null));
     }
@@ -199,6 +212,39 @@ public class FXMLRenderSceneController {
             objectList.add(obj);
             mainScene.addObj(obj.getName(), obj.getObj());
             if (autoRender) render();
+        });
+        menuItemSaveToDatabase.setOnAction((event)->{
+            if(image!=null){
+                String name = FXMLConvolutionsSceneController.chooseNameFileDialog();
+                File temp = new File("src\\main\\resources\\Images\\Convolutions\\temp.bmp");
+                try {
+                    ImageIO.write(image, "bmp", temp);
+                    Database.insertRow("Images", "ImagesConvolutions", name, temp);
+                } catch (FileNotFoundException ex) {
+                    Logger.getLogger(FXMLRenderSceneController.class.getName()).log(Level.SEVERE, null, ex);
+                } catch (IOException ex) {
+                    Logger.getLogger(FXMLRenderSceneController.class.getName()).log(Level.SEVERE, null, ex);
+                } catch (SQLException ex) {
+                    Logger.getLogger(FXMLRenderSceneController.class.getName()).log(Level.SEVERE, null, ex);
+                }
+                
+            }
+        });
+        
+        menuItemSaveToFile.setOnAction((event) -> {
+            if(image!=null){
+                
+                //To save the file, we need a directory and a name for the file
+            String name = chooseNameFileDialog();
+            DirectoryChooser dc = FXMLConvolutionsSceneController.getDirectoryChooser(primaryStage);
+            //Create the file at the location with the name chosen by the user
+            File file = new File(dc.getInitialDirectory().getAbsolutePath()+"//"+name+".bmp");
+            try {
+                    ImageIO.write(image, "bmp", file);
+                } catch (IOException ex) {
+                    Logger.getLogger(FXMLRenderSceneController.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
         });
         
         /**
