@@ -54,7 +54,7 @@
 <?import javafx.scene.shape.Line?>
 <?import javafx.scene.text.Font?>
 
-<VBox fx:id="RootVBox" prefHeight="600.0" prefWidth="905.0" xmlns="http://javafx.com/javafx/20.0.1" xmlns:fx="http://javafx.com/fxml/1">
+<VBox fx:id="RootVBox" prefHeight="600.0" prefWidth="905.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1">
   <children>
     <MenuBar VBox.vgrow="NEVER">
       <menus>
@@ -65,7 +65,7 @@
             </Menu>
         <Menu mnemonicParsing="false" text="About">
           <items>
-            <MenuItem mnemonicParsing="false" text="menuItemAboutConvolutions" />
+            <MenuItem fx:id="menuItemAboutConvolution" mnemonicParsing="false" text="About Convolutions" />
           </items>
         </Menu>
       </menus>
