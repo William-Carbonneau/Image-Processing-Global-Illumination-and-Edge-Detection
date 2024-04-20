@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<VBox alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" spacing="8.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <Label text="About Convolutions">
+         <font>
+            <Font size="24.0" />
+         </font>
+      </Label>
+      <ScrollPane fx:id="scrollTextHolder" fitToWidth="true" hbarPolicy="NEVER" prefHeight="344.0" prefWidth="600.0" VBox.vgrow="ALWAYS">
+         <content>
+            <VBox fx:id="VBoxTextHolder" alignment="TOP_CENTER">
+               <children>
+                  <Label prefHeight="650.0" prefWidth="597.0" text="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Aliquam ut porttitor leo a. Sem integer vitae justo eget magna fermentum iaculis. Tristique senectus et netus et. Quis auctor elit sed vulputate mi sit. Condimentum vitae sapien pellentesque habitant morbi. Dui sapien eget mi proin sed libero enim sed faucibus. Eget mi proin sed libero enim sed. Risus commodo viverra maecenas accumsan lacus. Sapien et ligula ullamcorper malesuada proin libero nunc. Consequat interdum varius sit amet mattis vulputate. Arcu vitae elementum curabitur vitae nunc sed. Dignissim cras tincidunt lobortis feugiat vivamus at augue. Aliquam ut porttitor leo a. Turpis egestas integer eget aliquet. Ut venenatis tellus in metus vulputate eu scelerisque felis imperdiet. Cursus risus at ultrices mi tempus.Suspendisse sed nisi lacus sed viverra. Sed tempus urna et pharetra. Enim praesent elementum facilisis leo. Sed lectus vestibulum mattis ullamcorper velit sed ullamcorper morbi tincidunt. In fermentum et sollicitudin ac orci phasellus egestas tellus. Arcu dui vivamus arcu felis bibendum ut tristique et. Feugiat scelerisque varius morbi enim nunc faucibus. Nec nam aliquam sem et tortor consequat. Pharetra diam sit amet nisl suscipit adipiscing bibendum. Eleifend donec pretium vulputate sapien nec sagittis aliquam malesuada. Viverra nam libero justo laoreet. Eros donec ac odio tempor orci dapibus ultrices in iaculis. Integer malesuada nunc vel risus. Tempor id eu nisl nunc.Convallis aenean et tortor at risus viverra adipiscing at in. Purus viverra accumsan in nisl. Vitae ultricies leo integer malesuada. Aliquam malesuada bibendum arcu vitae elementum curabitur vitae. Eget duis at tellus at urna condimentum. Nec nam aliquam sem et tortor consequat. Sem fringilla ut morbi tincidunt augue interdum velit euismod. Sed elementum tempus egestas sed sed. At ultrices mi tempus imperdiet nulla malesuada pellentesque. Ultrices vitae auctor eu augue ut. Ut aliquam purus sit amet luctus. Malesuada pellentesque elit eget gravida cum sociis. Varius quam quisque id diam vel quam elementum pulvinar etiam. Massa tincidunt dui ut ornare lectus sit. Posuere morbi leo urna molestie at elementum. Odio eu feugiat pretium nibh ipsum consequat nisl. Et pharetra pharetra massa massa ultricies mi quis hendrerit. Dolor purus non enim praesent elementum facilisis leo vel. Sed velit dignissim sodales ut eu sem integer.Pretium lectus quam id leo in vitae turpis massa. Donec enim diam vulputate ut pharetra. Imperdiet dui accumsan sit amet. Sem et tortor consequat id. Fringilla est ullamcorper eget nulla. Pellentesque nec nam aliquam sem et tortor consequat. Turpis egestas sed tempus urna et pharetra. At imperdiet dui accumsan sit amet. Gravida neque convallis a cras semper auctor. Morbi tempus iaculis urna id volutpat lacus. Proin fermentum leo vel orci porta non pulvinar. Orci sagittis eu volutpat odio facilisis mauris sit amet massa.Hac habitasse platea dictumst quisque sagittis purus sit amet volutpat. Tristique sollicitudin nibh sit amet commodo nulla facilisi. Ut consequat semper viverra nam libero. At erat pellentesque adipiscing commodo elit at imperdiet dui accumsan. Dictum fusce ut placerat orci nulla pellentesque. Mauris in aliquam sem fringilla ut morbi. Auctor neque vitae tempus quam pellentesque. Consequat id porta nibh venenatis cras sed. Scelerisque in dictum non consectetur a erat nam. Nec ultrices dui sapien eget mi proin sed libero enim. Aliquam sem et tortor consequat id porta nibh venenatis. Dignissim convallis aenean et tortor at risus viverra adipiscing. Netus et malesuada fames ac turpis egestas sed tempus." wrapText="true">
+                     <padding>
+                        <Insets bottom="16.0" left="16.0" right="16.0" />
+                     </padding>
+                  </Label>
+               </children>
+            </VBox>
+         </content>
+      </ScrollPane>
+   </children>
+   <padding>
+      <Insets top="8.0" />
+   </padding>
+</VBox>

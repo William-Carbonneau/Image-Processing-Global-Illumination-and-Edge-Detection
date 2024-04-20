@@ -57,7 +57,7 @@
 <?import javafx.scene.shape.Line?>
 <?import javafx.scene.text.Font?>
 
-<VBox fx:id="RootVBox" prefHeight="600.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1">
+<VBox fx:id="RootVBox" prefHeight="600.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/20.0.1" xmlns:fx="http://javafx.com/fxml/1">
   <children>
     <MenuBar VBox.vgrow="NEVER">
       <menus>
@@ -68,7 +68,9 @@
             </Menu>
         <Menu mnemonicParsing="false" text="File">
           <items>
+                  <MenuItem fx:id="menuItemSaveToDatabase" mnemonicParsing="false" text="Save to database" />
             <SeparatorMenuItem mnemonicParsing="false" />
+                  <MenuItem fx:id="menuItemSaveToFile" mnemonicParsing="false" text="Save to file" />
           </items>
         </Menu>
             <Menu mnemonicParsing="false" text="Object">
@@ -80,7 +82,7 @@
                   <MenuItem fx:id="menuItemRemoveSelected" mnemonicParsing="false" text="Remove Selected" />
                </items>
             </Menu>
-        <Menu mnemonicParsing="false" text="Help">
+        <Menu mnemonicParsing="false" text="About">
           <items>
             <MenuItem fx:id="menuItemAboutRendering" mnemonicParsing="false" text="About Rendering" />
           </items>
@@ -184,7 +186,7 @@
                               </HBox>
                               <HBox alignment="CENTER_LEFT" prefHeight="20.0" prefWidth="200.0" spacing="2.0">
                                  <children>
-                                    <Label fx:id="lblIOREmissiveness1" prefHeight="17.0" prefWidth="75.0" text="Emissiveness:" />
+                                    <Label fx:id="lblIOREmissiveness1" prefHeight="17.0" prefWidth="75.0" text="Emissivity:" />
                                     <TextField fx:id="txtEmissiveness" prefHeight="27.0" prefWidth="109.0" text="2.95" />
                                  </children>
                                  <padding>
@@ -285,6 +287,7 @@
                            <children>
                               <Button fx:id="btnRender" mnemonicParsing="false" text="Render" />
                               <ChoiceBox fx:id="choiceEngine" prefWidth="150.0" />
+                              <Label text="Technique" />
                            </children>
                         </HBox>
                         <CheckBox fx:id="checkStratified" mnemonicParsing="false" selected="true" text="Stratified Diffuse Sampling" />

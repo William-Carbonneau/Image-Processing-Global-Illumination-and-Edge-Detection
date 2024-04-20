@@ -1,0 +1,20 @@
+This is an implementation of the rendering equation based in part on an MSc course from Tu Wien. 
+Zsolnai-Feh’er, K. (2018). Smallpaint: A Global Illumination Renderer.
+It implements a technique called Global Illumination (with some shortcuts like directly 
+measuring RGB values of surfaces instead of material textures).
+The principle of this is using mathematics to define a scene, 
+then ray-tracing with quasi-Monte-Carlo sampling to simulate light rays.
+This will produce ideal photorealistic images.
+
+To use this project:
+An example scene comes provided, and the base renderer is the rasterized preview render (fast).
+Change to one of the slower alternate rendering techniques with thhe dropdown for proper light simulation.
+Select objects on the object list, modify their parameters, or delete them with the button.
+Set the position of the objects using the parameters.
+The vector defines the center of a sphere, and the direction vector for a plane.
+DTO is the distance of the plane from the origin.
+Set the material type from the dropdown, and set the emissiveness to add light.
+Rename objects to keep track of them.
+Add more objects using the "object" menu in the top bar.
+When ready, modify the samples to increase the quality and render time. Rasterized is always 1 sample.
+Select the amount of threads to use to render. Default is max-1. 0 selects default.
