@@ -95,6 +95,11 @@ public class FXMLConvolutionsSceneController {
     @FXML
     TextField thresholdTxtBox;
     /**
+     * Textfield if the user wants to perform the same convolution multiple times in a row
+     */
+    @FXML
+    TextField repeatsTxtField;
+    /**
      * Button to save the active image into the database, in the form of byte[]
      */
     @FXML
@@ -248,6 +253,15 @@ public class FXMLConvolutionsSceneController {
             }
             //If both conditions are accepted, then we can proceed with the convolution
             if (convolutionIsSelected == true && imageIsSelected == true) {
+                //Verify the repeatsTxtField to see of the user wants to repeat a convolution multiple times in a row
+                int repeats = 0;
+                try{
+                    repeats = Integer.parseInt(repeatsTxtField.getText());
+                }
+                catch(Exception notAnInt){
+                    repeats=  0;
+                }
+                System.out.println("Repeats = "+repeats);
                 //Set the choice value from the choicebox
                 choice = convolutionCB.getValue().toString();
                 //Determine the value from the choice box and  perform the convolution using the temp file and the imageBeingDisplayedOnIV file
@@ -255,6 +269,7 @@ public class FXMLConvolutionsSceneController {
                 if (choice.equals("Gaussian Blur 3x3")) {
                     System.out.println("Gaussian Blur 3x3 Clicked");
                     try {
+                        for(int i=-1;i<repeats;i++)
                         Convolution.performConvolution(this.imageBeingDisplayedOnIV.getAbsolutePath(), this.imageBeingDisplayedOnIV.getAbsolutePath(), rulesGaussian3x3);
                         displayImage(this.imageBeingDisplayedOnIV.getAbsolutePath());
                         showAlertInfo("The " + choice + " convolution is completed");
@@ -264,6 +279,7 @@ public class FXMLConvolutionsSceneController {
                 } else if (choice.equals("Gaussian Blur 5x5")) {
                     System.out.println("Gaussian Blur 5x5 Clicked");
                     try {
+                        for(int i=-1;i<repeats;i++)
                         Convolution.performConvolution(this.imageBeingDisplayedOnIV.getAbsolutePath(), this.imageBeingDisplayedOnIV.getAbsolutePath(), rulesGaussian5x5);
                         displayImage(this.imageBeingDisplayedOnIV.getAbsolutePath());
                         showAlertInfo("The " + choice + " convolution is completed");
@@ -273,6 +289,7 @@ public class FXMLConvolutionsSceneController {
                 } else if (choice.equals("Gaussian Blur 7x7")) {
                     System.out.println("Gaussian Blur 7x7 Clicked");
                     try {
+                        for(int i=-1;i<repeats;i++)
                         Convolution.performConvolution(this.imageBeingDisplayedOnIV.getAbsolutePath(), this.imageBeingDisplayedOnIV.getAbsolutePath(), rulesGaussian7x7);
                         displayImage(this.imageBeingDisplayedOnIV.getAbsolutePath());
                         showAlertInfo("The " + choice + " convolution is completed");
@@ -281,6 +298,7 @@ public class FXMLConvolutionsSceneController {
                     }
                 } else if (choice.equals("Sharpening")) {
                     try {
+                        for(int i=-1;i<repeats;i++)
                         Convolution.performConvolution(this.imageBeingDisplayedOnIV.getAbsolutePath(), this.imageBeingDisplayedOnIV.getAbsolutePath(), rulesSharp1);
                         displayImage(this.imageBeingDisplayedOnIV.getAbsolutePath());
                         showAlertInfo("The " + choice + " convolution is completed");
@@ -289,6 +307,7 @@ public class FXMLConvolutionsSceneController {
                     }
                 } else if (choice.equals("Grayscale")) {
                     try {
+                        for(int i=-1;i<repeats;i++)
                         Convolution.performGrayscale(this.imageBeingDisplayedOnIV.getAbsolutePath(), this.imageBeingDisplayedOnIV.getAbsolutePath());
                         displayImage(this.imageBeingDisplayedOnIV.getAbsolutePath());
                         showAlertInfo("The " + choice + " convolution is completed");
@@ -299,6 +318,7 @@ public class FXMLConvolutionsSceneController {
                     try {
                         Convolution.performConvolution(this.imageBeingDisplayedOnIV.getAbsolutePath(), this.imageBeingDisplayedOnIV.getAbsolutePath(), rulesGaussian7x7);
                         Convolution.performGrayscale(this.imageBeingDisplayedOnIV.getAbsolutePath(), this.imageBeingDisplayedOnIV.getAbsolutePath());
+                        for(int i=-1;i<repeats;i++)
                         Convolution.performSobelX(this.imageBeingDisplayedOnIV.getAbsolutePath(), this.imageBeingDisplayedOnIV.getAbsolutePath());
                         displayImage(this.imageBeingDisplayedOnIV.getAbsolutePath());
                         showAlertInfo("The " + choice + " convolution is completed");
@@ -309,7 +329,8 @@ public class FXMLConvolutionsSceneController {
                     try {
                         Convolution.performConvolution(this.imageBeingDisplayedOnIV.getAbsolutePath(), this.imageBeingDisplayedOnIV.getAbsolutePath(), rulesGaussian7x7);
                         Convolution.performGrayscale(this.imageBeingDisplayedOnIV.getAbsolutePath(), this.imageBeingDisplayedOnIV.getAbsolutePath());
-                        Convolution.performSobelX(this.imageBeingDisplayedOnIV.getAbsolutePath(), this.imageBeingDisplayedOnIV.getAbsolutePath());
+                        for(int i=-1;i<repeats;i++)
+                        Convolution.performSobelY(this.imageBeingDisplayedOnIV.getAbsolutePath(), this.imageBeingDisplayedOnIV.getAbsolutePath());
                         displayImage(this.imageBeingDisplayedOnIV.getAbsolutePath());
                         showAlertInfo("The " + choice + " convolution is completed");
                     } catch (IOException | NullPointerException ex) {
@@ -319,6 +340,7 @@ public class FXMLConvolutionsSceneController {
                     try {
                         Convolution.performConvolution(this.imageBeingDisplayedOnIV.getAbsolutePath(), this.imageBeingDisplayedOnIV.getAbsolutePath(), rulesGaussian7x7);
                         Convolution.performGrayscale(this.imageBeingDisplayedOnIV.getAbsolutePath(), this.imageBeingDisplayedOnIV.getAbsolutePath());
+                        for(int i=-1;i<repeats;i++)
                         Convolution.performSobel(this.imageBeingDisplayedOnIV.getAbsolutePath(), this.imageBeingDisplayedOnIV.getAbsolutePath());
                         displayImage(this.imageBeingDisplayedOnIV.getAbsolutePath());
                         showAlertInfo("The " + choice + " convolution is completed");
@@ -339,6 +361,7 @@ public class FXMLConvolutionsSceneController {
                         }
                         Convolution.performConvolution(this.imageBeingDisplayedOnIV.getAbsolutePath(), this.imageBeingDisplayedOnIV.getAbsolutePath(), rulesGaussian7x7);
                         Convolution.performGrayscale(this.imageBeingDisplayedOnIV.getAbsolutePath(), this.imageBeingDisplayedOnIV.getAbsolutePath());
+                        for(int i=-1;i<repeats;i++)
                         Convolution.performPrewitt(this.imageBeingDisplayedOnIV.getAbsolutePath(), this.imageBeingDisplayedOnIV.getAbsolutePath(), threshold);
                         displayImage(this.imageBeingDisplayedOnIV.getAbsolutePath());
                         showAlertInfo("The " + choice + " convolution is completed");
@@ -358,6 +381,7 @@ public class FXMLConvolutionsSceneController {
                         }
                         Convolution.performConvolution(this.imageBeingDisplayedOnIV.getAbsolutePath(), this.imageBeingDisplayedOnIV.getAbsolutePath(), rulesGaussian7x7);
                         Convolution.performGrayscale(this.imageBeingDisplayedOnIV.getAbsolutePath(), this.imageBeingDisplayedOnIV.getAbsolutePath());
+                        for(int i=-1;i<repeats;i++)
                         Convolution.performLaplacianOperator(this.imageBeingDisplayedOnIV.getAbsolutePath(), this.imageBeingDisplayedOnIV.getAbsolutePath());
                         displayImage(this.imageBeingDisplayedOnIV.getAbsolutePath());
                         showAlertInfo("The " + choice + " convolution is completed");
@@ -370,7 +394,7 @@ public class FXMLConvolutionsSceneController {
                     Stage stage = new Stage();
                     FXMLLoader loaderCK = new FXMLLoader(getClass().getResource("/fxml/FXMLCustomKernel.fxml"));
                     System.out.println("Done2");
-                    FXMLCustomKernelController controllerCK = new FXMLCustomKernelController();
+                    FXMLCustomKernelController controllerCK = new FXMLCustomKernelController(stage);
                     loaderCK.setController(controllerCK);
                     try {
                         BorderPane rootBP = loaderCK.load();
@@ -378,14 +402,18 @@ public class FXMLConvolutionsSceneController {
                         stage.setScene(scene);
                         stage.setAlwaysOnTop(true);
                         stage.showAndWait();
+                        if(controllerCK.valid==false){ 
+                            showAlertWarning("The kernel has not been properly set. Please try again.");
+                            return;
+                        }
                         kernelWithMoreDimensions = controllerCK.getKernelFloat();
-                        Convolution.print2DArray(kernelWithMoreDimensions);
                         try {
+                            for(int i=-1;i<repeats;i++)
                             Convolution.performConvolution(this.imageBeingDisplayedOnIV.getAbsolutePath(), this.imageBeingDisplayedOnIV.getAbsolutePath(), kernelWithMoreDimensions);
                             displayImage(this.imageBeingDisplayedOnIV.getAbsolutePath());
                             showAlertInfo("The " + choice + " convolution is completed");
                         } catch (IOException | NullPointerException ex) {
-                            System.out.println("Error caught");
+                            System.out.println("Error caught uu");
                         }
 
                     } catch (IOException ex) {
@@ -398,6 +426,7 @@ public class FXMLConvolutionsSceneController {
 
                         Convolution.performConvolution(this.imageBeingDisplayedOnIV.getAbsolutePath(), this.imageBeingDisplayedOnIV.getAbsolutePath(), rulesGaussian7x7);
                         Convolution.performGrayscale(this.imageBeingDisplayedOnIV.getAbsolutePath(), this.imageBeingDisplayedOnIV.getAbsolutePath());
+                        for(int i=-1;i<repeats;i++)
                         Convolution.performEdgeAngles(this.imageBeingDisplayedOnIV.getAbsolutePath(), this.imageBeingDisplayedOnIV.getAbsolutePath());
                         displayImage(this.imageBeingDisplayedOnIV.getAbsolutePath());
                         showAlertInfo("The " + choice + " convolution is completed");
@@ -701,7 +730,7 @@ public class FXMLConvolutionsSceneController {
         FOS.close();
     }
 
-    private void showAlertWarning(String message) {
+    public static void showAlertWarning(String message) {
         Alert alert = new Alert(Alert.AlertType.WARNING);
         alert.setTitle("Information Incorrect or Missing");
         alert.setContentText(message);
@@ -713,7 +742,7 @@ public class FXMLConvolutionsSceneController {
         }
     }
 
-    private void showAlertInfo(String message) {
+    public static void showAlertInfo(String message) {
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
         alert.setTitle("Confirmation");
         alert.setContentText(message);

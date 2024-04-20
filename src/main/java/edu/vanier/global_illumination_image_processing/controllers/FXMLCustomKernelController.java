@@ -2,11 +2,14 @@ package edu.vanier.global_illumination_image_processing.controllers;
 
 import edu.vanier.global_illumination_image_processing.models.Convolution;
 import javafx.fxml.FXML;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
+import javafx.stage.Stage;
 
 /**
  *
@@ -23,9 +26,19 @@ public class FXMLCustomKernelController {
     BorderPane BPane;
     TextField[][] kernel;
     float[][] kernelFloat;
+    Stage stage;
+    boolean valid = false;
+
+    public boolean isValid() {
+        return valid;
+    }
 
     public float[][] getKernelFloat() {
         return kernelFloat;
+    }
+
+    public FXMLCustomKernelController(Stage stage) {
+        this.stage = stage;
     }
 
     
@@ -85,20 +98,28 @@ public class FXMLCustomKernelController {
                 }
                 BPane.setCenter(gd);
             }
+            gd.setPadding(new Insets(10));
+            gd.setAlignment(Pos.CENTER);
             
         });
         setKernelBtn.setOnAction((event)->{
             kernelFloat = new float[kernel.length][kernel[0].length];
             //verify that all values have been initialized
             boolean kernelValid = verifyKernel();
-            if(kernelValid)
+            if(kernelValid){
                 Convolution.print2DArray(kernelFloat);
-            
+                stage.close();
+            }
+            else{
+                stage.setAlwaysOnTop(false);
+                FXMLConvolutionsSceneController.showAlertWarning("The values you have entered are not valid. Please try again.");
+                stage.setAlwaysOnTop(true);
+            }
         });
     }
 
     private boolean verifyKernel() {
-        boolean valid = true;
+        valid = true;
         float value;
         for(int i=0; i<kernel.length; i++){
             for(int j=0; j<kernel[0].length; j++){

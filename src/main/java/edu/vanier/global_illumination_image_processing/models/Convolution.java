@@ -63,7 +63,7 @@ public class Convolution {
         for (int i = 0; i < array.length; i++) {
             System.out.print("[");
             for (int j = 0; j < array[0].length; j++) {
-                System.out.print(array[i][j] + " ");
+                System.out.print(array[j][i] + " ");
             }
             System.out.println("]");
         }
@@ -74,10 +74,10 @@ public class Convolution {
      * This method prints a 2-d array
      */
     public static void print2DArray(byte[][] array) {
-        for (int i = 0; i < array.length; i++) {
+        for (int i = 0; i < array[0].length; i++) {
             System.out.print("[");
-            for (int j = 0; j < array[0].length; j++) {
-                System.out.print(array[i][j] + " ");
+            for (int j = 0; j < array.length; j++) {
+                System.out.print(array[j][i] + " ");
             }
             System.out.println("]");
         }
