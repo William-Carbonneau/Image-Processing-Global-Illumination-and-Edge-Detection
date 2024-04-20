@@ -3,10 +3,13 @@
 ## A project for "Integrative Project in Computer Science", focusing in 3D rendering using global illumination and image processing by convolutions and edge detection.
 
 
+References:
+Zsolnai-Feh’er, K. (2018). TU Wien Rendering Course.
+Zsolnai-Feh’er, K. (2018). Smallpaint: A Global Illumination Renderer.
+Driscoll, Rory. “Better Sampling.” CodeItNow, 7 Jan. 2009, www.rorydriscoll.com/2009/01/07/better-sampling/. 
 
 
-
-
+Poem:
  
 In the realm of creativity's dance, where teams of visionaries take their chance, there exists a group, a spectral blend, whose name, a story, they seek to send.
 

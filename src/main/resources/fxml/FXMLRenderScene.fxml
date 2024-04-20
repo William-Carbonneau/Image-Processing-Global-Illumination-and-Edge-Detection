@@ -186,7 +186,7 @@
                               </HBox>
                               <HBox alignment="CENTER_LEFT" prefHeight="20.0" prefWidth="200.0" spacing="2.0">
                                  <children>
-                                    <Label fx:id="lblIOREmissiveness1" prefHeight="17.0" prefWidth="75.0" text="Emissiveness:" />
+                                    <Label fx:id="lblIOREmissiveness1" prefHeight="17.0" prefWidth="75.0" text="Emissivity:" />
                                     <TextField fx:id="txtEmissiveness" prefHeight="27.0" prefWidth="109.0" text="2.95" />
                                  </children>
                                  <padding>
@@ -287,6 +287,7 @@
                            <children>
                               <Button fx:id="btnRender" mnemonicParsing="false" text="Render" />
                               <ChoiceBox fx:id="choiceEngine" prefWidth="150.0" />
+                              <Label text="Technique" />
                            </children>
                         </HBox>
                         <CheckBox fx:id="checkStratified" mnemonicParsing="false" selected="true" text="Stratified Diffuse Sampling" />

@@ -99,7 +99,7 @@ public class RenderingEquation {
     /**
     * Generates a stratified (or not) sample point on a hemisphere for diffuse objects. TODO citation
     * 
-    * This method implements stratified sampling of a hemisphere based on the algorithm provided by  http://www.rorydriscoll.com/2009/01/07/better-sampling/
+    * This method implements stratified sampling of a hemisphere based on the algorithm provided by  (Driscoll, 2009)
     * It takes random radius and angle as parameters, ensuring an even ray distribution from the hemisphere to reduce noise in Monte Carlo simulations.
     * 
     * @param uniform1 The random radius parameter used for sampling the hemisphere.
