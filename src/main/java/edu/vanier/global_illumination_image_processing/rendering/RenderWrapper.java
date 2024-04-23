@@ -278,7 +278,6 @@ public class RenderWrapper {
             e.printStackTrace(); // TODO deal with error
             return null;
         }
-        System.out.println("Save completed as: " + name + ".bmp");
         return output;
     }
 }
