@@ -237,7 +237,9 @@ public class FXMLRenderSceneController {
             String name = chooseNameFileDialog();
             DirectoryChooser dc = FXMLConvolutionsSceneController.getDirectoryChooser(primaryStage);
             //Create the file at the location with the name chosen by the user
-            File file = new File(dc.getInitialDirectory().getAbsolutePath()+"//"+name+".bmp");
+            if (dc.getInitialDirectory() == null) return;
+            String directory = dc.getInitialDirectory().getAbsolutePath()+"//"+name+".bmp";
+            File file = new File(directory);
             try {
                     ImageIO.write(image, "bmp", file);
                 } catch (IOException ex) {
