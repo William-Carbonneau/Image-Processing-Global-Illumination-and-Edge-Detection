@@ -8,6 +8,8 @@ Zsolnai-Feh’er, K. (2018). TU Wien Rendering Course.
 Zsolnai-Feh’er, K. (2018). Smallpaint: A Global Illumination Renderer.
 Driscoll, Rory. “Better Sampling.” CodeItNow, 7 Jan. 2009, www.rorydriscoll.com/2009/01/07/better-sampling/. 
 
+A note on numerical text inputs:
+Some text boxes allow for numerical input. This can be in the form of a floating point number (negative or non-negative), or of an integer. The user should be able to freely modify these inputs, but any invalid keystrokes (like letters) will not go through. Furthermore, the user will be unable to delete a digit if such an oparation would leave an invalid number in its place. Highlight the number and type over the highlighted part to override it (if it helps).
 
 Poem:
  
