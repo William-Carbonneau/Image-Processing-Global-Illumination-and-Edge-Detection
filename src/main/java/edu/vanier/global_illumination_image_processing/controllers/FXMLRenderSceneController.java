@@ -4,6 +4,7 @@ import edu.vanier.global_illumination_image_processing.MainApp;
 import static edu.vanier.global_illumination_image_processing.controllers.FXMLConvolutionsSceneController.chooseNameFileDialog;
 import edu.vanier.global_illumination_image_processing.models.Database;
 import edu.vanier.global_illumination_image_processing.rendering.DiffuseColor;
+import static edu.vanier.global_illumination_image_processing.rendering.Intersection.EPS;
 import edu.vanier.global_illumination_image_processing.rendering.RenderWrapper;
 import edu.vanier.global_illumination_image_processing.rendering.RenderScene;
 import edu.vanier.global_illumination_image_processing.rendering.SceneObject;
@@ -106,8 +107,9 @@ public class FXMLRenderSceneController {
     }
     
     /** the regex expression to match any double number even negatives */
-    public static final String textFormatterDoubleRegex = "\\-?\\d+\\.?\\d*";
-    public static final String textFormatterIntegerRegex = "[1-9][0-9]*";
+    public static final String textFormatterDoubleRegex = "(\\-?\\d+\\.?\\d*)?";
+    public static final String textFormatterDoubleNonNegativeRegex = "(\\d+\\.?\\d*)?";
+    public static final String textFormatterIntegerRegex = "([1-9][0-9]*)?";
     
     public String doubleFormatterRemoveTrailingPeriod(String input) {
         if (input.endsWith(".")) return input.replace(".", "");
@@ -124,9 +126,9 @@ public class FXMLRenderSceneController {
     private String modifyKeyString(String key, int depth) {
         String temp = key;
         if (mainScene.getObjectByName(key) != null && key.charAt(key.length()-1) == ' ') {
-            temp = modifyKeyString(key + (depth + 1), depth + 1);
+            temp = modifyKeyString(key + (depth+1), depth + 1);
         }else if (mainScene.getObjectByName(key) != null) {
-            temp = modifyKeyString(key.substring(0, key.length()-1) + (depth + 1), depth + 1);
+            temp = modifyKeyString(key.substring(0, key.length()) + (depth+1), depth + 1);
         }
         return temp;
     }
@@ -326,7 +328,13 @@ public class FXMLRenderSceneController {
          * Update the current SPP - only numbers allowed by textFormatter
          */
         txtSPP.setOnKeyTyped((event) -> {
-            renderer.setSPP(Integer.parseInt(doubleFormatterRemoveTrailingPeriod(txtSPP.getText())));
+            int temp;
+            try {
+                temp = Integer.parseInt(doubleFormatterRemoveTrailingPeriod(txtSPP.getText()));
+            }catch (NumberFormatException e) {
+                temp = 8;
+            }
+            renderer.setSPP(temp);
         });
         // filters all incoming characters from getControlNewText() by the regex. Returns null new String is it does not match
         txtSPP.setTextFormatter(new TextFormatter <> (input -> input.getControlNewText().matches(textFormatterIntegerRegex) ? input : null));
@@ -335,7 +343,13 @@ public class FXMLRenderSceneController {
          * Update the threads to be spared
          */
         txtThreads.setOnKeyTyped((event) -> {
-            renderer.setThreadsRequested((int)Double.parseDouble(doubleFormatterRemoveTrailingPeriod(txtThreads.getText())));
+            int temp;
+            try {
+                temp = (int)Double.parseDouble(doubleFormatterRemoveTrailingPeriod(txtThreads.getText()));
+            }catch (NumberFormatException e) {
+                temp = 0;
+            }
+            renderer.setThreadsRequested(temp);
         });
         // filters all incoming characters from getControlNewText() by the regex. Returns null new String is it does not match
         txtThreads.setTextFormatter(new TextFormatter <> (input -> input.getControlNewText().matches(textFormatterIntegerRegex) ? input : null));
@@ -397,9 +411,20 @@ public class FXMLRenderSceneController {
             ObjWrapper item = (ObjWrapper) listObjectList.getSelectionModel().getSelectedItem();
             
             if (item == null) return;
+            String name  = txtObjectName.getText();
+            if ("".equals(name)) {
+                name = "default ";
+                name = modifyKeyString(name, 0);
+            }
+            if (mainScene.getObjectByName(name) != null) {
+                name = modifyKeyString(name, 0);
+            }
             
+            
+            // reset item in scene list with new name
+            mainScene.replaceKey(item.getName(), name);
             // update object in list
-            item.setName(txtObjectName.getText());
+            item.setName(name);
         });
         
         /**
@@ -409,9 +434,14 @@ public class FXMLRenderSceneController {
             ObjWrapper item = (ObjWrapper) listObjectList.getSelectionModel().getSelectedItem();
             
             if (item == null) return;
-            
+            double temp;
+            try {
+                temp = Double.parseDouble(doubleFormatterRemoveTrailingPeriod(txtDTO.getText()));
+            }catch (NumberFormatException e) {
+                temp = 0;
+            }
             // update object in list
-            item.getObj().setDistanceOrigin(Double.parseDouble(doubleFormatterRemoveTrailingPeriod(txtDTO.getText())));
+            item.getObj().setDistanceOrigin(temp);
             if (autoRender) render();
         });
         txtDTO.setTextFormatter(new TextFormatter <> (input -> input.getControlNewText().matches(textFormatterDoubleRegex) ? input : null));
@@ -423,9 +453,14 @@ public class FXMLRenderSceneController {
             ObjWrapper item = (ObjWrapper) listObjectList.getSelectionModel().getSelectedItem();
             
             if (item == null) return;
-            
+            double temp;
+            try {
+                temp = Double.parseDouble(doubleFormatterRemoveTrailingPeriod(txtRadius.getText()));
+            }catch (NumberFormatException e) {
+                temp = EPS; // make the radius exist but practically not there
+            }
             // update object in list
-            item.getObj().setRadius(Double.parseDouble(doubleFormatterRemoveTrailingPeriod(txtRadius.getText())));
+            item.getObj().setRadius(temp);
             if (autoRender) render();
         });
         txtRadius.setTextFormatter(new TextFormatter <> (input -> input.getControlNewText().matches(textFormatterDoubleRegex) ? input : null));
@@ -437,11 +472,16 @@ public class FXMLRenderSceneController {
             ObjWrapper item = (ObjWrapper) listObjectList.getSelectionModel().getSelectedItem();
             
             if (item == null) return;
-            
+            double temp;
+            try {
+                temp = Double.parseDouble(doubleFormatterRemoveTrailingPeriod(txtEmissiveness.getText()));
+            }catch (NumberFormatException e) {
+                temp = 0;
+            }
             // update object in list
-            item.getObj().setEmission(Double.parseDouble(doubleFormatterRemoveTrailingPeriod(txtEmissiveness.getText())));
+            item.getObj().setEmission(temp);
         });
-        txtEmissiveness.setTextFormatter(new TextFormatter <> (input -> input.getControlNewText().matches(textFormatterDoubleRegex) ? input : null));
+        txtEmissiveness.setTextFormatter(new TextFormatter <> (input -> input.getControlNewText().matches(textFormatterDoubleNonNegativeRegex) ? input : null));
         
         /**
          * Update selected object's IOR - only numbers allowed by textFormatter
@@ -450,9 +490,14 @@ public class FXMLRenderSceneController {
             ObjWrapper item = (ObjWrapper) listObjectList.getSelectionModel().getSelectedItem();
             
             if (item == null) return;
-            
+            double temp;
+            try {
+                temp = Double.parseDouble(doubleFormatterRemoveTrailingPeriod(txtIOR.getText()));
+            }catch (NumberFormatException e) {
+                temp = 0;
+            }
             // update object in list
-            item.getObj().setRefractiveIndex(Double.parseDouble(doubleFormatterRemoveTrailingPeriod(txtIOR.getText())));
+            item.getObj().setRefractiveIndex(temp);
         });
         txtIOR.setTextFormatter(new TextFormatter <> (input -> input.getControlNewText().matches(textFormatterDoubleRegex) ? input : null));
         
@@ -463,9 +508,14 @@ public class FXMLRenderSceneController {
             ObjWrapper item = (ObjWrapper) listObjectList.getSelectionModel().getSelectedItem();
             
             if (item == null) return;
-            
+            double temp;
+            try {
+                temp = Double.parseDouble(doubleFormatterRemoveTrailingPeriod(txtObjectXPos.getText()));
+            }catch (NumberFormatException e) {
+                temp = 0; 
+            }
             // update object in list
-            item.getObj().getNormal().setX(Double.parseDouble(doubleFormatterRemoveTrailingPeriod(txtObjectXPos.getText())));
+            item.getObj().getNormal().setX(temp);
             if (autoRender) render();
         });
         txtObjectXPos.setTextFormatter(new TextFormatter <> (input -> input.getControlNewText().matches(textFormatterDoubleRegex) ? input : null));
@@ -477,9 +527,14 @@ public class FXMLRenderSceneController {
             ObjWrapper item = (ObjWrapper) listObjectList.getSelectionModel().getSelectedItem();
             
             if (item == null) return;
-            
+            double temp;
+            try {
+                temp = Double.parseDouble(doubleFormatterRemoveTrailingPeriod(txtObjectYPos.getText()));
+            }catch (NumberFormatException e) {
+                temp = 0; 
+            }
             // update object in list
-            item.getObj().getNormal().setY((Double.parseDouble(doubleFormatterRemoveTrailingPeriod(txtObjectYPos.getText()))));
+            item.getObj().getNormal().setY((temp));
             if (autoRender) render();
         });
         txtObjectYPos.setTextFormatter(new TextFormatter <> (input -> input.getControlNewText().matches(textFormatterDoubleRegex) ? input : null));
@@ -491,9 +546,14 @@ public class FXMLRenderSceneController {
             ObjWrapper item = (ObjWrapper) listObjectList.getSelectionModel().getSelectedItem();
             
             if (item == null) return;
-            
+            double temp;
+            try {
+                temp = Double.parseDouble(txtObjectZPos.getText());
+            }catch (NumberFormatException e) {
+                temp = 0; 
+            }
             // update object in list
-            item.getObj().getNormal().setZ((Double.parseDouble(txtObjectZPos.getText())));
+            item.getObj().getNormal().setZ((temp));
             if (autoRender) render();
         });
         txtObjectZPos.setTextFormatter(new TextFormatter <> (input -> input.getControlNewText().matches(textFormatterDoubleRegex) ? input : null));
