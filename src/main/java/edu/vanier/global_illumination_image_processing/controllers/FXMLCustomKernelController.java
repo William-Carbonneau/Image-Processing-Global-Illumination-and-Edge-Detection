@@ -1,5 +1,8 @@
 package edu.vanier.global_illumination_image_processing.controllers;
 
+import static edu.vanier.global_illumination_image_processing.controllers.FXMLConvolutionsSceneController.showAlertConfirmation;
+import static edu.vanier.global_illumination_image_processing.controllers.FXMLRenderSceneController.textFormatterDoubleRegex;
+import static edu.vanier.global_illumination_image_processing.controllers.FXMLRenderSceneController.textFormatterIntegerRegex;
 import edu.vanier.global_illumination_image_processing.models.Convolution;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
@@ -7,6 +10,7 @@ import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.TextField;
+import javafx.scene.control.TextFormatter;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
@@ -14,14 +18,27 @@ import javafx.stage.Stage;
 /**
  *
  * @author Loovdrish Sujore
+ * This class is the controller for the custom kernel. The window appears when the custom kernel option is selected.
  */
 public class FXMLCustomKernelController {
+    /**
+     * choice box of the different dimensions of kernel available
+     */
     @FXML
     ChoiceBox choiceBoxCK;
+    /**
+     * this button generates the textfields for the user to enter the values of the kernel
+     */
     @FXML
     Button generateBtn;
+    /**
+     * this button takes the kernel that was created by the user and sets it to that of the current class object
+     */
     @FXML
     Button setKernelBtn;
+    /**
+     * 
+     */
     @FXML
     BorderPane BPane;
     TextField[][] kernel;
@@ -54,6 +71,7 @@ public class FXMLCustomKernelController {
                     for(int j=0; j<kernel[0].length;j++){
                         kernel[i][j] = new TextField();
                         gd.add(kernel[i][j], i,j);
+                        kernel[i][j].setTextFormatter(new TextFormatter <> (input -> input.getControlNewText().matches(textFormatterDoubleRegex) ? input : null));
                     }
                 }
                 BPane.setCenter(gd);
@@ -64,6 +82,7 @@ public class FXMLCustomKernelController {
                     for(int j=0; j<kernel[0].length;j++){
                         kernel[i][j] = new TextField();
                         gd.add(kernel[i][j], i,j);
+                        kernel[i][j].setTextFormatter(new TextFormatter <> (input -> input.getControlNewText().matches(textFormatterDoubleRegex) ? input : null));
                     }
                 }
                 BPane.setCenter(gd);
@@ -74,6 +93,7 @@ public class FXMLCustomKernelController {
                     for(int j=0; j<kernel[0].length;j++){
                         kernel[i][j] = new TextField();
                         gd.add(kernel[i][j], i,j);
+                        kernel[i][j].setTextFormatter(new TextFormatter <> (input -> input.getControlNewText().matches(textFormatterDoubleRegex) ? input : null));
                     }
                 }
                 BPane.setCenter(gd);
@@ -84,6 +104,7 @@ public class FXMLCustomKernelController {
                     for(int j=0; j<kernel[0].length;j++){
                         kernel[i][j] = new TextField();
                         gd.add(kernel[i][j], i,j);
+                        kernel[i][j].setTextFormatter(new TextFormatter <> (input -> input.getControlNewText().matches(textFormatterDoubleRegex) ? input : null));
                     }
                 }
                 BPane.setCenter(gd);
@@ -94,6 +115,7 @@ public class FXMLCustomKernelController {
                     for(int j=0; j<kernel[0].length;j++){
                         kernel[i][j] = new TextField();
                         gd.add(kernel[i][j], i,j);
+                        kernel[i][j].setTextFormatter(new TextFormatter <> (input -> input.getControlNewText().matches(textFormatterDoubleRegex) ? input : null));
                     }
                 }
                 BPane.setCenter(gd);
@@ -112,7 +134,7 @@ public class FXMLCustomKernelController {
             }
             else{
                 stage.setAlwaysOnTop(false);
-                FXMLConvolutionsSceneController.showAlertWarning("The values you have entered are not valid. Please try again.");
+                valid = showAlertConfirmation("Your kernels contains values that have not been set. By default, they have been changed to 0.");
                 stage.setAlwaysOnTop(true);
             }
         });
@@ -127,6 +149,7 @@ public class FXMLCustomKernelController {
                     value = Float.valueOf(kernel[i][j].getText());
                     kernelFloat[i][j] = value;
                 }catch(Exception e){
+                    kernelFloat[i][j] = 0;
                     valid = false;
                 }
             }

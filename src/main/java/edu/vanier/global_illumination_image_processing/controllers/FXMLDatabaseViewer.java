@@ -1,6 +1,5 @@
 package edu.vanier.global_illumination_image_processing.controllers;
 
-import static edu.vanier.global_illumination_image_processing.controllers.FXMLConvolutionsSceneController.print;
 import edu.vanier.global_illumination_image_processing.models.Database;
 import java.io.File;
 import java.io.FileInputStream;
@@ -148,12 +147,10 @@ public class FXMLDatabaseViewer {
         ArrayList<VBox> vBoxes = new ArrayList<>();
         try{
             connection  =DriverManager.getConnection("jdbc:sqlite:"+titleDatabase+".db");
-            print("Connection established");
             Statement stmt = connection.createStatement();
             //Get the values from the table
             String getResultSetFromDB = "Select *from "+tableName;
             ResultSet rs = stmt.executeQuery(getResultSetFromDB);
-            print("rs created");
             System.out.println("File temp created");
             Image image;
             ImageView imageview;

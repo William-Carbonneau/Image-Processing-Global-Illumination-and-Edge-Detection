@@ -106,8 +106,8 @@ public class FXMLRenderSceneController {
     }
     
     /** the regex expression to match any double number even negatives */
-    public final String textFormatterDoubleRegex = "\\-?\\d+\\.?\\d*";
-    public final String textFormatterIntegerRegex = "[1-9][0-9]*";
+    public static final String textFormatterDoubleRegex = "\\-?\\d+\\.?\\d*";
+    public static final String textFormatterIntegerRegex = "[1-9][0-9]*";
     
     public String doubleFormatterRemoveTrailingPeriod(String input) {
         if (input.endsWith(".")) return input.replace(".", "");
