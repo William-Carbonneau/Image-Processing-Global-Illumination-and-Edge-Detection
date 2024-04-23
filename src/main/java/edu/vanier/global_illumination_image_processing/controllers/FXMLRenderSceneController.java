@@ -317,6 +317,7 @@ public class FXMLRenderSceneController {
         btnRender.setOnAction((event) -> {
             // render and return the time it took
             render();
+            FXMLConvolutionsSceneController.showAlertInfo("The rendering is completed");
         });
         
         /**
