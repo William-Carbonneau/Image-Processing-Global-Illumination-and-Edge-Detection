@@ -1,6 +1,7 @@
 package edu.vanier.global_illumination_image_processing.rendering;
 
 import java.util.HashMap;
+import java.util.Map;
 
 /**
  * A Scene for the object to live in 
@@ -8,7 +9,7 @@ import java.util.HashMap;
  */
 public class RenderScene {
     // TODO potentially change this to a hashset to only have unique elements and easy deletion
-    private HashMap<String, SceneObject> objects;
+    private Map<String, SceneObject> objects;
 
     /**
      * Constructor to create the list of objects in the scene
@@ -19,6 +20,7 @@ public class RenderScene {
     
     /**
      * Adds an object (shape) to the scene's list of objects
+     * @param objName String: name of object
      * @param object type: SceneObject
      */
     public void  addObj(String objName, SceneObject object) {
@@ -39,9 +41,24 @@ public class RenderScene {
     }
     
     /**
+     * Replace a key with a new one
+     * @param oldKey String key to replace
+     * @param newKey String key to replace with
+     * @return 0 for success and 1 for failure
+     */
+    public int replaceKey(String oldKey, String newKey) {
+        try {
+            objects.put(newKey,objects.get(oldKey));
+            return 0;
+        }catch (Exception e) {
+            return 1;
+        }
+    }
+    
+    /**
      * Get an object in the scene by name
      * @param objName name of object as key type: String
-     * @return the object found or null
+     * @return the SceneObject found or null
      */
     public SceneObject getObjectByName(String objName) {
         return objects.get(objName);
