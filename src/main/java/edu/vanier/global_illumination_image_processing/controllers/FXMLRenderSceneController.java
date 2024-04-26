@@ -38,6 +38,7 @@ import javafx.stage.Stage;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.Pane;
@@ -92,6 +93,7 @@ public class FXMLRenderSceneController {
     Stage primaryStage;
     private BufferedImage image;
     private boolean autoRender;
+    private Alert lastAlert;
     
     /** create the render scene */
     private final RenderScene mainScene = new RenderScene();
@@ -214,7 +216,7 @@ public class FXMLRenderSceneController {
         });
         menuItemSaveToDatabase.setOnAction((event)->{
             if(image!=null){
-                String name = FXMLConvolutionsSceneController.chooseNameFileDialog();
+                String name = FXMLConvolutionsSceneController.chooseNameFileDialog(primaryStage);
                 File temp = new File("src\\main\\resources\\Images\\Convolutions\\temp.bmp");
                 try {
                     ImageIO.write(image, "bmp", temp);
@@ -234,7 +236,7 @@ public class FXMLRenderSceneController {
             if(image!=null){
                 
                 //To save the file, we need a directory and a name for the file
-            String name = chooseNameFileDialog();
+            String name = chooseNameFileDialog(primaryStage);
             DirectoryChooser dc = FXMLConvolutionsSceneController.getDirectoryChooser(primaryStage);
             //Create the file at the location with the name chosen by the user
             if (dc.getInitialDirectory() == null) return;
@@ -317,7 +319,12 @@ public class FXMLRenderSceneController {
         btnRender.setOnAction((event) -> {
             // render and return the time it took
             render();
-            FXMLConvolutionsSceneController.showAlertInfo("The rendering is completed");
+            primaryStage.setAlwaysOnTop(false);
+            if(lastAlert!=null) lastAlert.close();
+            if(!choiceEngine.getValue().equals("Rasterized"))
+                lastAlert = FXMLConvolutionsSceneController.showAlertInfo("The rendering is completed");
+                
+            primaryStage.setAlwaysOnTop(true);
         });
         
         /**

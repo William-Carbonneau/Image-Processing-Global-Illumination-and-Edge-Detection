@@ -23,6 +23,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.TilePane;
 import javafx.scene.layout.VBox;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 public class FXMLDatabaseViewer {
@@ -88,8 +89,10 @@ public class FXMLDatabaseViewer {
             }
         });
     }
-    public FXMLDatabaseViewer(Stage stage, File temp) throws FileNotFoundException, IOException {
+    public FXMLDatabaseViewer(Stage stage, File temp, Stage primaryStage) throws FileNotFoundException, IOException {
         this.stage = stage;
+        this.stage.initModality(Modality.APPLICATION_MODAL);
+        this.stage.initOwner(primaryStage);
         FileInputStream FIS = new FileInputStream(temp);
         this.imageBeingDisplayedOnIV = FIS.readAllBytes();
         passedImage = this.imageBeingDisplayedOnIV;

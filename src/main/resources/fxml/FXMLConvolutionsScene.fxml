@@ -212,12 +212,12 @@
                                                 </StackPane>
                                                 <StackPane prefHeight="150.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
                                                    <children>
-                                                      <Button fx:id="saveToDatabaseBtn" mnemonicParsing="false" opacity="0.0" prefHeight="81.0" prefWidth="49.0" />
                                                       <ImageView fitHeight="33.0" fitWidth="32.0">
                                                          <image>
                                                             <Image url="@../Images/Icons/DatabaseIcon.png" />
                                                          </image>
                                                       </ImageView>
+                                                      <Button fx:id="saveToDatabaseBtn" mnemonicParsing="false" opacity="0.0" prefHeight="81.0" prefWidth="49.0" />
                                                    </children>
                                                 </StackPane>
                                              </children>

@@ -484,7 +484,7 @@ public class FXMLConvolutionsSceneController {
                 //Load the FXML
                 FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/FXMLUpdatedDatabaseViewer.fxml"));
                 //Create the controller and set it
-                FXMLDatabaseViewer databaseController = new FXMLDatabaseViewer(stage, temp);
+                FXMLDatabaseViewer databaseController = new FXMLDatabaseViewer(stage, temp,primaryStage);
                 loader.setController(databaseController);
                 SplitPane root = loader.load();
                 Scene scene = new Scene(root);
@@ -522,7 +522,7 @@ public class FXMLConvolutionsSceneController {
          */
         SaveToFileBtn.setOnAction((event) -> {
             //To save the file, we need a directory and a name for the file
-            String name = chooseNameFileDialog();
+            String name = chooseNameFileDialog(primaryStage);
             DirectoryChooser dc = getDirectoryChooser(primaryStage);
             //Create the file at the location with the name chosen by the user
             File file = new File(dc.getInitialDirectory().getAbsolutePath() + "//" + name + ".bmp");
@@ -551,7 +551,7 @@ public class FXMLConvolutionsSceneController {
                 temp = new File(imageToSave.getUrl());
                 try {
                     //Insert the data in the database
-                    Database.insertRow("Images", "ImagesConvolutions", chooseNameFileDialog(), temp);
+                    Database.insertRow("Images", "ImagesConvolutions", chooseNameFileDialog(primaryStage), temp);
                 } catch (FileNotFoundException ex) {
                     Logger.getLogger(FXMLConvolutionsSceneController.class.getName()).log(Level.SEVERE, null, ex);
                 } catch (IOException ex) {
@@ -623,9 +623,11 @@ public class FXMLConvolutionsSceneController {
      *
      * @return nameFile, String which corresponds to the name of the file
      */
-    public static String chooseNameFileDialog(){
+    public static String chooseNameFileDialog(Stage primaryStage){
         AtomicReference<String> nameFileOut = new AtomicReference<String>();
         Stage stage = new Stage();
+        stage.initModality(Modality.APPLICATION_MODAL);
+        stage.initOwner(primaryStage);
         VBox root = new VBox();
         Label nameLbl = new Label("Please write the name of your file");
         TextField nameTxtFld = new TextField("Name");
@@ -736,11 +738,12 @@ public class FXMLConvolutionsSceneController {
         }
     }
 
-    public static void showAlertInfo(String message) {
-        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-        alert.setTitle("Confirmation");
-        alert.setContentText(message);
+    public static Alert showAlertInfo(String message) {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("Information");
+        alert.setHeaderText(message);
         alert.showAndWait();
+        return alert;
     }
     /**
      * If the user returns true, then the user wants to continue. If not, stop all operations.
