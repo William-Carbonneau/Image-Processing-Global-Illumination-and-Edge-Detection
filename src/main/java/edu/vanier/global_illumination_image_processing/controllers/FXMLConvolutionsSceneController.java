@@ -140,7 +140,7 @@ public class FXMLConvolutionsSceneController {
     //Taken from https://www.researchgate.net/figure/Discrete-approximation-of-the-Gaussian-kernels-3x3-5x5-7x7_fig2_325768087
     float[][] rulesGaussian7x7 = {{0, 0, 1, 2, 1, 0, 0}, {0, 3, 13, 22, 13, 3, 0}, {1, 13, 59, 97, 59, 13, 1}, {2, 22, 97, 159, 97, 22, 2}, {1, 13, 59, 97, 59, 13, 1}, {0, 3, 13, 22, 13, 3, 0}, {0, 0, 1, 2, 1, 0, 0}};
     //Source for the kernel to implement: https://pro.arcgis.com/en/pro-app/latest/help/analysis/raster-functions/convolution-function.htm#:~:text=The%20Convolution%20function%20performs%20filtering,or%20other%20kernel%2Dbased%20enhancements.
-    float[][] rulesSharp1 = {{0f, -0.25f, 0f}, {-0.25f, 2f, -0.25f}, {0f, -0.25f, 0f}};
+    float[][] rulesSharp1 = {{0f, -1f, 0f}, {-1f, 5f, -1f}, {0f, -1f, 0f}};
     //Source for the kernel: https://en.wikipedia.org/wiki/Sobel_operator
     float[][] rulesSobelY = {{-1, 0, 1},
     {-2, 0, 2},

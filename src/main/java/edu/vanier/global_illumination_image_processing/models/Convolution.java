@@ -36,9 +36,9 @@ public class Convolution {
     
 
     // Source for the kernel to implement: https://youtu.be/C_zFhWdM4ic?si=CH3JvuO9mSfVmleJ
-    float[][] rulesGaussian = {{1, 2, 1}, {2, 4, 2}, {1, 2, 1}};
+    private static float[][] rulesGaussian = {{1, 2, 1}, {2, 4, 2}, {1, 2, 1}};
     //Source for the kernel to implement: https://pro.arcgis.com/en/pro-app/latest/help/analysis/raster-functions/convolution-function.htm#:~:text=The%20Convolution%20function%20performs%20filtering,or%20other%20kernel%2Dbased%20enhancements.
-    float[][] rulesSharp1 = {{0f, -0.25f, 0f}, {-0.25f, 2f, -0.25f}, {0f, -0.25f, 0f}};
+    private static float[][] rulesSharp1 = {{0f, -1f, 0f}, {-1f, 5f, -1f}, {0f, -1f, 0f}};
     Stage primaryStage;
     File inputFile;
     String nameFileOut;
@@ -666,7 +666,7 @@ public class Convolution {
                 try {
                     color = new Color(rFinal[w][h] / 256, gFinal[w][h] / 256, bFinal[w][h] / 256);
                 } catch (Exception e) {
-                    color = new Color(0, 0, 0);
+                    color = new Color(Math.abs(rFinal[w][h]) > 256 ? 1 : 0, Math.abs(gFinal[w][h]) > 256 ? 1 : 0, Math.abs(bFinal[w][h]) > 256 ? 1 : 0);
                 }
                 finalImage.setRGB(w, h, color.getRGB());
             }
