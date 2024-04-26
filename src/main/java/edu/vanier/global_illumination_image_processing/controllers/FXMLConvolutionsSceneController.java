@@ -712,6 +712,8 @@ public class FXMLConvolutionsSceneController {
     }
     public static DirectoryChooser getDirectoryChooser(Stage primaryStage){
         Stage stage = new Stage();
+        stage.initModality(Modality.APPLICATION_MODAL);
+        stage.initOwner(primaryStage);
         DirectoryChooser dc = new DirectoryChooser();
         primaryStage.setAlwaysOnTop(false);
         stage.setAlwaysOnTop(true);
