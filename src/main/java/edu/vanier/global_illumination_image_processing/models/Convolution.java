@@ -33,6 +33,8 @@ public class Convolution {
         
     }
 
+    
+
     // Source for the kernel to implement: https://youtu.be/C_zFhWdM4ic?si=CH3JvuO9mSfVmleJ
     private static float[][] rulesGaussian = {{1, 2, 1}, {2, 4, 2}, {1, 2, 1}};
     //Source for the kernel to implement: https://pro.arcgis.com/en/pro-app/latest/help/analysis/raster-functions/convolution-function.htm#:~:text=The%20Convolution%20function%20performs%20filtering,or%20other%20kernel%2Dbased%20enhancements.
@@ -336,6 +338,88 @@ public class Convolution {
         ImageIO.write(finalImage, "bmp", file);
 
     }
+    public static void performSobelColored(String filePathIn, String filePathOut) throws IOException {
+        
+        //Source for the kernel: https://en.wikipedia.org/wiki/Sobel_operator
+        float[][] rulesSobelX = {{-1, -2, -1},
+                                 {0, 0, 0},
+                                 {1, 2, 1}};
+        //Source for the kernel: https://en.wikipedia.org/wiki/Sobel_operator
+        float[][] rulesSobelY = {{-1, 0, 1},
+                                 {-2, 0, 2},
+                                 {-1, 0, 1}};
+        BufferedImage BI = createBI(filePathIn);
+        // Create the array gray corresponding to the average values of the pixels
+        float[][] g = new float[BI.getWidth()][BI.getHeight()];
+        float[][] r = new float[BI.getWidth()][BI.getHeight()];
+        float[][] b = new float[BI.getWidth()][BI.getHeight()];
+        //Initialize the values of g
+        Color color;
+        //The values of a geayscale image are uniform, meaning that the values for red, blue, and green are all the same
+        // Therefore, we can take any one of these three to initialize the array g (g)
+        for (int w = 0; w < BI.getWidth(); w++) {
+            for (int h = 0; h < BI.getHeight(); h++) {
+                color = new Color(BI.getRGB(w, h));
+                g[w][h] = color.getGreen();
+                r[w][h] = color.getRed();
+                b[w][h] = color.getBlue();
+            }
+        }
+        //Perform the convolution on the gray array, in order to get the final one
+        // gFinal contains the floating numbers describing how much the colour values change up to down. (It does not represent the grayscale value, but the difference in the grayscale)
+        float[][] gradientXGreen = performConvolutionOnArray(rulesSobelX, g);
+        float[][] gradientYGreen = performConvolutionOnArray(rulesSobelY, g);
+        float[][] sobelGreen = new float[BI.getWidth()][BI.getHeight()];
+        float[][] gradientXRed = performConvolutionOnArray(rulesSobelX, r);
+        float[][] gradientYRed = performConvolutionOnArray(rulesSobelY, r);
+        float[][] sobelRed = new float[BI.getWidth()][BI.getHeight()];
+        float[][] gradientXBlue = performConvolutionOnArray(rulesSobelX, b);
+        float[][] gradientYBlue = performConvolutionOnArray(rulesSobelY,b);
+        float[][] sobelBlue = new float[BI.getWidth()][BI.getHeight()];
+        //Make a new image
+        BufferedImage finalImage = new BufferedImage(g.length, g[0].length, BufferedImage.TYPE_INT_RGB);
+        float maxGradientGreen;//Maximum value that a green pixel can return
+        float maxGradientRed;//Maximum value that a red pixel can return
+        float maxGradientBlue;//Maximum value that a blue pixel can return
+        float ratioGradientGreen; //ratio between the final gradient and the max gradient
+        float ratioGradientRed; //ratio between the final gradient and the max gradient
+        float ratioGradientBlue; //ratio between the final gradient and the max gradient
+        int colorFloatGreen; //Value of the color that the pixel should have between 0 and 255
+        int colorFloatRed; //Value of the color that the pixel should have between 0 and 255
+        int colorFloatBlue; //Value of the color that the pixel should have between 0 and 255
+        for (int w = 0; w < BI.getWidth(); w++) {
+            for (int h = 0; h < BI.getHeight(); h++) {
+                //Calculate the final gradient using Pythagora
+                sobelGreen[w][h] = (float) Math.sqrt(gradientXGreen[w][h] * gradientXGreen[w][h] + gradientYGreen[w][h] * gradientYGreen[w][h]);
+                sobelBlue[w][h] = (float) Math.sqrt(gradientXBlue[w][h] * gradientXBlue[w][h] + gradientYBlue[w][h] * gradientYBlue[w][h]);
+                sobelRed[w][h] = (float) Math.sqrt(gradientXRed[w][h] * gradientXRed[w][h] + gradientYRed[w][h] * gradientYRed[w][h]);
+            }
+        }
+        //We can now find the maximum gradient detected
+        maxGradientGreen = findBiggestValue(sobelGreen);
+        maxGradientRed = findBiggestValue(sobelRed);
+        maxGradientBlue = findBiggestValue(sobelBlue);
+        for (int w = 0; w < BI.getWidth(); w++) {
+            for (int h = 0; h < BI.getHeight(); h++) {
+                ratioGradientGreen = sobelGreen[w][h]/maxGradientGreen;
+                ratioGradientRed = sobelRed[w][h]/maxGradientRed;
+                ratioGradientBlue = sobelBlue[w][h]/maxGradientBlue;
+                colorFloatGreen = (int)((int) 255*ratioGradientGreen);
+                colorFloatRed = (int)((int) 255*ratioGradientRed);
+                colorFloatBlue = (int)((int) 255*ratioGradientBlue);
+                try{
+                    color = new Color(colorFloatRed, colorFloatGreen, colorFloatBlue);
+                }catch(Exception e){
+                    color = new Color(0,0,0);
+                }
+                //Set the value of the colour
+                finalImage.setRGB(w, h, color.getRGB());
+            }
+        }
+        // Create and write the output file
+        File file = new File(filePathOut);
+        ImageIO.write(finalImage, "bmp", file);
+    }
     /**
      * This method applies the laplacian operator kernel on an image
      * @param filePathIn
@@ -374,20 +458,6 @@ public class Convolution {
                 } else {
                     color = new Color(255, 255, 255);
                 }
-                /*
-                try{
-                    int result = (int) (128+laplacianResult[w][h]);
-                    color =new Color(result, result, result);
-                }catch(Exception e){
-                    if(laplacianResult[w][h]>127){
-                        color =new Color(255,255,255);
-                    }
-                    else{
-                        color =new Color(0,0,0);
-                    }
-                    System.out.println(laplacianResult[w][h]);
-                }
-                 */
 
                 finalImage.setRGB(w, h, color.getRGB());
             }

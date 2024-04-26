@@ -223,7 +223,7 @@ public class FXMLConvolutionsSceneController {
         initializeTempFile();
         iterationsTxtField.setTextFormatter(new TextFormatter <> (input -> input.getControlNewText().matches(textFormatterIntegerRegex) ? input : null));
         //Initialize the choices in the choice box
-        convolutionCB.getItems().addAll("Custom Kernel", "Gaussian Blur 3x3", "Gaussian Blur 5x5", "Gaussian Blur 7x7", "Sharpening", "Grayscale", "Sobel X", "Sobel Y", "Sobel Complete", "Prewitt", "Laplacian", "Colored Edge Angles");
+        convolutionCB.getItems().addAll("Custom Kernel", "Gaussian Blur 3x3", "Gaussian Blur 5x5", "Gaussian Blur 7x7", "Sharpening", "Grayscale", "Sobel X", "Sobel Y", "Sobel Classic","Sobel Colored", "Prewitt", "Laplacian", "Colored Edge Angles");
         //When someone clicks on the convolve button
         convolveBtn.setOnAction((event) -> {
             //To convolve an image, we need an image and a convolution choice
@@ -335,7 +335,7 @@ public class FXMLConvolutionsSceneController {
                     } catch (IOException | NullPointerException ex) {
                         showAlertWarning("The " + choice + " convolution did not work. Please try again.");
                     }
-                } else if (choice.equals("Sobel Complete")) {
+                } else if (choice.equals("Sobel Classic")) {
                     try {
                         Convolution.performConvolution(this.imageBeingDisplayedOnIV.getAbsolutePath(), this.imageBeingDisplayedOnIV.getAbsolutePath(), rulesGaussian7x7);
                         Convolution.performGrayscale(this.imageBeingDisplayedOnIV.getAbsolutePath(), this.imageBeingDisplayedOnIV.getAbsolutePath());
@@ -430,7 +430,19 @@ public class FXMLConvolutionsSceneController {
                     } catch (IOException ex) {
                         Logger.getLogger(FXMLConvolutionsSceneController.class.getName()).log(Level.SEVERE, null, ex);
                     }
-                } else {
+                }
+                else if (choice.equals("Sobel Colored")){
+                    try {
+                        Convolution.performConvolution(this.imageBeingDisplayedOnIV.getAbsolutePath(), this.imageBeingDisplayedOnIV.getAbsolutePath(), rulesGaussian7x7);
+                        for(int i=0;i<iterations;i++)
+                        Convolution.performSobelColored(this.imageBeingDisplayedOnIV.getAbsolutePath(), this.imageBeingDisplayedOnIV.getAbsolutePath());
+                        displayImage(this.imageBeingDisplayedOnIV.getAbsolutePath());
+                        showAlertInfo("The " + choice + " convolution is completed");
+                    } catch (IOException | NullPointerException ex) {
+                        showAlertWarning("The " + choice + " convolution did not work. Please try again.");
+                    }
+                    
+                }else {
                     System.out.println("Else");
                 }
             } else {
