@@ -74,7 +74,7 @@ public class FXMLDatabaseViewer {
          * deletes selected image from database
          */
         btnDelete.setOnAction((event) -> {
-            if(indexSelected!=-1 && (indexSelected>3))
+            if(indexSelected!=-1 && (indexSelected>4))
             try {
                 Database.deleteRow("Images","ImagesConvolutions", titles.get(indexSelected));
                 //Update the viewer by eliminating all children and adding them if they are still in the database
