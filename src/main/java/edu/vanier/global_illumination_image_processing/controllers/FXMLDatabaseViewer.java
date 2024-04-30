@@ -142,12 +142,23 @@ public class FXMLDatabaseViewer {
             return null;
         }
     }
+    
+    /**
+     * Get data from the database and put it in the GUI
+     * 
+     * @param titleDatabase the String title of the database
+     * @param tableName the String name of the database
+     * @param root the TilePane to put the data into
+     * @throws FileNotFoundException
+     * @throws IOException 
+     */
     private void getFromDBAndDisplay(String titleDatabase,String tableName,  TilePane root) throws FileNotFoundException, IOException {
         Connection connection = null;
         imvs = new ArrayList<>();
         titles = new ArrayList<>();
         bs = new ArrayList<>();
         ArrayList<VBox> vBoxes = new ArrayList<>();
+        // to try connect to the database and loop over the data
         try{
             connection  =DriverManager.getConnection("jdbc:sqlite:"+titleDatabase+".db");
             Statement stmt = connection.createStatement();
@@ -160,6 +171,7 @@ public class FXMLDatabaseViewer {
             System.out.println(rs.getFetchSize());
             Label title;
             VBox imageAndTitle;
+            // create the individual boxes/tiles and put them in the GUI
             while(rs.next()){
                 imageAndTitle = new VBox();
                 String titleImage = rs.getString("title");
@@ -182,20 +194,20 @@ public class FXMLDatabaseViewer {
                 root.getChildren().add(imageAndTitle);
                 FOS.flush();
             }
+            // set event listenners on each box
             for(int i = 0; i<imvs.size(); i++){
                 imvs.get(i).setOnMouseClicked((event)->{
                     System.out.println(imvs.indexOf(iv));
                 });
             }
+            // set selected event to put box around clicked object
             imvs.forEach((i)->{
                 iv = i;
                 i.setOnMouseClicked((event)->{
                     int index = imvs.indexOf(event.getPickResult().getIntersectedNode());
-                    indexSelected = index;
                     if (indexSelected!= -1) vBoxes.get(indexSelected).setStyle("");
                     indexSelected=index;
                     vBoxes.get(indexSelected).setStyle("-fx-border-color: BLACK;");
-                    System.out.println(indexSelected);
                     passedImage = bs.get(index);
                 });
             });
