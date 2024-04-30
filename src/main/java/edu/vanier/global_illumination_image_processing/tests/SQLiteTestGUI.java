@@ -77,9 +77,9 @@ class testControllerSQLiteGUI{
             }
         });
     }
-    //Source: https://github.com/frostybee/fx-gallery/tree/main/src/main/java/org/bee/fxgallery/db TODO citation
-    //Source: https://www.youtube.com/watch?v=0beocykXUag TODO citation
-    //Source: https://www.tutorialspoint.com/what-is-jdbc-blob-data-type-how-to-store-and-read-data-from-it  TODO citation
+    //Source: https://github.com/frostybee/fx-gallery/tree/main/src/main/java/org/bee/fxgallery/db (Frostybee)
+    //Source: https://www.youtube.com/watch?v=0beocykXUag (Logic Lamda, 2021)
+    //Source: https://www.tutorialspoint.com/what-is-jdbc-blob-data-type-how-to-store-and-read-data-from-it  (Thomas)
     private void initImageDB(String title, String tableName) throws SQLException, FileNotFoundException, IOException {
         Connection connection = null;
         try{

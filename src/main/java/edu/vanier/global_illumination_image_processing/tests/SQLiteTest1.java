@@ -6,7 +6,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-//copied from https://www.youtube.com/watch?v=0beocykXUag TODO citation
+//copied from https://www.youtube.com/watch?v=0beocykXUag (Logic Lamda, 2021)
 
 /**
  * test database class - do not run alone

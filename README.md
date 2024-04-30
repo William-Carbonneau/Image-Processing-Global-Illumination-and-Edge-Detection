@@ -4,10 +4,22 @@
 
 
 References:
-Zsolnai-Feh’er, K. (2018). TU Wien Rendering Course.
-Zsolnai-Feh’er, K. (2018). Smallpaint: A Global Illumination Renderer.
 Driscoll, Rory. “Better Sampling.” CodeItNow, 7 Jan. 2009, www.rorydriscoll.com/2009/01/07/better-sampling/.
+Esri. (n.d.). Convolution function. Convolution function-ArcGIS Pro | Documentation. https://pro.arcgis.com/en/pro-app/latest/help/analysis/raster-functions/convolution-function.htm#:~:text=The%20Convolution%20function%20performs%20filtering,or%20other%20kernel%2Dbased%20enhancements. 
+Frostybee. (n.d.). FX-Gallery/SRC/main/java/org/bee/fxgallery/DB at main · frostybee/fx-gallery. GitHub. https://github.com/frostybee/fx-gallery/tree/main/src/main/java/org/bee/fxgallery/db
+Logic Lambda. (2021, December 3). Working with databases in java: JDBC & sqlite. YouTube. https://www.youtube.com/watch?v=0beocykXUag 
+Nayar, S. (2021, March 3). Edge detection using laplacian | edge detection. YouTube. https://www.youtube.com/watch?v=uNP6ZwQ3r6A 
+Oracle. (2015, February 10). ImageView (javafx 8). https://docs.oracle.com/javase/8/javafx/api/javafx/scene/image/ImageView.html 
 Pound, M. (2015, November 4). Finding the edges (Sobel operator) - computerphile. YouTube. https://www.youtube.com/watch?v=uihBwtPIBxM 
+Pound, M. (2015, October 2). How blurs & filters work - computerphile. YouTube. https://youtu.be/C_zFhWdM4ic?si=CH3JvuO9mSfVmleJ 
+Ramo, K. (2018, October 30). Implement simple convolution with Java. ramok.tech. https://ramok.tech/2018/09/27/convolution-in-java/ 
+Shipitko, O. (n.d.). Discrete approximation of the Gaussian kernels 3x3, 5x5, 7x7 | download scientific diagram. https://www.researchgate.net/figure/Discrete-approximation-of-the-Gaussian-kernels-3x3-5x5-7x7_fig2_325768087 
+Stanford.edu. (n.d.). Image-6 grayscale. CS101 Introduction to Computing Principles. https://web.stanford.edu/class/cs101/image-6-grayscale-adva.html 
+Thomas, D. (n.d.). What is JDBC blob data type? how to store and read data from it?. Tutorialspoint. https://www.tutorialspoint.com/what-is-jdbc-blob-data-type-how-to-store-and-read-data-from-it 
+Wikimedia Foundation. (2024, March 1). Sobel operator. Wikipedia. https://en.wikipedia.org/wiki/Sobel_operator 
+Wikimedia Foundation. (2024b, April 27). Prewitt operator. Wikipedia. https://en.wikipedia.org/wiki/Prewitt_operator 
+Zsolnai-Feh’er, K. (2018). Smallpaint: A Global Illumination Renderer.
+Zsolnai-Feh’er, K. (2018). TU Wien Rendering Course.
 
 A note on numerical text inputs:
 Some text boxes allow for numerical input. This can be in the form of a floating point number (negative or non-negative), or of an integer. 
