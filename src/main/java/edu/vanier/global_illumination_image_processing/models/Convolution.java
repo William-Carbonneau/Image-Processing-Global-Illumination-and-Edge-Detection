@@ -11,7 +11,7 @@ import javax.imageio.ImageIO;
  * This class is a collection of static methods that are useful for
  * convolutions.
  * 
- * This source was used to understand what is a convolution, what is a kernel, and how do they go hand in hand: https://youtu.be/C_zFhWdM4ic?si=nDnBCiZYqUB04SMO TODO citation
+ * This source was used to understand what is a convolution, what is a kernel, and how do they go hand in hand: https://youtu.be/C_zFhWdM4ic?si=nDnBCiZYqUB04SMO (Pound, 2015)
  */
 public class Convolution {
     /**
@@ -34,9 +34,9 @@ public class Convolution {
 
     
 
-    // Source for the kernel to implement: https://youtu.be/C_zFhWdM4ic?si=CH3JvuO9mSfVmleJ TODO citation
+    // Source for the kernel to implement: https://youtu.be/C_zFhWdM4ic?si=CH3JvuO9mSfVmleJ (Pound, 2015)
     private static final float[][] rulesGaussian = {{1, 2, 1}, {2, 4, 2}, {1, 2, 1}};
-    //Source for the kernel to implement: https://pro.arcgis.com/en/pro-app/latest/help/analysis/raster-functions/convolution-function.htm#:~:text=The%20Convolution%20function%20performs%20filtering,or%20other%20kernel%2Dbased%20enhancements. TODO citation
+    //Source for the kernel to implement: https://pro.arcgis.com/en/pro-app/latest/help/analysis/raster-functions/convolution-function.htm#:~:text=The%20Convolution%20function%20performs%20filtering,or%20other%20kernel%2Dbased%20enhancements. (Esri)
     private static final float[][] rulesSharp1 = {{0f, -1f, 0f}, {-1f, 5f, -1f}, {0f, -1f, 0f}};
 
     /**
@@ -122,9 +122,9 @@ public class Convolution {
      * @param filePathOut - The path of the file output
      * @throws IOException 
      * Source used as a reference to use ImageIO:
-     * https://ramok.tech/2018/09/27/convolution-in-java/  TODO citation
+     * https://ramok.tech/2018/09/27/convolution-in-java/  (Ramo, 2018)
      * A grayscale pixel is obtained by averaging the r, g, and b values:
-     * https://web.stanford.edu/class/cs101/image-6-grayscale-adva.html TODO citation
+     * https://web.stanford.edu/class/cs101/image-6-grayscale-adva.html (Standor.edu, Image-6 grayscale)
      */
     public static void performGrayscale(String filePathIn, String filePathOut) throws IOException {
         BufferedImage BI = createBI(filePathIn);
@@ -159,14 +159,14 @@ public class Convolution {
      * @param filePathOut
      * @throws IOException 
      * This source was used as a reference to use ImageIO in the context of performing a convolution:
-     * https://ramok.tech/2018/09/27/convolution-in-java/ TODO citation
+     * https://ramok.tech/2018/09/27/convolution-in-java/ (Ramo, 2018)
      */
     public static void performEdgeAngles(String filePathIn, String filePathOut) throws IOException {
-        //Source for the kernel: https://en.wikipedia.org/wiki/Sobel_operator TODO citation
+        //Source for the kernel: https://en.wikipedia.org/wiki/Sobel_operator (Sobel operator, 2024)
         float[][] rulesSobelX = {{-1, -2, -1},
         {0, 0, 0},
         {1, 2, 1}};
-        //Source for the kernel: https://en.wikipedia.org/wiki/Sobel_operator TODO citation
+        //Source for the kernel: https://en.wikipedia.org/wiki/Sobel_operator (Sobel operator, 2024)
         float[][] rulesSobelY = {{-1, 0, 1},
         {-2, 0, 2},
         {-1, 0, 1}};
@@ -217,11 +217,11 @@ public class Convolution {
      * @param filePathOut
      * @throws IOException 
      * This source was used as a reference to use ImageIO in the context of performing a convolution:
-     * https://ramok.tech/2018/09/27/convolution-in-java/ TODO citation
+     * https://ramok.tech/2018/09/27/convolution-in-java/ (Ramo, 2018)
      */
     public static void performSobelX(String filePathIn, String filePathOut) throws IOException {
         float threshold = 100;
-        //Source for the kernel: https://en.wikipedia.org/wiki/Sobel_operator TODO citation
+        //Source for the kernel: https://en.wikipedia.org/wiki/Sobel_operator (Sobel operator, 2024)
         float[][] rulesSobelX = {{-1, -2, -1},
         {0, 0, 0},
         {1, 2, 1}};
@@ -263,22 +263,22 @@ public class Convolution {
 
     /**
      * Reference to understand the algorithm:
-     * https://youtu.be/uihBwtPIBxM?si=W3KaT-ADPo2NBvcW TODO citation
+     * https://youtu.be/uihBwtPIBxM?si=W3KaT-ADPo2NBvcW (Pound, 2015)
      *
      * @param filePathIn
      * @param filePathOut
      * @param threshold
      * @throws IOException
      * This source was used as a reference to use ImageIO in the context of performing a convolution:
-     * https://ramok.tech/2018/09/27/convolution-in-java/ TODO citation
+     * https://ramok.tech/2018/09/27/convolution-in-java/ (Ramo, 2018)
      */
     public static void performSobel(String filePathIn, String filePathOut) throws IOException {
 
-        //Source for the kernel: https://en.wikipedia.org/wiki/Sobel_operator TODO citation
+        //Source for the kernel: https://en.wikipedia.org/wiki/Sobel_operator (Sobel operator, 2024)
         float[][] rulesSobelX = {{-1, -2, -1},
                                  {0, 0, 0},
                                  {1, 2, 1}};
-        //Source for the kernel: https://en.wikipedia.org/wiki/Sobel_operator TODO citation
+        //Source for the kernel: https://en.wikipedia.org/wiki/Sobel_operator (Sobel operator, 2024)
         float[][] rulesSobelY = {{-1, 0, 1},
                                  {-2, 0, 2},
                                  {-1, 0, 1}};
@@ -336,11 +336,11 @@ public class Convolution {
     }
     public static void performSobelColored(String filePathIn, String filePathOut) throws IOException {
         
-        //Source for the kernel: https://en.wikipedia.org/wiki/Sobel_operator TODO citation
+        //Source for the kernel: https://en.wikipedia.org/wiki/Sobel_operator (Sobel operator, 2024)
         float[][] rulesSobelX = {{-1, -2, -1},
                                  {0, 0, 0},
                                  {1, 2, 1}};
-        //Source for the kernel: https://en.wikipedia.org/wiki/Sobel_operator TODO citation
+        //Source for the kernel: https://en.wikipedia.org/wiki/Sobel_operator (Sobel operator, 2024)
         float[][] rulesSobelY = {{-1, 0, 1},
                                  {-2, 0, 2},
                                  {-1, 0, 1}};
@@ -422,10 +422,10 @@ public class Convolution {
      * @param filePathOut
      * @throws IOException 
      * This source was used as a reference to use ImageIO in the context of performing a convolution:
-     * https://ramok.tech/2018/09/27/convolution-in-java/ TODO citation
+     * https://ramok.tech/2018/09/27/convolution-in-java/ (Ramo, 2018)
      */
     public static void performLaplacianOperator(String filePathIn, String filePathOut) throws IOException {
-        //Source for the kernel: https://youtu.be/uNP6ZwQ3r6A?si=Lg2Q0SyxrTAA6Qcw TODO citation
+        //Source for the kernel: https://youtu.be/uNP6ZwQ3r6A?si=Lg2Q0SyxrTAA6Qcw (Nayar, 2021)
         float[][] laplacianKernel = {{0, 1, 0},
         {1, -4, 1},
         {0, 1, 0}};
