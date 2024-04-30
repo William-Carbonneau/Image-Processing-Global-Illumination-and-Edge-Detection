@@ -142,6 +142,7 @@ public class FXMLConvolutionsSceneController {
     float[][] rulesSobelX = {{-1, -2, -1},
     {0, 0, 0},
     {1, 2, 1}};
+    
     /**
      * main window being used to interact with the user. We will need to access
      * when we need to open new windows that will take priority over the primary
@@ -216,7 +217,7 @@ public class FXMLConvolutionsSceneController {
         initializeTempFile();
         txtIterations.setTextFormatter(new TextFormatter <> (input -> input.getControlNewText().matches(textFormatterIntegerRegex) ? input : null));
         //Initialize the choices in the choice box
-        choiceBoxConvolution.getItems().addAll("Custom Kernel", "Gaussian Blur 3x3", "Gaussian Blur 5x5", "Gaussian Blur 7x7", "Sharpening", "Grayscale", "Sobel X", "Sobel Y", "Sobel Classic","Sobel Colored", "Prewitt", "Laplacian", "Colored Edge Angles");
+        choiceBoxConvolution.getItems().addAll("Custom Kernel", "Gaussian Blur 3x3", "Gaussian Blur 5x5", "Gaussian Blur 7x7", "Sharpening", "Grayscale", "Sobel X", "Sobel Y", "Sobel Classic","Sobel Colored", "Prewitt","Prewitt - Pure", "Laplacian", "Colored Edge Angles");
         //When someone clicks on the convolve button
         btnConvolve.setOnAction((event) -> {
             //To convolve an image, we need an image and a convolution choice
@@ -362,8 +363,20 @@ public class FXMLConvolutionsSceneController {
                         }
                         Convolution.performConvolution(this.imageBeingDisplayedOnIV.getAbsolutePath(), this.imageBeingDisplayedOnIV.getAbsolutePath(), rulesGaussian7x7);
                         Convolution.performGrayscale(this.imageBeingDisplayedOnIV.getAbsolutePath(), this.imageBeingDisplayedOnIV.getAbsolutePath());
-                        for(int i=0;i<iterations;i++)
-                        Convolution.performPrewitt(this.imageBeingDisplayedOnIV.getAbsolutePath(), this.imageBeingDisplayedOnIV.getAbsolutePath(), threshold);
+                        for(int i=0;i<iterations;i++) {
+                            Convolution.performPrewitt(this.imageBeingDisplayedOnIV.getAbsolutePath(), this.imageBeingDisplayedOnIV.getAbsolutePath(), threshold);
+                        }
+                        displayImage(this.imageBeingDisplayedOnIV.getAbsolutePath());
+                        showAlertInfo("The " + choice + " convolution is completed");
+                    } catch (IOException | NullPointerException ex) {
+                        showAlertWarning("The " + choice + " convolution did not work. Please try again.");
+                    }
+                    } else if (choice.equals("Prewitt - Pure")) {
+                    // Prewitt convolution - pure no threshold
+                    try {
+                        for(int i=0;i<iterations;i++) {
+                            Convolution.performPrewittPure(this.imageBeingDisplayedOnIV.getAbsolutePath(), this.imageBeingDisplayedOnIV.getAbsolutePath());
+                        }
                         displayImage(this.imageBeingDisplayedOnIV.getAbsolutePath());
                         showAlertInfo("The " + choice + " convolution is completed");
                     } catch (IOException | NullPointerException ex) {
