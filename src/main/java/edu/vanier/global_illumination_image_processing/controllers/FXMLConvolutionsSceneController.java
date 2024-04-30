@@ -126,19 +126,19 @@ public class FXMLConvolutionsSceneController {
      * Threshold value when performing certain convolutions.
      */
     float threshold;
-    // Source for the kernel to implement: https://youtu.be/C_zFhWdM4ic?si=CH3JvuO9mSfVmleJ TODO citation
+    // Source for the kernel to implement: https://youtu.be/C_zFhWdM4ic?si=CH3JvuO9mSfVmleJ (Pound, 2015)
     float[][] rulesGaussian3x3 = {{1, 2, 1}, {2, 4, 2}, {1, 2, 1}};
-    //Taken from https://www.researchgate.net/figure/Discrete-approximation-of-the-Gaussian-kernels-3x3-5x5-7x7_fig2_325768087 TODO citation
+    //Taken from https://www.researchgate.net/figure/Discrete-approximation-of-the-Gaussian-kernels-3x3-5x5-7x7_fig2_325768087 (Shipitko)
     float[][] rulesGaussian5x5 = {{1, 4, 7, 4, 1}, {4, 16, 26, 16, 4}, {7, 26, 41, 26, 7}, {4, 16, 26, 16, 4}, {1, 4, 7, 4, 1}};
-    //Taken from https://www.researchgate.net/figure/Discrete-approximation-of-the-Gaussian-kernels-3x3-5x5-7x7_fig2_325768087 TODO citation
+    //Taken from https://www.researchgate.net/figure/Discrete-approximation-of-the-Gaussian-kernels-3x3-5x5-7x7_fig2_325768087 (Shipitko)
     float[][] rulesGaussian7x7 = {{0, 0, 1, 2, 1, 0, 0}, {0, 3, 13, 22, 13, 3, 0}, {1, 13, 59, 97, 59, 13, 1}, {2, 22, 97, 159, 97, 22, 2}, {1, 13, 59, 97, 59, 13, 1}, {0, 3, 13, 22, 13, 3, 0}, {0, 0, 1, 2, 1, 0, 0}};
-    //Source for the kernel to implement: https://pro.arcgis.com/en/pro-app/latest/help/analysis/raster-functions/convolution-function.htm#:~:text=The%20Convolution%20function%20performs%20filtering,or%20other%20kernel%2Dbased%20enhancements. TODO citation
+    //Source for the kernel to implement: https://pro.arcgis.com/en/pro-app/latest/help/analysis/raster-functions/convolution-function.htm#:~:text=The%20Convolution%20function%20performs%20filtering,or%20other%20kernel%2Dbased%20enhancements. (Esri)
     float[][] rulesSharp1 = {{0f, -1f, 0f}, {-1f, 5f, -1f}, {0f, -1f, 0f}};
-    //Source for the kernel: https://en.wikipedia.org/wiki/Sobel_operator TODO citation
+    //Source for the kernel: https://en.wikipedia.org/wiki/Sobel_operator (Sobel operator, 2024)
     float[][] rulesSobelY = {{-1, 0, 1},
     {-2, 0, 2},
     {-1, 0, 1}};
-    //Source for the kernel: https://en.wikipedia.org/wiki/Sobel_operator TODO citation
+    //Source for the kernel: https://en.wikipedia.org/wiki/Sobel_operator (Sobel operator, 2024)
     float[][] rulesSobelX = {{-1, -2, -1},
     {0, 0, 0},
     {1, 2, 1}};
@@ -713,7 +713,7 @@ public class FXMLConvolutionsSceneController {
      * This method displays an image file onto the image view imageImgView
      *
      * @param filePath Source:
-     * https://docs.oracle.com/javase/8/javafx/api/javafx/scene/image/ImageView.html TODO citation
+     * https://docs.oracle.com/javase/8/javafx/api/javafx/scene/image/ImageView.html (Oracle, 2015)
      */
     public void displayImage(String filePath) {
         imageImgView.setImage(new Image(filePath));
