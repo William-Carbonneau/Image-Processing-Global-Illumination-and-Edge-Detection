@@ -6,7 +6,8 @@
 References:
 Zsolnai-Feh’er, K. (2018). TU Wien Rendering Course.
 Zsolnai-Feh’er, K. (2018). Smallpaint: A Global Illumination Renderer.
-Driscoll, Rory. “Better Sampling.” CodeItNow, 7 Jan. 2009, www.rorydriscoll.com/2009/01/07/better-sampling/. 
+Driscoll, Rory. “Better Sampling.” CodeItNow, 7 Jan. 2009, www.rorydriscoll.com/2009/01/07/better-sampling/.
+Pound, M. (2015, November 4). Finding the edges (Sobel operator) - computerphile. YouTube. https://www.youtube.com/watch?v=uihBwtPIBxM 
 
 A note on numerical text inputs:
 Some text boxes allow for numerical input. This can be in the form of a floating point number (negative or non-negative), or of an integer. 

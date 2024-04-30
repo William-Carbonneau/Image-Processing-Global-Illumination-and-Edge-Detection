@@ -54,7 +54,7 @@ import javax.imageio.ImageIO;
  */
 public class FXMLRenderSceneController {
     // FXML objects
-    @FXML VBox RootVBox;
+    @FXML VBox vBoxRoot;
     @FXML VBox vboxPropertyList;
     @FXML MenuItem menuItemBackToTitle;
     @FXML MenuItem menuItemAddSphere;
