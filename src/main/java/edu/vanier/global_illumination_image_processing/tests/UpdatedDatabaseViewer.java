@@ -10,7 +10,10 @@ import javafx.scene.control.SplitPane;
 import javafx.scene.layout.TilePane;
 import javafx.stage.Stage;
 
-
+/**
+ * Test version of the database viewer, do not run alone
+ * @author 2265724
+ */
 public class UpdatedDatabaseViewer extends Application{
     public static void main(String[] args) {
         launch(args);

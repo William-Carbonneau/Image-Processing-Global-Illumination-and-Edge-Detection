@@ -5,15 +5,12 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.sql.Blob;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.application.Application;
@@ -24,10 +21,12 @@ import javafx.scene.control.Button;
 import javafx.scene.control.SplitPane;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 
-
+/**
+ * Test database class - do not run alone
+ * @author 2265724
+ */
 public class SQLiteTestGUI extends Application{
     public static void main(String[] args) {
         launch(args);
@@ -78,9 +77,9 @@ class testControllerSQLiteGUI{
             }
         });
     }
-    //Source: https://github.com/frostybee/fx-gallery/tree/main/src/main/java/org/bee/fxgallery/db
-    //Source: https://www.youtube.com/watch?v=0beocykXUag
-    //Source: https://www.tutorialspoint.com/what-is-jdbc-blob-data-type-how-to-store-and-read-data-from-it  
+    //Source: https://github.com/frostybee/fx-gallery/tree/main/src/main/java/org/bee/fxgallery/db TODO citation
+    //Source: https://www.youtube.com/watch?v=0beocykXUag TODO citation
+    //Source: https://www.tutorialspoint.com/what-is-jdbc-blob-data-type-how-to-store-and-read-data-from-it  TODO citation
     private void initImageDB(String title, String tableName) throws SQLException, FileNotFoundException, IOException {
         Connection connection = null;
         try{

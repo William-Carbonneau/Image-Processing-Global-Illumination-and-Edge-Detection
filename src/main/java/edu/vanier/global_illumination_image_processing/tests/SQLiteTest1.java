@@ -6,7 +6,12 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-//copied from https://www.youtube.com/watch?v=0beocykXUag
+//copied from https://www.youtube.com/watch?v=0beocykXUag TODO citation
+
+/**
+ * test database class - do not run alone
+ * @author 2265724
+ */
 public class SQLiteTest1 {
     public static void main(String[] args) {
         System.out.println("SQLiteTest1 class being read");

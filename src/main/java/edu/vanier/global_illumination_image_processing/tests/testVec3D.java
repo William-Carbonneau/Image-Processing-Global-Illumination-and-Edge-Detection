@@ -9,7 +9,7 @@ import edu.vanier.global_illumination_image_processing.rendering.Vec3D;
 public class testVec3D {
 
     /**
-    * Test method for Vec3D addition.
+    * Tests for Vec3D
     * It creates two vectors, adds them, and prints the result.
     */
     public static void testAdd() {

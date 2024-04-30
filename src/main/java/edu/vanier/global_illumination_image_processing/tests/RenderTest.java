@@ -14,6 +14,7 @@ import java.util.logging.Logger;
 
 /**
  * A test class for the rendering, test is qualitative
+ * this test also logs performance for multiple processors
  * 
  * @author William Carbonneau
  */
