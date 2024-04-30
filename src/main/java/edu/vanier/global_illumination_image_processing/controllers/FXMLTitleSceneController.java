@@ -23,11 +23,11 @@ import javafx.stage.Stage;
 public class FXMLTitleSceneController {
     
     @FXML
-    VBox RootVBox;
+    VBox vBoxRoot;
     @FXML
-    Button ImageProcessingBtn;
+    Button btnImageProcessing;
     @FXML
-    Button GlobalIlluminationBtn;
+    Button btnGlobalIllumination;
     
     Stage primaryStage;
 
@@ -43,13 +43,13 @@ public class FXMLTitleSceneController {
     @FXML
     public void initialize() {
         System.out.println("Title Scene being loaded");
-        ImageProcessingBtn.setOnAction((event) -> {
+        btnImageProcessing.setOnAction((event) -> {
             MainApp.switchScene(MainApp.FXMLConvolutionsScene, new FXMLConvolutionsSceneController(primaryStage));
             
             
         });
 
-        GlobalIlluminationBtn.setOnAction((event) -> {
+        btnGlobalIllumination.setOnAction((event) -> {
             MainApp.switchScene(MainApp.FXMLRenderScene, new FXMLRenderSceneController(primaryStage));
             
         });

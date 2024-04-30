@@ -46,8 +46,9 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 /**
- *
- * @Loovdrish Sujore
+ * The controller for the convolutions scene
+ * 
+ * @auhtor Loovdrish Sujore and Zachary Tremblay
  */
 public class FXMLConvolutionsSceneController {
 
@@ -55,7 +56,7 @@ public class FXMLConvolutionsSceneController {
      * Button to go back to the main menu
      */
     @FXML
-    MenuItem BackToTitleMenuItem;
+    MenuItem menuItemBackToTitle;
     /**
      * The about menu item
      */
@@ -65,12 +66,12 @@ public class FXMLConvolutionsSceneController {
      * Button to retrieve an image from the database
      */
     @FXML
-    Button getFromDatabaseBtn;
+    Button btnGetFromDatabase;
     /**
      * Button to save an image on the computer
      */
     @FXML
-    Button SaveToFileBtn;
+    Button btnSaveToFile;
     /**
      * Image view used to show the main active image
      */
@@ -80,33 +81,33 @@ public class FXMLConvolutionsSceneController {
      * Button to get an image from a file chooser
      */
     @FXML
-    Button getFromFileBtn;
+    Button btnGetFromFile;
     /**
      * Button to start a convolution, to convolve an image
      */
     @FXML
-    Button convolveBtn;
+    Button btnConvolve;
     /**
      * Choice box which contains the convolution options
      */
     @FXML
-    ChoiceBox convolutionCB;
+    ChoiceBox choiceBoxConvolution;
     /**
      * Textfield that enables the user to set a threshold value for certain
      * convolutions
      */
     @FXML
-    TextField thresholdTxtBox;
+    TextField txtThreshold;
     /**
      * Textfield if the user wants to perform the same convolution multiple times in a row
      */
     @FXML
-    TextField iterationsTxtField;
+    TextField txtIterations;
     /**
      * Button to save the active image into the database, in the form of byte[]
      */
     @FXML
-    Button saveToDatabaseBtn;
+    Button btnSaveToDatabase;
     /**
      * bytes corresponding to the data of an image
      */
@@ -221,18 +222,18 @@ public class FXMLConvolutionsSceneController {
     public void initialize() throws IOException {
         //Need to erase the content in the temp file, if content is present.
         initializeTempFile();
-        iterationsTxtField.setTextFormatter(new TextFormatter <> (input -> input.getControlNewText().matches(textFormatterIntegerRegex) ? input : null));
+        txtIterations.setTextFormatter(new TextFormatter <> (input -> input.getControlNewText().matches(textFormatterIntegerRegex) ? input : null));
         //Initialize the choices in the choice box
-        convolutionCB.getItems().addAll("Custom Kernel", "Gaussian Blur 3x3", "Gaussian Blur 5x5", "Gaussian Blur 7x7", "Sharpening", "Grayscale", "Sobel X", "Sobel Y", "Sobel Classic","Sobel Colored", "Prewitt", "Laplacian", "Colored Edge Angles");
+        choiceBoxConvolution.getItems().addAll("Custom Kernel", "Gaussian Blur 3x3", "Gaussian Blur 5x5", "Gaussian Blur 7x7", "Sharpening", "Grayscale", "Sobel X", "Sobel Y", "Sobel Classic","Sobel Colored", "Prewitt", "Laplacian", "Colored Edge Angles");
         //When someone clicks on the convolve button
-        convolveBtn.setOnAction((event) -> {
+        btnConvolve.setOnAction((event) -> {
             //To convolve an image, we need an image and a convolution choice
             //Convolution choice: Check if a choice has been made
             boolean convolutionIsSelected = false;
             String choice;
             //Set the variable to true if a selection has been made
-            if (convolutionCB.getValue() != null) {
-                choice = convolutionCB.getValue().toString();
+            if (choiceBoxConvolution.getValue() != null) {
+                choice = choiceBoxConvolution.getValue().toString();
                 System.out.println(choice + " selected");
                 convolutionIsSelected = true;
             } //If not, show an alert to the user
@@ -258,14 +259,14 @@ public class FXMLConvolutionsSceneController {
                 //Verify the iterationsTxtField to see of the user wants to repeat a convolution multiple times in a row
                 int iterations = 1;
                 try{
-                    iterations = Integer.parseInt(iterationsTxtField.getText());
+                    iterations = Integer.parseInt(txtIterations.getText());
                     if(iterations<=0) iterations=1;
                 }
                 catch(Exception notAnInt){
                     iterations=  1;
                 }
                 //Set the choice value from the choicebox
-                choice = convolutionCB.getValue().toString();
+                choice = choiceBoxConvolution.getValue().toString();
                 //Determine the value from the choice box and  perform the convolution using the temp file and the imageBeingDisplayedOnIV file
                 //Then, after each convolution is completed, let the user know that the convolution has been completed with an alert
                 if (choice.equals("Gaussian Blur 3x3")) {
@@ -349,11 +350,11 @@ public class FXMLConvolutionsSceneController {
                 } else if (choice.equals("Prewitt")) {
                     try {
                         float threshold = 100;
-                        if (thresholdTxtBox.getText() == null) {
+                        if (txtThreshold.getText() == null) {
                             threshold = defaultThreshold;
                         } else {
                             try {
-                                threshold = Float.parseFloat(thresholdTxtBox.getText());
+                                threshold = Float.parseFloat(txtThreshold.getText());
                             } catch (Exception e) {
                                 threshold = defaultThreshold;
                             }
@@ -369,11 +370,11 @@ public class FXMLConvolutionsSceneController {
                     }
                 } else if (choice.equals("Laplacian")) {
                     try {
-                        if (thresholdTxtBox.getText() == null) {
+                        if (txtThreshold.getText() == null) {
                             threshold = defaultThreshold;
                         } else {
                             try {
-                                threshold = Float.parseFloat(thresholdTxtBox.getText());
+                                threshold = Float.parseFloat(txtThreshold.getText());
                             } catch (Exception e) {
                                 threshold = defaultThreshold;
                             }
@@ -453,7 +454,7 @@ public class FXMLConvolutionsSceneController {
          * When the user clicks on the button to get from file chooser. A file
          * chooser will appear to let him choose an image from his computer
          */
-        getFromFileBtn.setOnAction((event) -> {
+        btnGetFromFile.setOnAction((event) -> {
             //File that will be manipulated by the user when performing the convolution
             temp = new File("src\\main\\resources\\Images\\Convolutions\\temp.bmp");
             //File chosen by the user through the file chooser.
@@ -487,7 +488,7 @@ public class FXMLConvolutionsSceneController {
          * of the procedure, having a new stage with its own FXMLController is
          * the best way to proceed.
          */
-        getFromDatabaseBtn.setOnAction((event) -> {
+        btnGetFromDatabase.setOnAction((event) -> {
             try {
                 //Set this primary stage off
                 primaryStage.setAlwaysOnTop(false);
@@ -532,7 +533,7 @@ public class FXMLConvolutionsSceneController {
          * directory chooser is used to choose a location in the computer for
          * the file. Finally, the image is saved.
          */
-        SaveToFileBtn.setOnAction((event) -> {
+        btnSaveToFile.setOnAction((event) -> {
             //To save the file, we need a directory and a name for the file
             String name = chooseNameFileDialog(primaryStage);
             DirectoryChooser dc = getDirectoryChooser(primaryStage);
@@ -555,7 +556,7 @@ public class FXMLConvolutionsSceneController {
          * view and write them in the database, after having gotten the title
          * from the user.
          */
-        saveToDatabaseBtn.setOnAction((event) -> {
+        btnSaveToDatabase.setOnAction((event) -> {
             //Make sure that the image is not null
             if (imageImgView.getImage() != null) {
                 //Copy the file that is being displayed in temp
@@ -582,7 +583,7 @@ public class FXMLConvolutionsSceneController {
          * If the user wants to go back to the title menu, we simply have to
          * switch scenes.
          */
-        BackToTitleMenuItem.setOnAction((event) -> {
+        menuItemBackToTitle.setOnAction((event) -> {
             MainApp.switchScene(MainApp.FXMLTitleScene, new FXMLTitleSceneController(primaryStage));
 
         });

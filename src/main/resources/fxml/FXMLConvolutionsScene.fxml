@@ -60,7 +60,7 @@
       <menus>
             <Menu fx:id="BackToTitleMenu" mnemonicParsing="false" text="Back">
                <items>
-                  <MenuItem fx:id="BackToTitleMenuItem" mnemonicParsing="false" text="Back to title" />
+                  <MenuItem fx:id="menuItemBackToTitle" mnemonicParsing="false" text="Back to title" />
                </items>
             </Menu>
         <Menu mnemonicParsing="false" text="About">
@@ -92,14 +92,14 @@
                                     <Line endX="50.0" startX="-50.0" />
                                     <HBox alignment="CENTER_LEFT" prefHeight="56.0" prefWidth="268.0" spacing="8.0">
                                        <children>
-                                          <ChoiceBox fx:id="convolutionCB" prefWidth="150.0">
+                                          <ChoiceBox fx:id="choiceBoxConvolution" prefWidth="150.0">
                                              <HBox.margin>
                                                 <Insets left="8.0" />
                                              </HBox.margin></ChoiceBox>
-                                          <Button fx:id="convolveBtn" mnemonicParsing="false" text="Convolve" />
+                                          <Button fx:id="btnConvolve" mnemonicParsing="false" text="Convolve" />
                                        </children>
                                     </HBox>
-                                    <TextField fx:id="thresholdTxtBox" prefHeight="25.0" prefWidth="355.0" promptText="Threshold">
+                                    <TextField fx:id="txtThreshold" prefHeight="25.0" prefWidth="355.0" promptText="Threshold">
                                        <VBox.margin>
                                           <Insets left="8.0" right="8.0" />
                                        </VBox.margin>
@@ -139,12 +139,12 @@
                                                 </Label>
                                                 <StackPane prefHeight="150.0" prefWidth="200.0" GridPane.columnIndex="1">
                                                    <children>
-                                                      <ImageView fx:id="getFromFileImage" fitHeight="45.0" fitWidth="56.0">
+                                                      <ImageView fx:id="imgGetFromFile" fitHeight="45.0" fitWidth="56.0">
                                                          <image>
                                                             <Image url="@../Images/Icons/FileIcon.png" />
                                                          </image>
                                                       </ImageView>
-                                                      <Button fx:id="getFromFileBtn" mnemonicParsing="false" opacity="0.0" prefHeight="76.0" prefWidth="97.0" />
+                                                      <Button fx:id="btnGetFromFile" mnemonicParsing="false" opacity="0.0" prefHeight="76.0" prefWidth="97.0" />
                                                    </children>
                                                 </StackPane>
                                                 <HBox prefHeight="100.0" prefWidth="200.0" />
@@ -155,7 +155,7 @@
                                                             <Image url="@../Images/Icons/DatabaseIcon.png" />
                                                          </image>
                                                       </ImageView>
-                                                      <Button fx:id="getFromDatabaseBtn" mnemonicParsing="false" opacity="0.0" prefHeight="91.0" prefWidth="122.0" />
+                                                      <Button fx:id="btnGetFromDatabase" mnemonicParsing="false" opacity="0.0" prefHeight="91.0" prefWidth="122.0" />
                                                    </children>
                                                 </StackPane>
                                              </children>
@@ -207,7 +207,7 @@
                                                             <Image url="@../Images/Icons/FileIcon.png" />
                                                          </image>
                                                       </ImageView>
-                                                      <Button fx:id="SaveToFileBtn" mnemonicParsing="false" opacity="0.0" prefHeight="71.0" prefWidth="88.0" />
+                                                      <Button fx:id="btnSaveToFile" mnemonicParsing="false" opacity="0.0" prefHeight="71.0" prefWidth="88.0" />
                                                    </children>
                                                 </StackPane>
                                                 <StackPane prefHeight="150.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
@@ -217,7 +217,7 @@
                                                             <Image url="@../Images/Icons/DatabaseIcon.png" />
                                                          </image>
                                                       </ImageView>
-                                                      <Button fx:id="saveToDatabaseBtn" mnemonicParsing="false" opacity="0.0" prefHeight="81.0" prefWidth="49.0" />
+                                                      <Button fx:id="btnSaveToDatabase" mnemonicParsing="false" opacity="0.0" prefHeight="81.0" prefWidth="49.0" />
                                                    </children>
                                                 </StackPane>
                                              </children>
@@ -241,7 +241,7 @@
                                           <Font name="System Bold" size="12.0" />
                                        </font>
                                     </Label>
-                                    <TextField fx:id="iterationsTxtField" prefHeight="25.0" prefWidth="85.0" />
+                                    <TextField fx:id="txtIterations" prefHeight="25.0" prefWidth="85.0" />
                                  </children>
                               </HBox>
                            </children>
