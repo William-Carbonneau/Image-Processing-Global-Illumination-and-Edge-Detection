@@ -1,7 +1,5 @@
 package edu.vanier.global_illumination_image_processing;
 
-import edu.vanier.global_illumination_image_processing.controllers.FXMLConvolutionsSceneController;
-import edu.vanier.global_illumination_image_processing.controllers.FXMLMainAppController;
 import edu.vanier.global_illumination_image_processing.controllers.FXMLTitleSceneController;
 import java.io.IOException;
 import java.util.logging.Level;
@@ -9,7 +7,6 @@ import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -93,6 +90,11 @@ public class MainApp extends Application {
         return fxmlLoader.load();
     }
 
+    /**
+     * Start the app - main entry
+     * 
+     * @param args 
+     */
     public static void main(String[] args) {
         launch(args);
     }

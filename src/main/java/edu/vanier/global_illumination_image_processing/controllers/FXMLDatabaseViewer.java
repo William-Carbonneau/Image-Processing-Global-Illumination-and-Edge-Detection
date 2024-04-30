@@ -20,7 +20,6 @@ import javafx.scene.control.Label;
 import javafx.scene.control.SplitPane;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.TilePane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
@@ -77,7 +76,6 @@ public class FXMLDatabaseViewer {
         btnDelete.setOnAction((event) -> {
             if(indexSelected!=-1 && (indexSelected>3))
             try {
-                System.out.println(indexSelected);
                 Database.deleteRow("Images","ImagesConvolutions", titles.get(indexSelected));
                 //Update the viewer by eliminating all children and adding them if they are still in the database
                 tilePane.getChildren().removeAll(tilePane.getChildren());
@@ -89,6 +87,16 @@ public class FXMLDatabaseViewer {
             }
         });
     }
+    
+    /**
+     * Parametrized constructor
+     * 
+     * @param stage Stage to create viewer
+     * @param temp File temporary file
+     * @param primaryStage Stage primary stage owner of this popup 
+     * @throws FileNotFoundException
+     * @throws IOException 
+     */
     public FXMLDatabaseViewer(Stage stage, File temp, Stage primaryStage) throws FileNotFoundException, IOException {
         this.stage = stage;
         this.stage.initModality(Modality.APPLICATION_MODAL);
@@ -165,10 +173,9 @@ public class FXMLDatabaseViewer {
             //Get the values from the table
             String getResultSetFromDB = "Select *from "+tableName;
             ResultSet rs = stmt.executeQuery(getResultSetFromDB);
-            System.out.println("File temp created");
+            System.out.println("Temporary file created");
             Image image;
             ImageView imageview;
-            System.out.println(rs.getFetchSize());
             Label title;
             VBox imageAndTitle;
             // create the individual boxes/tiles and put them in the GUI

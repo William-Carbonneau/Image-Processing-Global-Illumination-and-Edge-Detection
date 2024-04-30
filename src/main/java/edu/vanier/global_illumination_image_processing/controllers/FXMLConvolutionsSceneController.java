@@ -1,7 +1,6 @@
 package edu.vanier.global_illumination_image_processing.controllers;
 
 import edu.vanier.global_illumination_image_processing.MainApp;
-import static edu.vanier.global_illumination_image_processing.controllers.FXMLRenderSceneController.textFormatterDoubleRegex;
 import static edu.vanier.global_illumination_image_processing.controllers.FXMLRenderSceneController.textFormatterIntegerRegex;
 import edu.vanier.global_illumination_image_processing.models.Convolution;
 import edu.vanier.global_illumination_image_processing.models.Database;
@@ -10,12 +9,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.logging.Level;
@@ -34,11 +28,8 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.TextFormatter;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.Pane;
-import javafx.scene.layout.TilePane;
 import javafx.scene.layout.VBox;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
@@ -46,7 +37,9 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 /**
- *
+ * The image processing scene
+ * used to perform image convolutions and manipulated the database
+ * 
  * @Loovdrish Sujore
  */
 public class FXMLConvolutionsSceneController {
@@ -133,19 +126,19 @@ public class FXMLConvolutionsSceneController {
      * Threshold value when performing certain convolutions.
      */
     float threshold;
-    // Source for the kernel to implement: https://youtu.be/C_zFhWdM4ic?si=CH3JvuO9mSfVmleJ
+    // Source for the kernel to implement: https://youtu.be/C_zFhWdM4ic?si=CH3JvuO9mSfVmleJ TODO citation
     float[][] rulesGaussian3x3 = {{1, 2, 1}, {2, 4, 2}, {1, 2, 1}};
-    //Taken from https://www.researchgate.net/figure/Discrete-approximation-of-the-Gaussian-kernels-3x3-5x5-7x7_fig2_325768087
+    //Taken from https://www.researchgate.net/figure/Discrete-approximation-of-the-Gaussian-kernels-3x3-5x5-7x7_fig2_325768087 TODO citation
     float[][] rulesGaussian5x5 = {{1, 4, 7, 4, 1}, {4, 16, 26, 16, 4}, {7, 26, 41, 26, 7}, {4, 16, 26, 16, 4}, {1, 4, 7, 4, 1}};
-    //Taken from https://www.researchgate.net/figure/Discrete-approximation-of-the-Gaussian-kernels-3x3-5x5-7x7_fig2_325768087
+    //Taken from https://www.researchgate.net/figure/Discrete-approximation-of-the-Gaussian-kernels-3x3-5x5-7x7_fig2_325768087 TODO citation
     float[][] rulesGaussian7x7 = {{0, 0, 1, 2, 1, 0, 0}, {0, 3, 13, 22, 13, 3, 0}, {1, 13, 59, 97, 59, 13, 1}, {2, 22, 97, 159, 97, 22, 2}, {1, 13, 59, 97, 59, 13, 1}, {0, 3, 13, 22, 13, 3, 0}, {0, 0, 1, 2, 1, 0, 0}};
-    //Source for the kernel to implement: https://pro.arcgis.com/en/pro-app/latest/help/analysis/raster-functions/convolution-function.htm#:~:text=The%20Convolution%20function%20performs%20filtering,or%20other%20kernel%2Dbased%20enhancements.
+    //Source for the kernel to implement: https://pro.arcgis.com/en/pro-app/latest/help/analysis/raster-functions/convolution-function.htm#:~:text=The%20Convolution%20function%20performs%20filtering,or%20other%20kernel%2Dbased%20enhancements. TODO citation
     float[][] rulesSharp1 = {{0f, -1f, 0f}, {-1f, 5f, -1f}, {0f, -1f, 0f}};
-    //Source for the kernel: https://en.wikipedia.org/wiki/Sobel_operator
+    //Source for the kernel: https://en.wikipedia.org/wiki/Sobel_operator TODO citation
     float[][] rulesSobelY = {{-1, 0, 1},
     {-2, 0, 2},
     {-1, 0, 1}};
-    //Source for the kernel: https://en.wikipedia.org/wiki/Sobel_operator
+    //Source for the kernel: https://en.wikipedia.org/wiki/Sobel_operator TODO citation
     float[][] rulesSobelX = {{-1, -2, -1},
     {0, 0, 0},
     {1, 2, 1}};
@@ -233,7 +226,6 @@ public class FXMLConvolutionsSceneController {
             //Set the variable to true if a selection has been made
             if (convolutionCB.getValue() != null) {
                 choice = convolutionCB.getValue().toString();
-                System.out.println(choice + " selected");
                 convolutionIsSelected = true;
             } //If not, show an alert to the user
             else {
@@ -269,6 +261,7 @@ public class FXMLConvolutionsSceneController {
                 //Determine the value from the choice box and  perform the convolution using the temp file and the imageBeingDisplayedOnIV file
                 //Then, after each convolution is completed, let the user know that the convolution has been completed with an alert
                 if (choice.equals("Gaussian Blur 3x3")) {
+                    // 3x3 gausian convolution
                     try {
                         for(int i=0;i<iterations;i++)
                         Convolution.performConvolution(this.imageBeingDisplayedOnIV.getAbsolutePath(), this.imageBeingDisplayedOnIV.getAbsolutePath(), rulesGaussian3x3);
@@ -278,6 +271,7 @@ public class FXMLConvolutionsSceneController {
                         showAlertWarning("The " + choice + " convolution did not work. Please try again.");
                     }
                 } else if (choice.equals("Gaussian Blur 5x5")) {
+                    // 5x5 gausian convolution
                     try {
                         for(int i=0;i<iterations;i++)
                         Convolution.performConvolution(this.imageBeingDisplayedOnIV.getAbsolutePath(), this.imageBeingDisplayedOnIV.getAbsolutePath(), rulesGaussian5x5);
@@ -287,6 +281,7 @@ public class FXMLConvolutionsSceneController {
                         showAlertWarning("The " + choice + " convolution did not work. Please try again.");
                     }
                 } else if (choice.equals("Gaussian Blur 7x7")) {
+                    // 7x7 gausian convolution
                     try {
                         for(int i=0;i<iterations;i++)
                         Convolution.performConvolution(this.imageBeingDisplayedOnIV.getAbsolutePath(), this.imageBeingDisplayedOnIV.getAbsolutePath(), rulesGaussian7x7);
@@ -296,6 +291,7 @@ public class FXMLConvolutionsSceneController {
                         showAlertWarning("The " + choice + " convolution did not work. Please try again.");
                     }
                 } else if (choice.equals("Sharpening")) {
+                    // Sharpening convolution
                     try {
                         for(int i=0;i<iterations;i++)
                         Convolution.performConvolution(this.imageBeingDisplayedOnIV.getAbsolutePath(), this.imageBeingDisplayedOnIV.getAbsolutePath(), rulesSharp1);
@@ -305,6 +301,7 @@ public class FXMLConvolutionsSceneController {
                         showAlertWarning("The " + choice + " convolution did not work. Please try again.");
                     }
                 } else if (choice.equals("Grayscale")) {
+                    // Grayscale convolution convolution
                     try {
                         for(int i=0;i<iterations;i++)
                         Convolution.performGrayscale(this.imageBeingDisplayedOnIV.getAbsolutePath(), this.imageBeingDisplayedOnIV.getAbsolutePath());
@@ -314,6 +311,7 @@ public class FXMLConvolutionsSceneController {
                         showAlertWarning("The " + choice + " convolution did not work. Please try again.");
                     }
                 } else if (choice.equals("Sobel X")) {
+                    // Sobel X component grayscaled convolution
                     try {
                         Convolution.performConvolution(this.imageBeingDisplayedOnIV.getAbsolutePath(), this.imageBeingDisplayedOnIV.getAbsolutePath(), rulesGaussian7x7);
                         Convolution.performGrayscale(this.imageBeingDisplayedOnIV.getAbsolutePath(), this.imageBeingDisplayedOnIV.getAbsolutePath());
@@ -325,6 +323,7 @@ public class FXMLConvolutionsSceneController {
                         showAlertWarning("The " + choice + " convolution did not work. Please try again.");
                     }
                 } else if (choice.equals("Sobel Y")) {
+                    // Sobel Y component grayscaled convolution
                     try {
                         Convolution.performConvolution(this.imageBeingDisplayedOnIV.getAbsolutePath(), this.imageBeingDisplayedOnIV.getAbsolutePath(), rulesGaussian7x7);
                         Convolution.performGrayscale(this.imageBeingDisplayedOnIV.getAbsolutePath(), this.imageBeingDisplayedOnIV.getAbsolutePath());
@@ -336,6 +335,7 @@ public class FXMLConvolutionsSceneController {
                         showAlertWarning("The " + choice + " convolution did not work. Please try again.");
                     }
                 } else if (choice.equals("Sobel Classic")) {
+                    // Sobel X-Y converged grayscaled convolution
                     try {
                         Convolution.performConvolution(this.imageBeingDisplayedOnIV.getAbsolutePath(), this.imageBeingDisplayedOnIV.getAbsolutePath(), rulesGaussian7x7);
                         Convolution.performGrayscale(this.imageBeingDisplayedOnIV.getAbsolutePath(), this.imageBeingDisplayedOnIV.getAbsolutePath());
@@ -347,6 +347,7 @@ public class FXMLConvolutionsSceneController {
                         showAlertWarning("The " + choice + " convolution did not work. Please try again.");
                     }
                 } else if (choice.equals("Prewitt")) {
+                    // Prewitt convolution
                     try {
                         float threshold = 100;
                         if (thresholdTxtBox.getText() == null) {
@@ -368,6 +369,7 @@ public class FXMLConvolutionsSceneController {
                         showAlertWarning("The " + choice + " convolution did not work. Please try again.");
                     }
                 } else if (choice.equals("Laplacian")) {
+                    // Laplacian convolution
                     try {
                         if (thresholdTxtBox.getText() == null) {
                             threshold = defaultThreshold;
@@ -388,6 +390,7 @@ public class FXMLConvolutionsSceneController {
                         showAlertWarning("The " + choice + " convolution did not work. Please try again.");
                     }
                 } else if (choice.equals("Custom Kernel")) {
+                    // Let the user create a custom kernel with the popup then convolve
                     primaryStage.setAlwaysOnTop(false);
                     Stage stage = new Stage();
                     FXMLLoader loaderCK = new FXMLLoader(getClass().getResource("/fxml/FXMLCustomKernel.fxml"));
@@ -419,6 +422,7 @@ public class FXMLConvolutionsSceneController {
                     primaryStage.setAlwaysOnTop(true);
 
                 } else if (choice.equals("Colored Edge Angles")) {
+                    // Do sobel comverged with grascale then color the edge angles
                     try {
 
                         Convolution.performConvolution(this.imageBeingDisplayedOnIV.getAbsolutePath(), this.imageBeingDisplayedOnIV.getAbsolutePath(), rulesGaussian7x7);
@@ -432,6 +436,7 @@ public class FXMLConvolutionsSceneController {
                     }
                 }
                 else if (choice.equals("Sobel Colored")){
+                    // Sobel converged non-grayscale convolution
                     try {
                         Convolution.performConvolution(this.imageBeingDisplayedOnIV.getAbsolutePath(), this.imageBeingDisplayedOnIV.getAbsolutePath(), rulesGaussian7x7);
                         for(int i=0;i<iterations;i++)
@@ -638,6 +643,7 @@ public class FXMLConvolutionsSceneController {
     public static String chooseNameFileDialog(Stage primaryStage){
         AtomicReference<String> nameFileOut = new AtomicReference<String>();
         Stage stage = new Stage();
+        // set modal
         stage.initModality(Modality.APPLICATION_MODAL);
         stage.initOwner(primaryStage);
         VBox root = new VBox();
@@ -649,6 +655,7 @@ public class FXMLConvolutionsSceneController {
             nameFileOut.set(nameTxtFld.getText()); 
             stage.close();
         });
+        // add the children
         root.getChildren().addAll(nameLbl, nameTxtFld, OkBtn);
         stage.setAlwaysOnTop(true);
         Scene scene = new Scene(root, 300, 300);
@@ -705,7 +712,7 @@ public class FXMLConvolutionsSceneController {
      * This method displays an image file onto the image view imageImgView
      *
      * @param filePath Source:
-     * https://docs.oracle.com/javase/8/javafx/api/javafx/scene/image/ImageView.html
+     * https://docs.oracle.com/javase/8/javafx/api/javafx/scene/image/ImageView.html TODO citation
      */
     public void displayImage(String filePath) {
         imageImgView.setImage(new Image(filePath));

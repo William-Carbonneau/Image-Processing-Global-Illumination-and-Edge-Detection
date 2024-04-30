@@ -5,19 +5,16 @@
 package edu.vanier.global_illumination_image_processing.controllers;
 
 import edu.vanier.global_illumination_image_processing.MainApp;
-import java.io.IOException;
-import java.util.HashSet;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Button;
-import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 /**
- *
+ * The title scene controller
+ * 
+ * This is the start and home page of the application. Enables the ability to switch between scenes.
+ * 
  * @author Zachary Tremblay
  */
 public class FXMLTitleSceneController {
@@ -31,27 +28,40 @@ public class FXMLTitleSceneController {
     
     Stage primaryStage;
 
+    /**
+     * Main constructor
+     * 
+     * @param primaryStage 
+     */
     public FXMLTitleSceneController(Stage primaryStage) {
         this.primaryStage = primaryStage;
     }
 
+    /**
+     * Default constructor
+     */
     public FXMLTitleSceneController() {
     }
     
     
-
+    /**
+     * Initialize the FXML controller and the buttons
+     */
     @FXML
     public void initialize() {
         System.out.println("Title Scene being loaded");
+        /**
+         * Set the event listener for the button to switch to the convolutions scene
+         */
         ImageProcessingBtn.setOnAction((event) -> {
-            MainApp.switchScene(MainApp.FXMLConvolutionsScene, new FXMLConvolutionsSceneController(primaryStage));
-            
-            
+            MainApp.switchScene(MainApp.FXMLConvolutionsScene, new FXMLConvolutionsSceneController(primaryStage));    
         });
-
+        
+        /**
+         * Set the event listener for the button to switch to the render scene
+         */
         GlobalIlluminationBtn.setOnAction((event) -> {
-            MainApp.switchScene(MainApp.FXMLRenderScene, new FXMLRenderSceneController(primaryStage));
-            
+            MainApp.switchScene(MainApp.FXMLRenderScene, new FXMLRenderSceneController(primaryStage));  
         });
     }
 
