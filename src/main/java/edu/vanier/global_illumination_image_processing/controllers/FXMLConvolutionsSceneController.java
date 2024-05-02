@@ -184,7 +184,23 @@ public class FXMLConvolutionsSceneController {
         this.primaryStage = primaryStage;
 
     }
-
+    /**
+     * This method verifies if a method is of type .bmp or not
+     * 
+     * @param file - The input file
+     * @return boolean corresponding to whether the file is of type .bmp or not
+     */
+    public boolean verifyImageFormat(File file){
+        String path = file.getAbsolutePath();
+        String type = path.substring(path.length()-3, path.length());
+        if(type.equals("bmp")){
+            return true;
+        }
+        else{
+            showAlertWarning("The file is of type "+type+". Choose a file of type bmp");
+            return false;
+        }
+    }
     /**
      * This method converts an array of textfields into one of float
      * corresponding to the values that are inserted in the textfields
@@ -244,7 +260,7 @@ public class FXMLConvolutionsSceneController {
             } //If not, show an alert to the user
             else {
                 //Show message to user to choose an image
-                showAlertWarning("Please choose a convolution from the database or the file chooser");
+                showAlertWarning("Please choose an image from the database or the file chooser");
                 return;
             }
             //If both conditions are accepted, then we can proceed with the convolution
@@ -477,6 +493,8 @@ public class FXMLConvolutionsSceneController {
             temp = new File("src\\main\\resources\\Images\\Convolutions\\temp.bmp");
             //File chosen by the user through the file chooser.
             File chosen = getFileFromFChooser();
+            if(verifyImageFormat(chosen)==false) 
+                return;
             /*
             The idea is the get the file of the user, and to copy it inside of the temp file, so that no modifications be made to the original chosen file unless the user wants these modifications saved.
              */
@@ -610,20 +628,7 @@ public class FXMLConvolutionsSceneController {
          * The about modal popup
          */
         menuItemAboutConvolution.setOnAction((event) -> {
-            try {
-                FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/FXMLConvolutionsAboutScene.fxml"));
-                Pane root = loader.load();
-                Stage stage = new Stage();
-                stage.initModality(Modality.APPLICATION_MODAL);
-                stage.initOwner(primaryStage);
-                Scene scene = new Scene(root);
-                stage.setScene(scene);
-                stage.setAlwaysOnTop(true);
-                stage.setTitle("About Convolutions");
-                stage.show();
-            } catch (IOException ex) {
-                Logger.getLogger(FXMLRenderSceneController.class.getName()).log(Level.SEVERE, null, ex);
-            }
+            openAboutDialog();
         });
     }
 
@@ -760,8 +765,11 @@ public class FXMLConvolutionsSceneController {
         FOS.flush();
         FOS.close();
     }
-
-    public static void showAlertWarning(String message) {
+    /**
+     * This method displays an alert with a message
+     * @param message - String - The message being shown to the user
+     */
+    public void showAlertWarning(String message) {
         Alert alert = new Alert(Alert.AlertType.WARNING);
         alert.setTitle("Information Incorrect or Missing");
         alert.setContentText(message);
@@ -770,9 +778,33 @@ public class FXMLConvolutionsSceneController {
         alert.showAndWait();
         if (alert.getResult() == helpBtn) {
             alert.close();
+            openAboutDialog();
         }
     }
-
+    /**
+     * This method opens the About window.
+     */
+    public void openAboutDialog(){
+        try {
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/ConvolutionsAboutUpdated.fxml"));
+                Pane root = loader.load();
+                Stage stage = new Stage();
+                stage.initModality(Modality.APPLICATION_MODAL);
+                stage.initOwner(primaryStage);
+                Scene scene = new Scene(root);
+                stage.setScene(scene);
+                stage.setAlwaysOnTop(true);
+                stage.setTitle("About Convolutions");
+                stage.show();
+            } catch (IOException ex) {
+                Logger.getLogger(FXMLRenderSceneController.class.getName()).log(Level.SEVERE, null, ex);
+            }
+    }
+    /**
+     * This method shows an alert with the information message shown to the user.
+     * @param message - String - the message shown to the user
+     * @return The alert - Returns itself
+     */
     public static Alert showAlertInfo(String message) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle("Information");
@@ -783,7 +815,7 @@ public class FXMLConvolutionsSceneController {
     /**
      * If the user returns true, then the user wants to continue. If not, stop all operations.
      * @param message
-     * @return 
+     * @return  Boolean  - Confirmation of the user.
      */
     public static boolean showAlertConfirmation(String message) {
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);

@@ -31,9 +31,6 @@ public class Convolution {
         return max;
         
     }
-
-    
-
     // Source for the kernel to implement: https://youtu.be/C_zFhWdM4ic?si=CH3JvuO9mSfVmleJ (Pound, 2015)
     private static final float[][] rulesGaussian = {{1, 2, 1}, {2, 4, 2}, {1, 2, 1}};
     //Source for the kernel to implement: https://pro.arcgis.com/en/pro-app/latest/help/analysis/raster-functions/convolution-function.htm#:~:text=The%20Convolution%20function%20performs%20filtering,or%20other%20kernel%2Dbased%20enhancements. (Esri)

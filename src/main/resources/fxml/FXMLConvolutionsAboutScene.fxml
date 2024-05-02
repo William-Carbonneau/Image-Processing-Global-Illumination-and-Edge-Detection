@@ -17,8 +17,48 @@
          <content>
             <VBox fx:id="VBoxTextHolder" alignment="TOP_CENTER">
                <children>
-                  <Label prefHeight="650.0" prefWidth="597.0" text="This part of the application performs a convolution o an image.&#13; Start by choosing a convolution type from the choicebox by clicking on it.&#13;Then,      choose an image.
-To choose an image, you have access to a database. Click on the database icon, and a database viewer will appear. Click on the image you want to convolve. Then, close the wind" wrapText="true">
+                  <Label prefHeight="650.0" prefWidth="597.0" text=
+"This part of the application performs a convolution on an image. Start by choosing a convolution type from the choicebox by clicking on it. 
+Then, choose an image. To choose an image, you have access to a database. Click on the database icon, and a database viewer will appear. 
+Click on the image you want to convolve. Then, close the window, and the image should appear on the main window. An image can also be chosen 
+from a File Chooser. To use this functionality, click on the Files Icon. A File Chooser should appear. Then, choose the image. Make sure 
+that the image chosen is of type .bmp. If an image of this type is selected, it should appear on the main screen. Then, click on convolve 
+to convolve the image. Certain convolutions will have a threshold. You can specify the threshold in the text field. You can also perform the 
+same convolution multiple times. To use this option, enter the number of iterations in the text field # of Iterations.&#13;&#13;
+About the Convolutions:&#13;
+1-Gaussian Blur: The Gaussian Blur is a filter that blurs an image. The program offers 3 different variations based on their dimensions. 
+&#13;The first one is a 3x3 kernel:
+&#13;[1,2,1]
+&#13;[2,4,2]
+&#13;[1,2,1]
+&#13;The second one is a 5x5 kernel:
+&#13;[1,  4,  7,  4, 1]
+&#13;[4, 16, 26, 16, 4]
+&#13;[7, 26, 41, 26, 7]
+&#13;[4, 16, 26, 16, 4]
+&#13;[1,  4,  7,  4, 1]
+&#13;The third one is a 7x7 kernel:
+&#13;[0,  0,  1,   2,  1,  0, 0]
+&#13;[0,  3, 13,  22, 13,  3, 0]
+&#13;[1, 13, 59,  97, 59, 13, 1]
+&#13;[2, 22, 97, 159, 97, 22, 2]
+&#13;[1, 13, 59,  97, 59, 13, 1]
+&#13;[0,  3, 13,  22, 13,  3, 0]
+&#13;[0,  0,  1,   2,  1,  0, 0]
+&#13;The more dimensions a Gaussian has, the better it is at blurring an image.
+&#13;
+2-Sharpening: The sharpening filter enhances the differences between adjacent pixels so that their differences is better shown. 
+&#13;The sharpening kernel used is:
+&#13;[ 0, -1,  0]
+&#13;[-1,  5, -1]
+&#13;[ 0, -1,  0]
+&#13; Since the negative values are compared to positive ones, it is possible that the value of a pixel exceeds 255. In that case, the value the pixel is simply set to 255.
+&#13; The value of a pixel can also be smaller than 0. Then, the value of the pixel is simply set to 0.
+&#13;
+3-Grayscale: Unlike the other convolutions, this filter is an averaging filter that does not depend on its surrounding pixels.
+Instead, it averages the Red, Green, and Blue value of a pixel, because a grayscale value is a pixel whose Red, Green, and Blue values are all equal.
+Therefore, it does not use a kernel.
+" wrapText="true">
                      <padding>
                         <Insets bottom="16.0" left="16.0" right="16.0" />
                      </padding>
