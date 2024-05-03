@@ -525,14 +525,15 @@ public class Convolution {
         //Perform the convolution on the gray array, in order to get the final one
         // gFinal contains the floating numbers describing how much the colour values change up to down. (It does not represent the grayscale value, but the difference in the grayscale)
         float[][] laplacianResult = performConvolutionOnArray(laplacianKernel, g);
+        
         //Make a new image
         BufferedImage finalImage = new BufferedImage(g.length, g[0].length, BufferedImage.TYPE_INT_RGB);
         for (int w = 0; w < BI.getWidth(); w++) {
             for (int h = 0; h < BI.getHeight(); h++) {
                 if (laplacianResult[w][h] != 0) {
-                    color = new Color(0, 0, 0);
-                } else {
                     color = new Color(255, 255, 255);
+                } else {
+                    color = new Color(0, 0, 0);
                 }
 
                 finalImage.setRGB(w, h, color.getRGB());

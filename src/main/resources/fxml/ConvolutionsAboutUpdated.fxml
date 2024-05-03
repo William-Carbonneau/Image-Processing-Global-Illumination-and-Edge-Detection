@@ -32,8 +32,21 @@ Click on the image you want to convolve. Then, close the window, and the image s
 from a File Chooser. To use this functionality, click on the Files Icon. A File Chooser should appear. Then, choose the image. Make sure 
 that the image chosen is of type .bmp. If an image of this type is selected, it should appear on the main screen. Then, click on convolve 
 to convolve the image. Certain convolutions will have a threshold. You can specify the threshold in the text field. You can also perform 
-the same convolution multiple times. To use this option, enter the number of iterations in the text field # of Iterations.
-Gaussian Blur: The Gaussian Blur is a filter that blurs an image. The program offers 3 different variations based on their dimensions. 
+the same convolution multiple times. To use this option, enter the number of iterations in the text field # of Iterations." wrappingWidth="372.5367240905762" />
+                           </children>
+                        </TextFlow>
+                     </content>
+                  </ScrollPane>
+               </content>
+          </TitledPane>
+            <TitledPane animated="false" text="Gaussian Blur">
+               <content>
+                  <ScrollPane prefHeight="200.0" prefWidth="200.0">
+                     <content>
+                        <TextFlow prefHeight="200.0" prefWidth="598.0">
+                           <children>
+                              <Text strokeType="OUTSIDE" strokeWidth="0.0" text=
+"Gaussian Blur: The Gaussian Blur is a filter that blurs an image. The program offers 3 different variations based on their dimensions. 
 &#13;The first one is a 3x3 kernel:
 &#13;[1,2,1]
 &#13;[2,4,2]
@@ -58,53 +71,96 @@ Gaussian Blur: The Gaussian Blur is a filter that blurs an image. The program of
                      </content>
                   </ScrollPane>
                </content>
-          </TitledPane>
-            <TitledPane animated="false" text="Gaussian Blur">
+            </TitledPane>
+            <TitledPane animated="false" text="Sharpening">
                <content>
                   <ScrollPane prefHeight="200.0" prefWidth="200.0">
                      <content>
                         <TextFlow prefHeight="200.0" prefWidth="598.0">
                            <children>
-                              <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Gaussian Blur: The Gaussian Blur is a filter that blurs an image. The program offers 3 different variations based on their dimensions. \nThe first one is a 3x3 kernel:\n[1,2,1]\n[2,4,2]\n[1,2,1]" wrappingWidth="372.5367240905762" />
+                              <Text strokeType="OUTSIDE" strokeWidth="0.0" text=
+"Sharpening: The sharpening filter enhances the differences between adjacent pixels so that their differences is better shown. 
+&#13;The sharpening kernel used is:
+&#13;[ 0, -1,  0]
+&#13;[-1,  5, -1]
+&#13;[ 0, -1,  0]
+&#13; Since the negative values are compared to positive ones, it is possible that the value of a pixel exceeds 255. In that case, the value the pixel is simply set to 255.
+&#13; The value of a pixel can also be smaller than 0. Then, the value of the pixel is simply set to 0.
+&#13;"
+                                    wrappingWidth="372.5367240905762" />
                            </children>
                         </TextFlow>
                      </content>
                   </ScrollPane>
                </content>
             </TitledPane>
-            <TitledPane animated="false" text="untitled 1">
+            <TitledPane animated="false" text="Grayscale">
                <content>
                   <ScrollPane prefHeight="200.0" prefWidth="200.0">
                      <content>
                         <TextFlow prefHeight="200.0" prefWidth="598.0">
                            <children>
-                              <Text strokeType="OUTSIDE" strokeWidth="0.0" wrappingWidth="372.5367240905762" />
+                              <Text strokeType="OUTSIDE" strokeWidth="0.0" text = 
+"Grayscale: Unlike the other convolutions, this filter is an averaging filter that does not depend on its surrounding pixels.
+Instead, it averages the Red, Green, and Blue value of a pixel, because a grayscale value is a pixel whose Red, Green, and Blue values are all equal.
+Therefore, it does not use a kernel." wrappingWidth="372.5367240905762" />
                            </children>
                         </TextFlow>
                      </content>
                   </ScrollPane>
                </content>
             </TitledPane>
-            <TitledPane animated="false" text="untitled 1">
+            <TitledPane animated="false" text="Edge Detection">
                <content>
                   <ScrollPane prefHeight="200.0" prefWidth="200.0">
                      <content>
                         <TextFlow prefHeight="200.0" prefWidth="598.0">
                            <children>
-                              <Text strokeType="OUTSIDE" strokeWidth="0.0" wrappingWidth="372.5367240905762" />
+                              <Text strokeType="OUTSIDE" strokeWidth="0.0" text = 
+"Sobel is an edge detection algorithm. It comes in three different variations: Sobel X, Sobel Y, Sobel Classic, and Sobel Coloured.
+All four of them uses the same 2 kernels:
+&#13;1st Kernel (X Axis):
+&#13;[ -1, -2, -1]
+&#13;[  0,  0,  0]
+&#13;[  1,  2,  1]
+&#13;2nd Kernel (Y Axis)
+&#13;[ -1,  0,  1]
+&#13;[ -2,  0,  2]
+&#13;[ -1,  0,  1]
+&#13;The Sobel X convolution detects the edges along the X axis.
+&#13;The Sobel Y convolution detects the edges along the Y axis.
+&#13;For both of these convolution, a threshold can be specified, which corresponds to the minimum difference required for a difference to be considered as an edge.
+&#13;The Sobel Classic is the regular Sobel Edge Detection algorithm: It goes through every pixel, performs Sobel X and Y, calculates a general difference using Pythagora, and associates a gradient value to thispixel.
+&#13;The Sobel Coloured performs the Sobel Classic algorithm on the Red, Green and Blue values.
+&#13;The Prewitt is very similar to the Sobel: The algorithm is exactly the same. The only difference is that it uses different kernels:
+&#13;Kernel 1:
+&#13;[ 1, 1, 1]
+&#13;[ 0, 0, 0]
+&#13;[-1,-1,-1]
+&#13;Kernel 2:
+&#13;[1,0,-1]
+&#13;[1,0,-1]
+&#13;[1,0,-1]
+" wrappingWidth="372.5367240905762" />
                            </children>
                         </TextFlow>
                      </content>
                   </ScrollPane>
                </content>
             </TitledPane>
-            <TitledPane animated="false" text="untitled 1">
+            <TitledPane animated="false" text="Lapplacian">
                <content>
                   <ScrollPane prefHeight="200.0" prefWidth="200.0">
                      <content>
                         <TextFlow prefHeight="200.0" prefWidth="598.0">
                            <children>
-                              <Text strokeType="OUTSIDE" strokeWidth="0.0" wrappingWidth="372.5367240905762" />
+                              <Text strokeType="OUTSIDE" strokeWidth="0.0" text = 
+"The Laplacian filter follows uses this kernel:
+&#13;[0,  1, 0]
+&#13;[1, -4, 1]
+&#13;[0,  1, 0]
+&#13;The idea is similar to the Edge Detection algorithms. The difference is that it only uses one single kernel, which calculates the difference between the centered pixel and thos around it. 
+" wrappingWidth="372.5367240905762" />
                            </children>
                         </TextFlow>
                      </content>
