@@ -286,9 +286,9 @@
                               <Insets />
                            </VBox.margin>
                            <children>
-                              <Button fx:id="btnRender" mnemonicParsing="false" text="Render" />
-                              <ChoiceBox fx:id="choiceEngine" prefWidth="150.0" />
                               <Label text="Technique" />
+                              <ChoiceBox fx:id="choiceEngine" prefWidth="150.0" />
+                              <Button fx:id="btnRender" mnemonicParsing="false" text="Render" />
                            </children>
                         </HBox>
                         <CheckBox fx:id="checkStratified" mnemonicParsing="false" selected="true" text="Stratified Diffuse Sampling" />
