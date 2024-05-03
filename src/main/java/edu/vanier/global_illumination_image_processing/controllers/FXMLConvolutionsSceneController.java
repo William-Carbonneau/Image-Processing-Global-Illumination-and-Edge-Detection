@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javafx.beans.binding.Bindings;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -23,6 +24,8 @@ import javafx.scene.control.ButtonType;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
+import javafx.scene.control.ScrollPane;
+import javafx.scene.control.Slider;
 import javafx.scene.control.SplitPane;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TextFormatter;
@@ -30,6 +33,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
@@ -100,6 +104,21 @@ public class FXMLConvolutionsSceneController {
      */
     @FXML
     Button btnSaveToDatabase;
+    /**
+     * The stackpane to center the imageview
+     */
+    @FXML
+    StackPane stackImageHolder;
+    /**
+     * The ScrollPane to pan the StackPane
+     */
+    @FXML
+    ScrollPane scrollImageHolder;
+    /**
+     * image zooming slider
+     */
+    @FXML 
+    Slider sliderZoom;
     /**
      * bytes corresponding to the data of an image
      */
@@ -173,6 +192,9 @@ public class FXMLConvolutionsSceneController {
      * ImageView that is clicked by the user in the database viewer.
      */
     ImageView iv;
+    
+    Double defaultWidth = 800.0;
+    Double defaultHeight = 800.0;
 
     /**
      * Parameterized constructor
@@ -234,6 +256,13 @@ public class FXMLConvolutionsSceneController {
         txtIterations.setTextFormatter(new TextFormatter <> (input -> input.getControlNewText().matches(textFormatterIntegerRegex) ? input : null));
         //Initialize the choices in the choice box
         choiceBoxConvolution.getItems().addAll("Custom Kernel", "Gaussian Blur 3x3", "Gaussian Blur 5x5", "Gaussian Blur 7x7", "Sharpening", "Grayscale", "Sobel X", "Sobel Y", "Sobel Classic","Sobel Colored", "Prewitt","Prewitt - Pure", "Laplacian", "Colored Edge Angles");
+        
+        // bind image holder to center it using double binding to get value of viewport dimensions as function of viewport modified
+        stackImageHolder.minHeightProperty().bind(Bindings.createDoubleBinding(() -> 
+        scrollImageHolder.getViewportBounds().getHeight(), scrollImageHolder.viewportBoundsProperty()));
+        stackImageHolder.minWidthProperty().bind(Bindings.createDoubleBinding(() -> 
+        scrollImageHolder.getViewportBounds().getWidth(), scrollImageHolder.viewportBoundsProperty()));
+
         //When someone clicks on the convolve button
         btnConvolve.setOnAction((event) -> {
             //To convolve an image, we need an image and a convolution choice
@@ -516,6 +545,18 @@ public class FXMLConvolutionsSceneController {
                 showAlertWarning("The image has not been processed correctly. Please try again.");
             }
         });
+        
+        // set default zoom to 1
+        sliderZoom.setValue(1);
+        /**
+         * listener when the slider to zoom changes value - zoom the image
+         */
+        sliderZoom.valueProperty().addListener((observable, oldValue, NewValue) -> {
+            double sliderValue = NewValue.doubleValue();
+            imageImgView.fitWidthProperty().setValue(defaultWidth*sliderValue);
+            imageImgView.fitHeightProperty().setValue(defaultHeight*sliderValue);
+        });
+        
         /**
          * If the user wants to get an image from the database, we need to open
          * a new stage which will display the images from the database. Since
