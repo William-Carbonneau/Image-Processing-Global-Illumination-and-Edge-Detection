@@ -541,6 +541,7 @@ public class FXMLConvolutionsSceneController {
             try {
                 //Display the image on the main image view
                 displayImage(imageBeingDisplayedOnIV.getAbsolutePath());
+                
             } catch (Exception e) {
                 showAlertWarning("The image has not been processed correctly. Please try again.");
             }
@@ -592,9 +593,10 @@ public class FXMLConvolutionsSceneController {
                     //Write the content of the chosen image
                     FOS.write(tempImage);
                     //Set the image of the image view
-                    imageImgView.setImage(new Image(temp.getAbsolutePath()));
+                    displayImage(temp.getAbsolutePath());
                     //Update the value of the imageBeingDisplayedOnIV which keeps track of the file that is being shown
                     imageBeingDisplayedOnIV = temp;
+                    
                 }
                 //close the stage if it is not already done
                 stage.close();
@@ -775,7 +777,14 @@ public class FXMLConvolutionsSceneController {
      * https://docs.oracle.com/javase/8/javafx/api/javafx/scene/image/ImageView.html (Oracle, 2015)
      */
     public void displayImage(String filePath) {
-        imageImgView.setImage(new Image(filePath));
+        Image img = new Image(filePath);
+        imageImgView.setImage(img);
+        
+        defaultWidth = img.getWidth();
+        defaultHeight = img.getHeight();
+        
+        imageImgView.setFitWidth(defaultWidth*sliderZoom.getValue());
+        imageImgView.setFitHeight(defaultHeight*sliderZoom.getValue());
     }
     public static DirectoryChooser getDirectoryChooser(Stage primaryStage){
         Stage stage = new Stage();
