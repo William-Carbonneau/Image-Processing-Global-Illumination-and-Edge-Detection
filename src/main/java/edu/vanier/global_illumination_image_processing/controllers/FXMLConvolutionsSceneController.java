@@ -215,11 +215,11 @@ public class FXMLConvolutionsSceneController {
     public boolean verifyImageFormat(File file){
         String path = file.getAbsolutePath();
         String type = path.substring(path.length()-3, path.length());
-        if(type.equals("bmp")){
+        if(type.equals("bmp")||type.equals("jpg")){
             return true;
         }
         else{
-            showAlertWarning("The file is of type "+type+". Choose a file of type bmp");
+            showAlertWarning("The file is of type "+type+". Choose a file of type bmp or jpg");
             return false;
         }
     }
@@ -521,7 +521,16 @@ public class FXMLConvolutionsSceneController {
             //File that will be manipulated by the user when performing the convolution
             temp = new File("src\\main\\resources\\Images\\Convolutions\\temp.bmp");
             //File chosen by the user through the file chooser.
-            File chosen = getFileFromFChooser();
+            File chosen=null;
+            boolean needToReturn = true;
+            try{
+                chosen = getFileFromFChooser();
+                needToReturn =  false;
+            }catch(Exception NoFileSelected){
+                needToReturn =  true;
+            }
+            if(chosen==null)
+                return;
             if(verifyImageFormat(chosen)==false) 
                 return;
             /*
@@ -644,6 +653,7 @@ public class FXMLConvolutionsSceneController {
                 try {
                     //Insert the data in the database
                     Database.insertRow("Images", "ImagesConvolutions", chooseNameFileDialog(primaryStage), temp);
+                    
                 } catch (FileNotFoundException ex) {
                     Logger.getLogger(FXMLConvolutionsSceneController.class.getName()).log(Level.SEVERE, null, ex);
                 } catch (IOException ex) {

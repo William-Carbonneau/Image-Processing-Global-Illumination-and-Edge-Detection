@@ -1,5 +1,6 @@
 package edu.vanier.global_illumination_image_processing.models;
 
+import edu.vanier.global_illumination_image_processing.controllers.FXMLConvolutionsSceneController;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -7,7 +8,9 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 
 /**
@@ -17,6 +20,13 @@ import java.util.ArrayList;
 public class Database {
     
     public static void insertRow(String databaseName, String tableName, String titleImage, File temp) throws SQLException, FileNotFoundException, IOException{
+        if(titleImage==null||titleImage.equals("Name")){
+            return;
+        }
+        if(verifyImageNameValid(titleImage, databaseName, tableName)==false){
+            FXMLConvolutionsSceneController.showAlertInfo("The image was not saved because the name is not unique. Please try again.");
+            return;
+        }
             Connection connection = null;
             FileInputStream FIS = new FileInputStream(temp);
             byte[] data = FIS.readAllBytes();
@@ -49,6 +59,26 @@ public class Database {
         finally{
             connection.close();
         }
+    }
+
+    private static boolean verifyImageNameValid(String nameImage, String databaseName, String tableName) {
+        Connection connection =null;
+        byte[] data = null;
+        try{
+            connection  = DriverManager.getConnection("jdbc:sqlite:"+databaseName+".db");
+            Statement stmt = connection.createStatement();
+            ResultSet rs = stmt.executeQuery("Select *from "+tableName);
+            while(rs.next()){
+                String t = rs.getString("title");
+                if(t.equals(nameImage)){
+                    return false;
+                }
+            }
+        }catch(Exception e){
+            System.out.println("Error caught");
+            return false;
+        }
+        return true;
     }
     
     }
