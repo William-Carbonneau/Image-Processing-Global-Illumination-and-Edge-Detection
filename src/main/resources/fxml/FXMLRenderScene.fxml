@@ -313,7 +313,7 @@
         </Label>
         <Pane prefHeight="-1.0" prefWidth="-1.0" HBox.hgrow="ALWAYS">
                <children>
-                  <Slider fx:id="sliderZoom" blockIncrement="1.0" layoutX="61.0" layoutY="1.0" max="12.0" min="0.25" />
+                  <Slider fx:id="sliderZoom" blockIncrement="0.25" layoutX="61.0" layoutY="1.0" max="12.0" min="0.25" value="1.0" />
                   <Label layoutX="16.0" prefHeight="17.0" prefWidth="45.0" text="Zoom:" />
                </children></Pane>
         <Label fx:id="lblRightStatus" font="$x3" maxWidth="-1.0" text="Right status" textFill="$x4" HBox.hgrow="NEVER" />
