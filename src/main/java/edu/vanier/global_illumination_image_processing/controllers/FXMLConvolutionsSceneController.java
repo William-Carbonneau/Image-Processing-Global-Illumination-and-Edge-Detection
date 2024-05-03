@@ -25,6 +25,7 @@ import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.control.Slider;
 import javafx.scene.control.SplitPane;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TextFormatter;
@@ -114,6 +115,11 @@ public class FXMLConvolutionsSceneController {
     @FXML
     ScrollPane scrollImageHolder;
     /**
+     * image zooming slider
+     */
+    @FXML 
+    Slider sliderZoom;
+    /**
      * bytes corresponding to the data of an image
      */
     byte[] b;
@@ -186,6 +192,9 @@ public class FXMLConvolutionsSceneController {
      * ImageView that is clicked by the user in the database viewer.
      */
     ImageView iv;
+    
+    Double defaultWidth = 800.0;
+    Double defaultHeight = 800.0;
 
     /**
      * Parameterized constructor
@@ -536,6 +545,18 @@ public class FXMLConvolutionsSceneController {
                 showAlertWarning("The image has not been processed correctly. Please try again.");
             }
         });
+        
+        // set default zoom to 1
+        sliderZoom.setValue(1);
+        /**
+         * listener when the slider to zoom changes value - zoom the image
+         */
+        sliderZoom.valueProperty().addListener((observable, oldValue, NewValue) -> {
+            double sliderValue = NewValue.doubleValue();
+            imageImgView.fitWidthProperty().setValue(defaultWidth*sliderValue);
+            imageImgView.fitHeightProperty().setValue(defaultHeight*sliderValue);
+        });
+        
         /**
          * If the user wants to get an image from the database, we need to open
          * a new stage which will display the images from the database. Since

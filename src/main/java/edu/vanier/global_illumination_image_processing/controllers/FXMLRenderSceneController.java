@@ -41,6 +41,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.control.Slider;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.stage.DirectoryChooser;
@@ -90,6 +91,7 @@ public class FXMLRenderSceneController {
     @FXML ImageView imgResult;
     @FXML ScrollPane scrollImageHolder;
     @FXML StackPane stackImageHolder;
+    @FXML Slider sliderZoom;
     Stage primaryStage;
     private BufferedImage image;
     private boolean autoRender;
@@ -190,6 +192,17 @@ public class FXMLRenderSceneController {
         scrollImageHolder.getViewportBounds().getHeight(), scrollImageHolder.viewportBoundsProperty()));
         stackImageHolder.minWidthProperty().bind(Bindings.createDoubleBinding(() -> 
         scrollImageHolder.getViewportBounds().getWidth(), scrollImageHolder.viewportBoundsProperty()));
+        
+        // set default zoom to 1
+        sliderZoom.setValue(1);
+        /**
+         * listener when the slider to zoom changes value - zoom the image
+         */
+        sliderZoom.valueProperty().addListener((observable, oldValue, NewValue) -> {
+            double sliderValue = NewValue.doubleValue();
+            imgResult.fitWidthProperty().setValue(800*sliderValue);
+            imgResult.fitHeightProperty().setValue(800*sliderValue);
+        });
         
         // set status text to none
         lblLeftStatus.setText("");
