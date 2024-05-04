@@ -219,7 +219,9 @@ public class FXMLConvolutionsSceneController {
             return true;
         }
         else{
+            primaryStage.setAlwaysOnTop(false);
             showAlertWarning("The file is of type "+type+". Choose a file of type bmp or jpg");
+            primaryStage.setAlwaysOnTop(true);
             return false;
         }
     }
@@ -278,7 +280,9 @@ public class FXMLConvolutionsSceneController {
             else {
                 System.out.println("No choice selected");
                 //Show message to user to choose a convolution
+                primaryStage.setAlwaysOnTop(false);
                 showAlertWarning("Please choose a convolution from the choice box");
+                primaryStage.setAlwaysOnTop(true);
                 return;
             }
             //Image: Check if a choice has been made
@@ -289,7 +293,9 @@ public class FXMLConvolutionsSceneController {
             } //If not, show an alert to the user
             else {
                 //Show message to user to choose an image
+                primaryStage.setAlwaysOnTop(false);
                 showAlertWarning("Please choose an image from the database or the file chooser");
+                primaryStage.setAlwaysOnTop(true);
                 return;
             }
             //If both conditions are accepted, then we can proceed with the convolution
@@ -313,9 +319,11 @@ public class FXMLConvolutionsSceneController {
                         for(int i=0;i<iterations;i++)
                         Convolution.performConvolution(this.imageBeingDisplayedOnIV.getAbsolutePath(), this.imageBeingDisplayedOnIV.getAbsolutePath(), rulesGaussian3x3);
                         displayImage(this.imageBeingDisplayedOnIV.getAbsolutePath());
-                        showAlertInfo("The " + choice + " convolution is completed");
+                        
                     } catch (IOException | NullPointerException ex) {
+                        primaryStage.setAlwaysOnTop(false);
                         showAlertWarning("The " + choice + " convolution did not work. Please try again.");
+                        primaryStage.setAlwaysOnTop(true);
                     }
                 } else if (choice.equals("Gaussian Blur 5x5")) {
                     // 5x5 gausian convolution
@@ -323,9 +331,11 @@ public class FXMLConvolutionsSceneController {
                         for(int i=0;i<iterations;i++)
                         Convolution.performConvolution(this.imageBeingDisplayedOnIV.getAbsolutePath(), this.imageBeingDisplayedOnIV.getAbsolutePath(), rulesGaussian5x5);
                         displayImage(this.imageBeingDisplayedOnIV.getAbsolutePath());
-                        showAlertInfo("The " + choice + " convolution is completed");
+                        
                     } catch (IOException | NullPointerException ex) {
+                        primaryStage.setAlwaysOnTop(false);
                         showAlertWarning("The " + choice + " convolution did not work. Please try again.");
+                        primaryStage.setAlwaysOnTop(true);
                     }
                 } else if (choice.equals("Gaussian Blur 7x7")) {
                     // 7x7 gausian convolution
@@ -333,9 +343,10 @@ public class FXMLConvolutionsSceneController {
                         for(int i=0;i<iterations;i++)
                         Convolution.performConvolution(this.imageBeingDisplayedOnIV.getAbsolutePath(), this.imageBeingDisplayedOnIV.getAbsolutePath(), rulesGaussian7x7);
                         displayImage(this.imageBeingDisplayedOnIV.getAbsolutePath());
-                        showAlertInfo("The " + choice + " convolution is completed");
                     } catch (IOException | NullPointerException ex) {
+                        primaryStage.setAlwaysOnTop(false);
                         showAlertWarning("The " + choice + " convolution did not work. Please try again.");
+                        primaryStage.setAlwaysOnTop(true);
                     }
                 } else if (choice.equals("Sharpening")) {
                     // Sharpening convolution
@@ -343,9 +354,10 @@ public class FXMLConvolutionsSceneController {
                         for(int i=0;i<iterations;i++)
                         Convolution.performConvolution(this.imageBeingDisplayedOnIV.getAbsolutePath(), this.imageBeingDisplayedOnIV.getAbsolutePath(), rulesSharp1);
                         displayImage(this.imageBeingDisplayedOnIV.getAbsolutePath());
-                        showAlertInfo("The " + choice + " convolution is completed");
                     } catch (IOException | NullPointerException ex) {
+                        primaryStage.setAlwaysOnTop(false);
                         showAlertWarning("The " + choice + " convolution did not work. Please try again.");
+                        primaryStage.setAlwaysOnTop(true);
                     }
                 } else if (choice.equals("Grayscale")) {
                     // Grayscale convolution convolution
@@ -353,9 +365,10 @@ public class FXMLConvolutionsSceneController {
                         for(int i=0;i<iterations;i++)
                         Convolution.performGrayscale(this.imageBeingDisplayedOnIV.getAbsolutePath(), this.imageBeingDisplayedOnIV.getAbsolutePath());
                         displayImage(this.imageBeingDisplayedOnIV.getAbsolutePath());
-                        showAlertInfo("The " + choice + " convolution is completed");
                     } catch (IOException | NullPointerException ex) {
+                        primaryStage.setAlwaysOnTop(false);
                         showAlertWarning("The " + choice + " convolution did not work. Please try again.");
+                        primaryStage.setAlwaysOnTop(true);
                     }
                 } else if (choice.equals("Sobel X")) {
                     // Sobel X component grayscaled convolution
@@ -365,9 +378,10 @@ public class FXMLConvolutionsSceneController {
                         for(int i=0;i<iterations;i++)
                         Convolution.performSobelX(this.imageBeingDisplayedOnIV.getAbsolutePath(), this.imageBeingDisplayedOnIV.getAbsolutePath());
                         displayImage(this.imageBeingDisplayedOnIV.getAbsolutePath());
-                        showAlertInfo("The " + choice + " convolution is completed");
                     } catch (IOException | NullPointerException ex) {
+                        primaryStage.setAlwaysOnTop(false);
                         showAlertWarning("The " + choice + " convolution did not work. Please try again.");
+                        primaryStage.setAlwaysOnTop(true);
                     }
                 } else if (choice.equals("Sobel Y")) {
                     // Sobel Y component grayscaled convolution
@@ -377,9 +391,10 @@ public class FXMLConvolutionsSceneController {
                         for(int i=0;i<iterations;i++)
                         Convolution.performSobelY(this.imageBeingDisplayedOnIV.getAbsolutePath(), this.imageBeingDisplayedOnIV.getAbsolutePath());
                         displayImage(this.imageBeingDisplayedOnIV.getAbsolutePath());
-                        showAlertInfo("The " + choice + " convolution is completed");
                     } catch (IOException | NullPointerException ex) {
+                        primaryStage.setAlwaysOnTop(false);
                         showAlertWarning("The " + choice + " convolution did not work. Please try again.");
+                        primaryStage.setAlwaysOnTop(true);
                     }
                 } else if (choice.equals("Sobel Classic")) {
                     // Sobel X-Y converged grayscaled convolution
@@ -389,9 +404,10 @@ public class FXMLConvolutionsSceneController {
                         for(int i=0;i<iterations;i++)
                         Convolution.performSobel(this.imageBeingDisplayedOnIV.getAbsolutePath(), this.imageBeingDisplayedOnIV.getAbsolutePath());
                         displayImage(this.imageBeingDisplayedOnIV.getAbsolutePath());
-                        showAlertInfo("The " + choice + " convolution is completed");
                     } catch (IOException | NullPointerException ex) {
+                        primaryStage.setAlwaysOnTop(false);
                         showAlertWarning("The " + choice + " convolution did not work. Please try again.");
+                        primaryStage.setAlwaysOnTop(true);
                     }
                 } else if (choice.equals("Prewitt")) {
                     // Prewitt convolution
@@ -412,9 +428,10 @@ public class FXMLConvolutionsSceneController {
                             Convolution.performPrewitt(this.imageBeingDisplayedOnIV.getAbsolutePath(), this.imageBeingDisplayedOnIV.getAbsolutePath(), threshold);
                         }
                         displayImage(this.imageBeingDisplayedOnIV.getAbsolutePath());
-                        showAlertInfo("The " + choice + " convolution is completed");
                     } catch (IOException | NullPointerException ex) {
+                        primaryStage.setAlwaysOnTop(false);
                         showAlertWarning("The " + choice + " convolution did not work. Please try again.");
+                        primaryStage.setAlwaysOnTop(true);
                     }
                     } else if (choice.equals("Prewitt - Pure")) {
                     // Prewitt convolution - pure no threshold
@@ -423,9 +440,10 @@ public class FXMLConvolutionsSceneController {
                             Convolution.performPrewittPure(this.imageBeingDisplayedOnIV.getAbsolutePath(), this.imageBeingDisplayedOnIV.getAbsolutePath());
                         }
                         displayImage(this.imageBeingDisplayedOnIV.getAbsolutePath());
-                        showAlertInfo("The " + choice + " convolution is completed");
                     } catch (IOException | NullPointerException ex) {
+                        primaryStage.setAlwaysOnTop(false);
                         showAlertWarning("The " + choice + " convolution did not work. Please try again.");
+                        primaryStage.setAlwaysOnTop(true);
                     }
                 } else if (choice.equals("Laplacian")) {
                     // Laplacian convolution
@@ -444,9 +462,10 @@ public class FXMLConvolutionsSceneController {
                         for(int i=0;i<iterations;i++)
                         Convolution.performLaplacianOperator(this.imageBeingDisplayedOnIV.getAbsolutePath(), this.imageBeingDisplayedOnIV.getAbsolutePath());
                         displayImage(this.imageBeingDisplayedOnIV.getAbsolutePath());
-                        showAlertInfo("The " + choice + " convolution is completed");
                     } catch (IOException | NullPointerException ex) {
+                        primaryStage.setAlwaysOnTop(false);
                         showAlertWarning("The " + choice + " convolution did not work. Please try again.");
+                        primaryStage.setAlwaysOnTop(true);
                     }
                 } else if (choice.equals("Custom Kernel")) {
                     // Let the user create a custom kernel with the popup then convolve
@@ -470,8 +489,9 @@ public class FXMLConvolutionsSceneController {
                             for(int i=0;i<iterations;i++)
                             Convolution.performConvolution(this.imageBeingDisplayedOnIV.getAbsolutePath(), this.imageBeingDisplayedOnIV.getAbsolutePath(), kernelWithMoreDimensions);
                             displayImage(this.imageBeingDisplayedOnIV.getAbsolutePath());
-                            showAlertInfo("The " + choice + " convolution is completed");
+                            
                         } catch (IOException | NullPointerException ex) {
+                            primaryStage.setAlwaysOnTop(false);
                             showAlertWarning("The " + choice + " convolution did not work. Please try again.");
                         }
 
@@ -489,7 +509,7 @@ public class FXMLConvolutionsSceneController {
                         for(int i=0;i<iterations;i++)
                         Convolution.performEdgeAngles(this.imageBeingDisplayedOnIV.getAbsolutePath(), this.imageBeingDisplayedOnIV.getAbsolutePath());
                         displayImage(this.imageBeingDisplayedOnIV.getAbsolutePath());
-                        showAlertInfo("The " + choice + " convolution is completed");
+                        
                     } catch (IOException ex) {
                         Logger.getLogger(FXMLConvolutionsSceneController.class.getName()).log(Level.SEVERE, null, ex);
                     }
@@ -501,17 +521,23 @@ public class FXMLConvolutionsSceneController {
                         for(int i=0;i<iterations;i++)
                         Convolution.performSobelColored(this.imageBeingDisplayedOnIV.getAbsolutePath(), this.imageBeingDisplayedOnIV.getAbsolutePath());
                         displayImage(this.imageBeingDisplayedOnIV.getAbsolutePath());
-                        showAlertInfo("The " + choice + " convolution is completed");
+                        
                     } catch (IOException | NullPointerException ex) {
+                        primaryStage.setAlwaysOnTop(false);
                         showAlertWarning("The " + choice + " convolution did not work. Please try again.");
+                        primaryStage.setAlwaysOnTop(true);
                     }
                     
                 }else {
                     System.out.println("Else");
                 }
+                primaryStage.setAlwaysOnTop(false);
+                showAlertInfo("The " + choice + " convolution is completed");
+                primaryStage.setAlwaysOnTop(true);
             } else {
                 return;
             }
+            
         });
         /**
          * When the user clicks on the button to get from file chooser. A file
@@ -543,7 +569,10 @@ public class FXMLConvolutionsSceneController {
                 FOS = new FileOutputStream(temp);
                 FOS.write(FIS.readAllBytes());
             } catch (Exception e) {
+                primaryStage.setAlwaysOnTop(false);
                 showAlertWarning("The system could not get the file from the file chooser");
+                primaryStage.setAlwaysOnTop(true);
+                return;
             }
             //Now, the image that is being shown on the main image view is that of the temp file
             imageBeingDisplayedOnIV = temp;
@@ -552,7 +581,10 @@ public class FXMLConvolutionsSceneController {
                 displayImage(imageBeingDisplayedOnIV.getAbsolutePath());
                 
             } catch (Exception e) {
+                primaryStage.setAlwaysOnTop(false);
                 showAlertWarning("The image has not been processed correctly. Please try again.");
+                primaryStage.setAlwaysOnTop(true);
+                return;
             }
         });
         
@@ -610,7 +642,9 @@ public class FXMLConvolutionsSceneController {
                 //close the stage if it is not already done
                 stage.close();
             } catch (Exception e) {
+                primaryStage.setAlwaysOnTop(false);
                 showAlertWarning("We could not load the file from the database. Please try again.");
+                primaryStage.setAlwaysOnTop(true);
             }
 
         });
@@ -622,20 +656,44 @@ public class FXMLConvolutionsSceneController {
          * the file. Finally, the image is saved.
          */
         btnSaveToFile.setOnAction((event) -> {
+            if(imageImgView.getImage()==null){
+                primaryStage.setAlwaysOnTop(false);
+                showAlertWarning("Please choose an image before saving.");
+                primaryStage.setAlwaysOnTop(true);
+                return;
+            }
             //To save the file, we need a directory and a name for the file
             String name = chooseNameFileDialog(primaryStage);
-            DirectoryChooser dc = getDirectoryChooser(primaryStage);
+            if(name==null){
+                return;
+            }
+            DirectoryChooser dc;
+            File file;
+            try{
+                dc = getDirectoryChooser(primaryStage);
+                file = new File(dc.getInitialDirectory().getAbsolutePath() + "//" + name + ".bmp");
+            }catch(Exception NoLocationSelectedException){
+                primaryStage.setAlwaysOnTop(false);
+                showAlertWarning("No location has been selected to save the image.");
+                primaryStage.setAlwaysOnTop(true);
+                return;
+            }
             //Create the file at the location with the name chosen by the user
-            File file = new File(dc.getInitialDirectory().getAbsolutePath() + "//" + name + ".bmp");
             try {
                 //Copy the data from the temporary file and write it in the new file
                 FileInputStream FIS = new FileInputStream(imageBeingDisplayedOnIV.getAbsolutePath());
                 FOS = new FileOutputStream(file);
                 FOS.write(FIS.readAllBytes());
             } catch (FileNotFoundException ex) {
+                primaryStage.setAlwaysOnTop(false);
                 showAlertWarning("No file is being displayed. Please choose a file.");
+                primaryStage.setAlwaysOnTop(true);
+                return;
             } catch (IOException ex) {
+                primaryStage.setAlwaysOnTop(false);
                 showAlertWarning("Could not write in the file. Please try again.");
+                primaryStage.setAlwaysOnTop(true);
+                return;
             }
         });
         /**
@@ -663,7 +721,10 @@ public class FXMLConvolutionsSceneController {
                 }
             } //If the image is null, ask the user to choose an image.
             else {
+                primaryStage.setAlwaysOnTop(false);
                 showAlertWarning("Please choose an image before saving.");
+                primaryStage.setAlwaysOnTop(true);
+                return;
             }
 
         });
@@ -830,16 +891,12 @@ public class FXMLConvolutionsSceneController {
      * @param message - String - The message being shown to the user
      */
     public void showAlertWarning(String message) {
+        primaryStage.setAlwaysOnTop(false);
         Alert alert = new Alert(Alert.AlertType.WARNING);
         alert.setTitle("Information Incorrect or Missing");
         alert.setContentText(message);
-        ButtonType helpBtn = new ButtonType("Help");
-        alert.getButtonTypes().addAll(helpBtn);
         alert.showAndWait();
-        if (alert.getResult() == helpBtn) {
-            alert.close();
-            openAboutDialog();
-        }
+        primaryStage.setAlwaysOnTop(true);
     }
     /**
      * This method opens the About window.
@@ -881,15 +938,9 @@ public class FXMLConvolutionsSceneController {
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
         alert.setTitle("Information Incorrect or Missing");
         alert.setContentText(message);
-        ButtonType helpBtn = new ButtonType("Help");
-        alert.getButtonTypes().addAll(helpBtn);
         alert.showAndWait();
         System.out.println(alert.getResult());
-        if (alert.getResult() == helpBtn) {
-            alert.close();
-            return false;
-        }
-        else if(alert.getResult()==ButtonType.OK){
+        if(alert.getResult()==ButtonType.OK){
             return true;
         }
         else if(alert.getResult()==ButtonType.CANCEL){

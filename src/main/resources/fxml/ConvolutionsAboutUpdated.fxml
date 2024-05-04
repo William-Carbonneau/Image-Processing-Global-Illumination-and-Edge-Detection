@@ -159,7 +159,7 @@ All four of them uses the same 2 kernels:
 &#13;[0,  1, 0]
 &#13;[1, -4, 1]
 &#13;[0,  1, 0]
-&#13;The idea is similar to the Edge Detection algorithms. The difference is that it only uses one single kernel, which calculates the difference between the centered pixel and thos around it. 
+&#13;The idea is similar to the Edge Detection algorithms. The difference is that it only uses one single kernel, which calculates the difference between the centered pixel and those around it. 
 " wrappingWidth="372.5367240905762" />
                            </children>
                         </TextFlow>
