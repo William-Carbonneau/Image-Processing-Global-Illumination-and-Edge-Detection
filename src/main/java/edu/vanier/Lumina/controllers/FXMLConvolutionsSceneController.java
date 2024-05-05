@@ -1,0 +1,951 @@
+package edu.vanier.Lumina.controllers;
+
+import edu.vanier.Lumina.MainApp;
+import static edu.vanier.Lumina.controllers.FXMLRenderSceneController.textFormatterIntegerRegex;
+import edu.vanier.Lumina.models.Convolution;
+import edu.vanier.Lumina.models.Database;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.concurrent.atomic.AtomicReference;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javafx.beans.binding.Bindings;
+import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Scene;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
+import javafx.scene.control.ChoiceBox;
+import javafx.scene.control.Label;
+import javafx.scene.control.MenuItem;
+import javafx.scene.control.ScrollPane;
+import javafx.scene.control.Slider;
+import javafx.scene.control.SplitPane;
+import javafx.scene.control.TextField;
+import javafx.scene.control.TextFormatter;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.Pane;
+import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
+import javafx.stage.DirectoryChooser;
+import javafx.stage.FileChooser;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
+
+/**
+ * The image processing scene
+ * used to perform image convolutions and manipulated the database
+ * 
+ * @Loovdrish Sujore
+ */
+public class FXMLConvolutionsSceneController {
+
+    /**
+     * Button to go back to the main menu
+     */
+    @FXML
+    MenuItem menuItemBackToTitle;
+    /**
+     * The about menu item
+     */
+    @FXML
+    MenuItem menuItemAboutConvolution;
+    /**
+     * Button to retrieve an image from the database
+     */
+    @FXML
+    Button btnGetFromDatabase;
+    /**
+     * Button to save an image on the computer
+     */
+    @FXML
+    Button btnSaveToFile;
+    /**
+     * Image view used to show the main active image
+     */
+    @FXML
+    ImageView imageImgView;
+    /**
+     * Button to get an image from a file chooser
+     */
+    @FXML
+    Button btnGetFromFile;
+    /**
+     * Button to start a convolution, to convolve an image
+     */
+    @FXML
+    Button btnConvolve;
+    /**
+     * Choice box which contains the convolution options
+     */
+    @FXML
+    ChoiceBox choiceBoxConvolution;
+    /**
+     * Textfield that enables the user to set a threshold value for certain
+     * convolutions
+     */
+    @FXML
+    TextField txtThreshold;
+    /**
+     * Textfield if the user wants to perform the same convolution multiple times in a row
+     */
+    @FXML
+    TextField txtIterations;
+    /**
+     * Button to save the active image into the database, in the form of byte[]
+     */
+    @FXML
+    Button btnSaveToDatabase;
+    /**
+     * The stackpane to center the imageview
+     */
+    @FXML
+    StackPane stackImageHolder;
+    /**
+     * The ScrollPane to pan the StackPane
+     */
+    @FXML
+    ScrollPane scrollImageHolder;
+    /**
+     * image zooming slider
+     */
+    @FXML 
+    Slider sliderZoom;
+    /**
+     * bytes corresponding to the data of an image
+     */
+    byte[] b;
+    /**
+     * Temporary file, located in the convolutions folder of the project, which
+     * is used to (1) contain the image being showed on the main image view, (2)
+     * contain that image after a convolution has been performed, and (3) create
+     * images when opening the database viewer.
+     */
+    File temp = new File("src\\main\\resources\\Images\\Convolutions\\temp.bmp");
+    /**
+     * FileOutputStream used throughout this controller to write byte[] into an
+     * image. This is necessary whenever we use databases, since we are
+     * represinting these images in the form of bytes in the database,
+     */
+    FileOutputStream FOS;
+    /**
+     * When performing convolutions that require a threshold, if the user does
+     * not specify one, a value of 100 will be attributed to that threshold.
+     */
+    float defaultThreshold = 100;
+    /**
+     * Threshold value when performing certain convolutions.
+     */
+    float threshold;
+    // Source for the kernel to implement: https://youtu.be/C_zFhWdM4ic?si=CH3JvuO9mSfVmleJ (Pound, 2015)
+    float[][] rulesGaussian3x3 = {{1, 2, 1}, {2, 4, 2}, {1, 2, 1}};
+    //Taken from https://www.researchgate.net/figure/Discrete-approximation-of-the-Gaussian-kernels-3x3-5x5-7x7_fig2_325768087 (Shipitko)
+    float[][] rulesGaussian5x5 = {{1, 4, 7, 4, 1}, {4, 16, 26, 16, 4}, {7, 26, 41, 26, 7}, {4, 16, 26, 16, 4}, {1, 4, 7, 4, 1}};
+    //Taken from https://www.researchgate.net/figure/Discrete-approximation-of-the-Gaussian-kernels-3x3-5x5-7x7_fig2_325768087 (Shipitko)
+    float[][] rulesGaussian7x7 = {{0, 0, 1, 2, 1, 0, 0}, {0, 3, 13, 22, 13, 3, 0}, {1, 13, 59, 97, 59, 13, 1}, {2, 22, 97, 159, 97, 22, 2}, {1, 13, 59, 97, 59, 13, 1}, {0, 3, 13, 22, 13, 3, 0}, {0, 0, 1, 2, 1, 0, 0}};
+    //Source for the kernel to implement: https://pro.arcgis.com/en/pro-app/latest/help/analysis/raster-functions/convolution-function.htm#:~:text=The%20Convolution%20function%20performs%20filtering,or%20other%20kernel%2Dbased%20enhancements. (Esri)
+    float[][] rulesSharp1 = {{0f, -1f, 0f}, {-1f, 5f, -1f}, {0f, -1f, 0f}};
+    //Source for the kernel: https://en.wikipedia.org/wiki/Sobel_operator (Sobel operator, 2024)
+    float[][] rulesSobelY = {{-1, 0, 1},
+    {-2, 0, 2},
+    {-1, 0, 1}};
+    //Source for the kernel: https://en.wikipedia.org/wiki/Sobel_operator (Sobel operator, 2024)
+    float[][] rulesSobelX = {{-1, -2, -1},
+    {0, 0, 0},
+    {1, 2, 1}};
+    
+    /**
+     * main window being used to interact with the user. We will need to access
+     * when we need to open new windows that will take priority over the primary
+     * one.
+     */
+    Stage primaryStage;
+    /**
+     * File corresponding to the one being showed on the main image view.
+     */
+    File imageBeingDisplayedOnIV;
+    /**
+     * Custom user kernel that will be initialized once the user specifies its dimensions.
+     */
+    float[][] kernelWithMoreDimensions;
+    /**
+     * Image views loaded from the database
+     */
+    ArrayList<ImageView> imvs = new ArrayList<>();
+    /**
+     * Titles of images loaded from the database.
+     */
+    ArrayList<String> titles = new ArrayList<>();
+    /**
+     * byte[] representing the data of each image loaded from the database
+     */
+    ArrayList<byte[]> bs = new ArrayList<>();
+    /**
+     * ImageView that is clicked by the user in the database viewer.
+     */
+    ImageView iv;
+    
+    Double defaultWidth = 800.0;
+    Double defaultHeight = 800.0;
+
+    /**
+     * Parameterized constructor
+     *
+     * @param primaryStage - The main window that is being used to show the main
+     * image and interact with the user
+     */
+    public FXMLConvolutionsSceneController(Stage primaryStage) {
+        this.primaryStage = primaryStage;
+
+    }
+    /**
+     * This method verifies if a method is of type .bmp or not
+     * 
+     * @param file - The input file
+     * @return boolean corresponding to whether the file is of type .bmp or not
+     */
+    public boolean verifyImageFormat(File file){
+        String path = file.getAbsolutePath();
+        String type = path.substring(path.length()-3, path.length());
+        if(type.equals("bmp")||type.equals("jpg")){
+            return true;
+        }
+        else{
+            primaryStage.setAlwaysOnTop(false);
+            showAlertWarning("The file is of type "+type+". Choose a file of type bmp or jpg");
+            primaryStage.setAlwaysOnTop(true);
+            return false;
+        }
+    }
+    /**
+     * This method converts an array of textfields into one of float
+     * corresponding to the values that are inserted in the textfields
+     *
+     * @param txtRules - The values of the kernel at each index
+     * @return custom kernel [][] in the type of float[][]
+     */
+    public float[][] getCustomKernelFloat(TextField[][] txtRules) {
+        float[][] rulesCustom = new float[3][3];
+        for (int i = 0; i < txtRules.length; i++) {
+            for (int j = 0; j < txtRules[0].length; j++) {
+                try {
+                    rulesCustom[i][j] = Float.valueOf(txtRules[i][j].getText());
+                } catch (Exception e) {
+                    rulesCustom[i][j] = 0f;
+                }
+            }
+        }
+        return rulesCustom;
+    }
+
+    /**
+     * initialization method of the FXML
+     *
+     * @throws IOException
+     */
+    @FXML
+    public void initialize() throws IOException {
+        //Need to erase the content in the temp file, if content is present.
+        initializeTempFile();
+        txtIterations.setTextFormatter(new TextFormatter <> (input -> input.getControlNewText().matches(textFormatterIntegerRegex) ? input : null));
+        //Initialize the choices in the choice box
+        choiceBoxConvolution.getItems().addAll("Custom Kernel", "Gaussian Blur 3x3", "Gaussian Blur 5x5", "Gaussian Blur 7x7", "Sharpening", "Grayscale", "Sobel X", "Sobel Y", "Sobel Classic","Sobel Colored", "Prewitt","Prewitt - Pure", "Laplacian", "Colored Edge Angles");
+        
+        // bind image holder to center it using double binding to get value of viewport dimensions as function of viewport modified
+        stackImageHolder.minHeightProperty().bind(Bindings.createDoubleBinding(() -> 
+        scrollImageHolder.getViewportBounds().getHeight(), scrollImageHolder.viewportBoundsProperty()));
+        stackImageHolder.minWidthProperty().bind(Bindings.createDoubleBinding(() -> 
+        scrollImageHolder.getViewportBounds().getWidth(), scrollImageHolder.viewportBoundsProperty()));
+
+        //When someone clicks on the convolve button
+        btnConvolve.setOnAction((event) -> {
+            //To convolve an image, we need an image and a convolution choice
+            //Convolution choice: Check if a choice has been made
+            boolean convolutionIsSelected = false;
+            String choice;
+            //Set the variable to true if a selection has been made
+            if (choiceBoxConvolution.getValue() != null) {
+                choice = choiceBoxConvolution.getValue().toString();
+                System.out.println(choice + " selected");
+                convolutionIsSelected = true;
+            } //If not, show an alert to the user
+            else {
+                System.out.println("No choice selected");
+                //Show message to user to choose a convolution
+                primaryStage.setAlwaysOnTop(false);
+                showAlertWarning("Please choose a convolution from the choice box");
+                primaryStage.setAlwaysOnTop(true);
+                return;
+            }
+            //Image: Check if a choice has been made
+            boolean imageIsSelected = false;
+            Image image = imageImgView.getImage();
+            if (image != null) {
+                imageIsSelected = true;
+            } //If not, show an alert to the user
+            else {
+                //Show message to user to choose an image
+                primaryStage.setAlwaysOnTop(false);
+                showAlertWarning("Please choose an image from the database or the file chooser");
+                primaryStage.setAlwaysOnTop(true);
+                return;
+            }
+            //If both conditions are accepted, then we can proceed with the convolution
+            if (convolutionIsSelected == true && imageIsSelected == true) {
+                //Verify the iterationsTxtField to see of the user wants to repeat a convolution multiple times in a row
+                int iterations = 1;
+                try{
+                    iterations = Integer.parseInt(txtIterations.getText());
+                    if(iterations<=0) iterations=1;
+                }
+                catch(Exception notAnInt){
+                    iterations=  1;
+                }
+                //Set the choice value from the choicebox
+                choice = choiceBoxConvolution.getValue().toString();
+                //Determine the value from the choice box and  perform the convolution using the temp file and the imageBeingDisplayedOnIV file
+                //Then, after each convolution is completed, let the user know that the convolution has been completed with an alert
+                if (choice.equals("Gaussian Blur 3x3")) {
+                    // 3x3 gausian convolution
+                    try {
+                        for(int i=0;i<iterations;i++)
+                        Convolution.performConvolution(this.imageBeingDisplayedOnIV.getAbsolutePath(), this.imageBeingDisplayedOnIV.getAbsolutePath(), rulesGaussian3x3);
+                        displayImage(this.imageBeingDisplayedOnIV.getAbsolutePath());
+                        
+                    } catch (IOException | NullPointerException ex) {
+                        primaryStage.setAlwaysOnTop(false);
+                        showAlertWarning("The " + choice + " convolution did not work. Please try again.");
+                        primaryStage.setAlwaysOnTop(true);
+                    }
+                } else if (choice.equals("Gaussian Blur 5x5")) {
+                    // 5x5 gausian convolution
+                    try {
+                        for(int i=0;i<iterations;i++)
+                        Convolution.performConvolution(this.imageBeingDisplayedOnIV.getAbsolutePath(), this.imageBeingDisplayedOnIV.getAbsolutePath(), rulesGaussian5x5);
+                        displayImage(this.imageBeingDisplayedOnIV.getAbsolutePath());
+                        
+                    } catch (IOException | NullPointerException ex) {
+                        primaryStage.setAlwaysOnTop(false);
+                        showAlertWarning("The " + choice + " convolution did not work. Please try again.");
+                        primaryStage.setAlwaysOnTop(true);
+                    }
+                } else if (choice.equals("Gaussian Blur 7x7")) {
+                    // 7x7 gausian convolution
+                    try {
+                        for(int i=0;i<iterations;i++)
+                        Convolution.performConvolution(this.imageBeingDisplayedOnIV.getAbsolutePath(), this.imageBeingDisplayedOnIV.getAbsolutePath(), rulesGaussian7x7);
+                        displayImage(this.imageBeingDisplayedOnIV.getAbsolutePath());
+                    } catch (IOException | NullPointerException ex) {
+                        primaryStage.setAlwaysOnTop(false);
+                        showAlertWarning("The " + choice + " convolution did not work. Please try again.");
+                        primaryStage.setAlwaysOnTop(true);
+                    }
+                } else if (choice.equals("Sharpening")) {
+                    // Sharpening convolution
+                    try {
+                        for(int i=0;i<iterations;i++)
+                        Convolution.performConvolution(this.imageBeingDisplayedOnIV.getAbsolutePath(), this.imageBeingDisplayedOnIV.getAbsolutePath(), rulesSharp1);
+                        displayImage(this.imageBeingDisplayedOnIV.getAbsolutePath());
+                    } catch (IOException | NullPointerException ex) {
+                        primaryStage.setAlwaysOnTop(false);
+                        showAlertWarning("The " + choice + " convolution did not work. Please try again.");
+                        primaryStage.setAlwaysOnTop(true);
+                    }
+                } else if (choice.equals("Grayscale")) {
+                    // Grayscale convolution convolution
+                    try {
+                        for(int i=0;i<iterations;i++)
+                        Convolution.performGrayscale(this.imageBeingDisplayedOnIV.getAbsolutePath(), this.imageBeingDisplayedOnIV.getAbsolutePath());
+                        displayImage(this.imageBeingDisplayedOnIV.getAbsolutePath());
+                    } catch (IOException | NullPointerException ex) {
+                        primaryStage.setAlwaysOnTop(false);
+                        showAlertWarning("The " + choice + " convolution did not work. Please try again.");
+                        primaryStage.setAlwaysOnTop(true);
+                    }
+                } else if (choice.equals("Sobel X")) {
+                    // Sobel X component grayscaled convolution
+                    try {
+                        Convolution.performConvolution(this.imageBeingDisplayedOnIV.getAbsolutePath(), this.imageBeingDisplayedOnIV.getAbsolutePath(), rulesGaussian7x7);
+                        Convolution.performGrayscale(this.imageBeingDisplayedOnIV.getAbsolutePath(), this.imageBeingDisplayedOnIV.getAbsolutePath());
+                        for(int i=0;i<iterations;i++)
+                        Convolution.performSobelX(this.imageBeingDisplayedOnIV.getAbsolutePath(), this.imageBeingDisplayedOnIV.getAbsolutePath());
+                        displayImage(this.imageBeingDisplayedOnIV.getAbsolutePath());
+                    } catch (IOException | NullPointerException ex) {
+                        primaryStage.setAlwaysOnTop(false);
+                        showAlertWarning("The " + choice + " convolution did not work. Please try again.");
+                        primaryStage.setAlwaysOnTop(true);
+                    }
+                } else if (choice.equals("Sobel Y")) {
+                    // Sobel Y component grayscaled convolution
+                    try {
+                        Convolution.performConvolution(this.imageBeingDisplayedOnIV.getAbsolutePath(), this.imageBeingDisplayedOnIV.getAbsolutePath(), rulesGaussian7x7);
+                        Convolution.performGrayscale(this.imageBeingDisplayedOnIV.getAbsolutePath(), this.imageBeingDisplayedOnIV.getAbsolutePath());
+                        for(int i=0;i<iterations;i++)
+                        Convolution.performSobelY(this.imageBeingDisplayedOnIV.getAbsolutePath(), this.imageBeingDisplayedOnIV.getAbsolutePath());
+                        displayImage(this.imageBeingDisplayedOnIV.getAbsolutePath());
+                    } catch (IOException | NullPointerException ex) {
+                        primaryStage.setAlwaysOnTop(false);
+                        showAlertWarning("The " + choice + " convolution did not work. Please try again.");
+                        primaryStage.setAlwaysOnTop(true);
+                    }
+                } else if (choice.equals("Sobel Classic")) {
+                    // Sobel X-Y converged grayscaled convolution
+                    try {
+                        Convolution.performConvolution(this.imageBeingDisplayedOnIV.getAbsolutePath(), this.imageBeingDisplayedOnIV.getAbsolutePath(), rulesGaussian7x7);
+                        Convolution.performGrayscale(this.imageBeingDisplayedOnIV.getAbsolutePath(), this.imageBeingDisplayedOnIV.getAbsolutePath());
+                        for(int i=0;i<iterations;i++)
+                        Convolution.performSobel(this.imageBeingDisplayedOnIV.getAbsolutePath(), this.imageBeingDisplayedOnIV.getAbsolutePath());
+                        displayImage(this.imageBeingDisplayedOnIV.getAbsolutePath());
+                    } catch (IOException | NullPointerException ex) {
+                        primaryStage.setAlwaysOnTop(false);
+                        showAlertWarning("The " + choice + " convolution did not work. Please try again.");
+                        primaryStage.setAlwaysOnTop(true);
+                    }
+                } else if (choice.equals("Prewitt")) {
+                    // Prewitt convolution
+                    try {
+                        float threshold = 100;
+                        if (txtThreshold.getText() == null) {
+                            threshold = defaultThreshold;
+                        } else {
+                            try {
+                                threshold = Float.parseFloat(txtThreshold.getText());
+                            } catch (Exception e) {
+                                threshold = defaultThreshold;
+                            }
+                        }
+                        Convolution.performConvolution(this.imageBeingDisplayedOnIV.getAbsolutePath(), this.imageBeingDisplayedOnIV.getAbsolutePath(), rulesGaussian7x7);
+                        Convolution.performGrayscale(this.imageBeingDisplayedOnIV.getAbsolutePath(), this.imageBeingDisplayedOnIV.getAbsolutePath());
+                        for(int i=0;i<iterations;i++) {
+                            Convolution.performPrewitt(this.imageBeingDisplayedOnIV.getAbsolutePath(), this.imageBeingDisplayedOnIV.getAbsolutePath(), threshold);
+                        }
+                        displayImage(this.imageBeingDisplayedOnIV.getAbsolutePath());
+                    } catch (IOException | NullPointerException ex) {
+                        primaryStage.setAlwaysOnTop(false);
+                        showAlertWarning("The " + choice + " convolution did not work. Please try again.");
+                        primaryStage.setAlwaysOnTop(true);
+                    }
+                    } else if (choice.equals("Prewitt - Pure")) {
+                    // Prewitt convolution - pure no threshold
+                    try {
+                        for(int i=0;i<iterations;i++) {
+                            Convolution.performPrewittPure(this.imageBeingDisplayedOnIV.getAbsolutePath(), this.imageBeingDisplayedOnIV.getAbsolutePath());
+                        }
+                        displayImage(this.imageBeingDisplayedOnIV.getAbsolutePath());
+                    } catch (IOException | NullPointerException ex) {
+                        primaryStage.setAlwaysOnTop(false);
+                        showAlertWarning("The " + choice + " convolution did not work. Please try again.");
+                        primaryStage.setAlwaysOnTop(true);
+                    }
+                } else if (choice.equals("Laplacian")) {
+                    // Laplacian convolution
+                    try {
+                        if (txtThreshold.getText() == null) {
+                            threshold = defaultThreshold;
+                        } else {
+                            try {
+                                threshold = Float.parseFloat(txtThreshold.getText());
+                            } catch (Exception e) {
+                                threshold = defaultThreshold;
+                            }
+                        }
+                        Convolution.performConvolution(this.imageBeingDisplayedOnIV.getAbsolutePath(), this.imageBeingDisplayedOnIV.getAbsolutePath(), rulesGaussian7x7);
+                        Convolution.performGrayscale(this.imageBeingDisplayedOnIV.getAbsolutePath(), this.imageBeingDisplayedOnIV.getAbsolutePath());
+                        for(int i=0;i<iterations;i++)
+                        Convolution.performLaplacianOperator(this.imageBeingDisplayedOnIV.getAbsolutePath(), this.imageBeingDisplayedOnIV.getAbsolutePath());
+                        displayImage(this.imageBeingDisplayedOnIV.getAbsolutePath());
+                    } catch (IOException | NullPointerException ex) {
+                        primaryStage.setAlwaysOnTop(false);
+                        showAlertWarning("The " + choice + " convolution did not work. Please try again.");
+                        primaryStage.setAlwaysOnTop(true);
+                    }
+                } else if (choice.equals("Custom Kernel")) {
+                    // Let the user create a custom kernel with the popup then convolve
+                    primaryStage.setAlwaysOnTop(false);
+                    Stage stage = new Stage();
+                    FXMLLoader loaderCK = new FXMLLoader(getClass().getResource("/fxml/FXMLCustomKernel.fxml"));
+                    FXMLCustomKernelController controllerCK = new FXMLCustomKernelController(stage);
+                    loaderCK.setController(controllerCK);
+                    try {
+                        BorderPane rootBP = loaderCK.load();
+                        Scene scene = new Scene(rootBP);
+                        stage.setScene(scene);
+                        stage.setAlwaysOnTop(true);
+                        stage.showAndWait();
+                        if(controllerCK.valid==false){ 
+                            showAlertInfo("The kernel has been dropped.");
+                            return;
+                        }
+                        kernelWithMoreDimensions = controllerCK.getKernelFloat();
+                        try {
+                            for(int i=0;i<iterations;i++)
+                            Convolution.performConvolution(this.imageBeingDisplayedOnIV.getAbsolutePath(), this.imageBeingDisplayedOnIV.getAbsolutePath(), kernelWithMoreDimensions);
+                            displayImage(this.imageBeingDisplayedOnIV.getAbsolutePath());
+                            
+                        } catch (IOException | NullPointerException ex) {
+                            primaryStage.setAlwaysOnTop(false);
+                            showAlertWarning("The " + choice + " convolution did not work. Please try again.");
+                        }
+
+                    } catch (IOException ex) {
+                        Logger.getLogger("Could not load FXML");
+                    }
+                    primaryStage.setAlwaysOnTop(true);
+
+                } else if (choice.equals("Colored Edge Angles")) {
+                    // Do sobel comverged with grascale then color the edge angles
+                    try {
+
+                        Convolution.performConvolution(this.imageBeingDisplayedOnIV.getAbsolutePath(), this.imageBeingDisplayedOnIV.getAbsolutePath(), rulesGaussian7x7);
+                        Convolution.performGrayscale(this.imageBeingDisplayedOnIV.getAbsolutePath(), this.imageBeingDisplayedOnIV.getAbsolutePath());
+                        for(int i=0;i<iterations;i++)
+                        Convolution.performEdgeAngles(this.imageBeingDisplayedOnIV.getAbsolutePath(), this.imageBeingDisplayedOnIV.getAbsolutePath());
+                        displayImage(this.imageBeingDisplayedOnIV.getAbsolutePath());
+                        
+                    } catch (IOException ex) {
+                        Logger.getLogger(FXMLConvolutionsSceneController.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                }
+                else if (choice.equals("Sobel Colored")){
+                    // Sobel converged non-grayscale convolution
+                    try {
+                        Convolution.performConvolution(this.imageBeingDisplayedOnIV.getAbsolutePath(), this.imageBeingDisplayedOnIV.getAbsolutePath(), rulesGaussian7x7);
+                        for(int i=0;i<iterations;i++)
+                        Convolution.performSobelColored(this.imageBeingDisplayedOnIV.getAbsolutePath(), this.imageBeingDisplayedOnIV.getAbsolutePath());
+                        displayImage(this.imageBeingDisplayedOnIV.getAbsolutePath());
+                        
+                    } catch (IOException | NullPointerException ex) {
+                        primaryStage.setAlwaysOnTop(false);
+                        showAlertWarning("The " + choice + " convolution did not work. Please try again.");
+                        primaryStage.setAlwaysOnTop(true);
+                    }
+                    
+                }else {
+                    System.out.println("Else");
+                }
+                primaryStage.setAlwaysOnTop(false);
+                showAlertInfo("The " + choice + " convolution is completed");
+                primaryStage.setAlwaysOnTop(true);
+            } else {
+                return;
+            }
+            
+        });
+        /**
+         * When the user clicks on the button to get from file chooser. A file
+         * chooser will appear to let him choose an image from his computer
+         */
+        btnGetFromFile.setOnAction((event) -> {
+            //File that will be manipulated by the user when performing the convolution
+            temp = new File("src\\main\\resources\\Images\\Convolutions\\temp.bmp");
+            //File chosen by the user through the file chooser.
+            File chosen=null;
+            boolean needToReturn = true;
+            try{
+                chosen = getFileFromFChooser();
+                needToReturn =  false;
+            }catch(Exception NoFileSelected){
+                needToReturn =  true;
+            }
+            if(chosen==null)
+                return;
+            if(verifyImageFormat(chosen)==false) 
+                return;
+            /*
+            The idea is the get the file of the user, and to copy it inside of the temp file, so that no modifications be made to the original chosen file unless the user wants these modifications saved.
+             */
+            try {
+                //Create file input stream to read the bytes from the file
+                FileInputStream FIS = new FileInputStream(chosen);
+                //Initialize the FileOutputStream so that it writes inside of the temp file
+                FOS = new FileOutputStream(temp);
+                FOS.write(FIS.readAllBytes());
+            } catch (Exception e) {
+                primaryStage.setAlwaysOnTop(false);
+                showAlertWarning("The system could not get the file from the file chooser");
+                primaryStage.setAlwaysOnTop(true);
+                return;
+            }
+            //Now, the image that is being shown on the main image view is that of the temp file
+            imageBeingDisplayedOnIV = temp;
+            try {
+                //Display the image on the main image view
+                displayImage(imageBeingDisplayedOnIV.getAbsolutePath());
+                
+            } catch (Exception e) {
+                primaryStage.setAlwaysOnTop(false);
+                showAlertWarning("The image has not been processed correctly. Please try again.");
+                primaryStage.setAlwaysOnTop(true);
+                return;
+            }
+        });
+        
+        // set default zoom to 1
+        sliderZoom.setValue(1);
+        /**
+         * listener when the slider to zoom changes value - zoom the image
+         */
+        sliderZoom.valueProperty().addListener((observable, oldValue, NewValue) -> {
+            double sliderValue = NewValue.doubleValue();
+            imageImgView.fitWidthProperty().setValue(defaultWidth*sliderValue);
+            imageImgView.fitHeightProperty().setValue(defaultHeight*sliderValue);
+        });
+        
+        /**
+         * If the user wants to get an image from the database, we need to open
+         * a new stage which will display the images from the database. Since
+         * the images are saved in the database in the form of bytes, a new
+         * stage is required to represent them visually. Due to the complexity
+         * of the procedure, having a new stage with its own FXMLController is
+         * the best way to proceed.
+         */
+        btnGetFromDatabase.setOnAction((event) -> {
+            try {
+                //Set this primary stage off
+                primaryStage.setAlwaysOnTop(false);
+                //Create a window 
+                Stage stage = new Stage();
+                //Load the FXML
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/FXMLUpdatedDatabaseViewer.fxml"));
+                //Create the controller and set it
+                FXMLDatabaseViewer databaseController = new FXMLDatabaseViewer(stage, temp,primaryStage);
+                loader.setController(databaseController);
+                SplitPane root = loader.load();
+                Scene scene = new Scene(root);
+                stage.setScene(scene);
+                stage.setAlwaysOnTop(true);
+                //Show the window until it is closed
+                stage.showAndWait();
+                // The database returns the image chosen, clicked, by the user in the form of bytes
+                //If no images have been slected, it returns the image that was shown on the main image view before the database viewer was opened
+                byte[] tempImage = databaseController.getPassedImage();
+                //The image should not be null
+                if (tempImage != null) {
+                    //Set the FOS to write in the temp file
+                    FOS = new FileOutputStream(temp);
+                    //Write the content of the chosen image
+                    FOS.write(tempImage);
+                    //Set the image of the image view
+                    displayImage(temp.getAbsolutePath());
+                    //Update the value of the imageBeingDisplayedOnIV which keeps track of the file that is being shown
+                    imageBeingDisplayedOnIV = temp;
+                    
+                }
+                //close the stage if it is not already done
+                stage.close();
+            } catch (Exception e) {
+                primaryStage.setAlwaysOnTop(false);
+                showAlertWarning("We could not load the file from the database. Please try again.");
+                primaryStage.setAlwaysOnTop(true);
+            }
+
+        });
+        /**
+         * If the user wants to save the image being displayed on the image view
+         * into the computer, we open a stage so that the user can pick a name
+         * for the file, which was "temp", but will no longer be. Then a
+         * directory chooser is used to choose a location in the computer for
+         * the file. Finally, the image is saved.
+         */
+        btnSaveToFile.setOnAction((event) -> {
+            if(imageImgView.getImage()==null){
+                primaryStage.setAlwaysOnTop(false);
+                showAlertWarning("Please choose an image before saving.");
+                primaryStage.setAlwaysOnTop(true);
+                return;
+            }
+            //To save the file, we need a directory and a name for the file
+            String name = chooseNameFileDialog(primaryStage);
+            if(name==null){
+                return;
+            }
+            DirectoryChooser dc;
+            File file;
+            try{
+                dc = getDirectoryChooser(primaryStage);
+                file = new File(dc.getInitialDirectory().getAbsolutePath() + "//" + name + ".bmp");
+            }catch(Exception NoLocationSelectedException){
+                primaryStage.setAlwaysOnTop(false);
+                showAlertWarning("No location has been selected to save the image.");
+                primaryStage.setAlwaysOnTop(true);
+                return;
+            }
+            //Create the file at the location with the name chosen by the user
+            try {
+                //Copy the data from the temporary file and write it in the new file
+                FileInputStream FIS = new FileInputStream(imageBeingDisplayedOnIV.getAbsolutePath());
+                FOS = new FileOutputStream(file);
+                FOS.write(FIS.readAllBytes());
+            } catch (FileNotFoundException ex) {
+                primaryStage.setAlwaysOnTop(false);
+                showAlertWarning("No file is being displayed. Please choose a file.");
+                primaryStage.setAlwaysOnTop(true);
+                return;
+            } catch (IOException ex) {
+                primaryStage.setAlwaysOnTop(false);
+                showAlertWarning("Could not write in the file. Please try again.");
+                primaryStage.setAlwaysOnTop(true);
+                return;
+            }
+        });
+        /**
+         * If the user wants to save the image that is being displayed into the
+         * database, we simply need to read the bytes of the image of the image
+         * view and write them in the database, after having gotten the title
+         * from the user.
+         */
+        btnSaveToDatabase.setOnAction((event) -> {
+            //Make sure that the image is not null
+            if (imageImgView.getImage() != null) {
+                //Copy the file that is being displayed in temp
+                Image imageToSave = imageImgView.getImage();
+                temp = new File(imageToSave.getUrl());
+                try {
+                    //Insert the data in the database
+                    Database.insertRow("Images", "ImagesConvolutions", chooseNameFileDialog(primaryStage), temp);
+                    
+                } catch (FileNotFoundException ex) {
+                    Logger.getLogger(FXMLConvolutionsSceneController.class.getName()).log(Level.SEVERE, null, ex);
+                } catch (IOException ex) {
+                    Logger.getLogger(FXMLConvolutionsSceneController.class.getName()).log(Level.SEVERE, null, ex);
+                } catch (SQLException ex) {
+                    Logger.getLogger(FXMLConvolutionsSceneController.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            } //If the image is null, ask the user to choose an image.
+            else {
+                primaryStage.setAlwaysOnTop(false);
+                showAlertWarning("Please choose an image before saving.");
+                primaryStage.setAlwaysOnTop(true);
+                return;
+            }
+
+        });
+
+        /**
+         * If the user wants to go back to the title menu, we simply have to
+         * switch scenes.
+         */
+        menuItemBackToTitle.setOnAction((event) -> {
+            MainApp.switchScene(MainApp.FXMLTitleScene, new FXMLTitleSceneController(primaryStage));
+
+        });
+
+        /**
+         * The about modal popup
+         */
+        menuItemAboutConvolution.setOnAction((event) -> {
+            openAboutDialog();
+        });
+    }
+
+    /**
+     * This method opens a file chooser and returns the file chosen by the user
+     * This is a method that Loovdrish has implemented last semester for the
+     * project on wave simulation
+     *
+     * @return File file chosen by the user
+     */
+    public File getFileFromFChooser() {
+        Stage stage = new Stage();
+        FileChooser f = new FileChooser();
+        stage.setAlwaysOnTop(true);
+        this.primaryStage.setAlwaysOnTop(false);
+        File file = f.showOpenDialog(stage);
+        stage.close();
+        return file;
+    }
+
+    /**
+     * This method creates a dialog that is responsible of letting the user
+     * choose a name for the file he wants to create. It returns the name of the
+     * file. It creates a new stage which will be used as a window to contain
+     * the text field used to write the name of the file. This is a method that
+     * Loovdrish has implemented last semester for the project on wave
+     * simulation
+     *
+     * @return nameFile, String which corresponds to the name of the file
+     */
+    public static String chooseNameFileDialog(Stage primaryStage){
+        AtomicReference<String> nameFileOut = new AtomicReference<String>();
+        Stage stage = new Stage();
+        // set modal
+        stage.initModality(Modality.APPLICATION_MODAL);
+        stage.initOwner(primaryStage);
+        VBox root = new VBox();
+        Label nameLbl = new Label("Please write the name of your file");
+        TextField nameTxtFld = new TextField("Name");
+        nameTxtFld.setLayoutX(0);
+        Button OkBtn = new Button("OK");
+        OkBtn.setOnAction((event)->{
+            nameFileOut.set(nameTxtFld.getText()); 
+            stage.close();
+        });
+        // add the children
+        root.getChildren().addAll(nameLbl, nameTxtFld, OkBtn);
+        stage.setAlwaysOnTop(true);
+        Scene scene = new Scene(root, 300, 300);
+        stage.setScene(scene);
+        stage.showAndWait();
+        return nameFileOut.get();
+    }
+
+    /**
+     * This method creates a dialog that is responsible of letting the user
+     * anticipate that a File Chooser is about to appear. It creates a new stage
+     * which will be used as a window to contain the message.
+     */
+    public void chooseFileDialog() {
+        Stage stage = new Stage();
+        VBox root = new VBox();
+        Label nameLbl = new Label("Please choose the file you want to convolve");
+        TextField nameTxtFld = new TextField("Name");
+        nameTxtFld.setLayoutX(0);
+        Button GotItBtn = new Button("Got it!");
+        GotItBtn.setOnAction((event) -> {
+            stage.close();
+        });
+        root.getChildren().addAll(nameLbl, GotItBtn);
+        stage.setAlwaysOnTop(true);
+        Scene scene = new Scene(root, 300, 200);
+        stage.setScene(scene);
+        stage.showAndWait();
+    }
+
+    /**
+     * This method creates a dialog that is responsible of letting the user
+     * anticipate that a Directory Chooser is about to appear. It creates a new
+     * stage which will be used as a window to contain the message. This is a
+     * method that Loovdrish has implemented last semester for the project on
+     * wave simulation
+     */
+    public void chooseDirectoryDialog() {
+        Stage stage = new Stage();
+        VBox root = new VBox();
+        Label nameLbl = new Label("Please choose a direcotry in which to save your output file");
+        Button GotItBtn = new Button("Got it!");
+        GotItBtn.setOnAction((event) -> {
+            stage.close();
+        });
+        root.getChildren().addAll(nameLbl, GotItBtn);
+        stage.setAlwaysOnTop(true);
+        Scene scene = new Scene(root, 300, 200);
+        stage.setScene(scene);
+        stage.showAndWait();
+    }
+
+    /**
+     * This method displays an image file onto the image view imageImgView
+     *
+     * @param filePath Source:
+     * https://docs.oracle.com/javase/8/javafx/api/javafx/scene/image/ImageView.html (Oracle, 2015)
+     */
+    public void displayImage(String filePath) {
+        Image img = new Image(filePath);
+        imageImgView.setImage(img);
+        
+        defaultWidth = img.getWidth();
+        defaultHeight = img.getHeight();
+        
+        imageImgView.setFitWidth(defaultWidth*sliderZoom.getValue());
+        imageImgView.setFitHeight(defaultHeight*sliderZoom.getValue());
+    }
+    public static DirectoryChooser getDirectoryChooser(Stage primaryStage){
+        Stage stage = new Stage();
+        stage.initModality(Modality.APPLICATION_MODAL);
+        stage.initOwner(primaryStage);
+        DirectoryChooser dc = new DirectoryChooser();
+        primaryStage.setAlwaysOnTop(false);
+        stage.setAlwaysOnTop(true);
+        dc.setInitialDirectory(dc.showDialog(stage));
+        stage.setAlwaysOnTop(false);
+        primaryStage.setAlwaysOnTop(true);
+        return dc;
+    }
+
+
+    /**
+     * This method deletes everything that is in the temporary file. It is
+     * crucial, because a user may run the program multiple times. Every time
+     * the program closes, assuming the user has chosen some image to convolve,
+     * temp will not be null, which can lead to problems in the logic of the
+     * program.
+     *
+     * @throws FileNotFoundException
+     * @throws IOException
+     */
+    private void initializeTempFile() throws FileNotFoundException, IOException {
+        FileOutputStream FOS = new FileOutputStream(temp);
+        FOS.flush();
+        FOS.close();
+    }
+    /**
+     * This method displays an alert with a message
+     * @param message - String - The message being shown to the user
+     */
+    public void showAlertWarning(String message) {
+        primaryStage.setAlwaysOnTop(false);
+        Alert alert = new Alert(Alert.AlertType.WARNING);
+        alert.setTitle("Information Incorrect or Missing");
+        alert.setContentText(message);
+        alert.showAndWait();
+        primaryStage.setAlwaysOnTop(true);
+    }
+    /**
+     * This method opens the About window.
+     */
+    public void openAboutDialog(){
+        try {
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/ConvolutionsAboutUpdated.fxml"));
+                Pane root = loader.load();
+                Stage stage = new Stage();
+                stage.initModality(Modality.APPLICATION_MODAL);
+                stage.initOwner(primaryStage);
+                Scene scene = new Scene(root);
+                stage.setScene(scene);
+                stage.setAlwaysOnTop(true);
+                stage.setTitle("About Convolutions");
+                stage.show();
+            } catch (IOException ex) {
+                Logger.getLogger(FXMLRenderSceneController.class.getName()).log(Level.SEVERE, null, ex);
+            }
+    }
+    /**
+     * This method shows an alert with the information message shown to the user.
+     * @param message - String - the message shown to the user
+     * @return The alert - Returns itself
+     */
+    public static Alert showAlertInfo(String message) {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("Information");
+        alert.setHeaderText(message);
+        alert.showAndWait();
+        return alert;
+    }
+    /**
+     * If the user returns true, then the user wants to continue. If not, stop all operations.
+     * @param message
+     * @return  Boolean  - Confirmation of the user.
+     */
+    public static boolean showAlertConfirmation(String message) {
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle("Information Incorrect or Missing");
+        alert.setContentText(message);
+        alert.showAndWait();
+        System.out.println(alert.getResult());
+        if(alert.getResult()==ButtonType.OK){
+            return true;
+        }
+        else if(alert.getResult()==ButtonType.CANCEL){
+            return false;
+        }
+        else return false;
+    }
+}
