@@ -4,11 +4,12 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * A Scene for the object to live in 
+ * A Scene for the objects to live in 3d space
+ * 
  * @author William Carbonneau <2265724 at edu.vaniercollege.ca>
  */
 public class RenderScene {
-    // TODO potentially change this to a hashset to only have unique elements and easy deletion
+
     private Map<String, SceneObject> objects;
 
     /**

@@ -42,7 +42,7 @@ import javafx.stage.Stage;
 
 /**
  * The image processing scene
- * used to perform image convolutions and manipulated the database
+ * used to perform image convolutions and manipulate the database
  * 
  * @Loovdrish Sujore
  */

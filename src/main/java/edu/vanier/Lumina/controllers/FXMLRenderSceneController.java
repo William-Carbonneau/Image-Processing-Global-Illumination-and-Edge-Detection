@@ -50,6 +50,7 @@ import javax.imageio.ImageIO;
 
 /**
  * The controller for the rendering scene
+ * It is the main window to interact with the rendering system
  * 
  * @author Zachary Tremblay and William Carbonneau
  */
@@ -99,7 +100,7 @@ public class FXMLRenderSceneController {
     
     /** create the render scene */
     private final RenderScene mainScene = new RenderScene();
-    /** The renderer instance TODO modify width/height */
+    /** The renderer instance with fixed width/height 800 pixels */
     private final RenderWrapper renderer = new RenderWrapper(800, 800, mainScene, 8);
     private int renderEngine = 3;
     private boolean stratified = true;

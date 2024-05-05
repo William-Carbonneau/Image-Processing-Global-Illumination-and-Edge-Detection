@@ -239,7 +239,7 @@ public class RenderWrapper {
     }
     
     /** 
-     * Save the image to a .bmp file 
+     * Save the image to memory - converge the threads
      * 
      * @return int 1 if error. 0 if success
      */
@@ -256,9 +256,6 @@ public class RenderWrapper {
         // create buffered image
         BufferedImage output = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
 
-        String name = "ray";
-        
-        File saveFile = new File(name+".bmp");
         
         for (int i = 0; i < threadCount; i++) {
             
@@ -271,13 +268,7 @@ public class RenderWrapper {
                 }
             }
         }
-        
-        try {
-            ImageIO.write(output, "bmp", saveFile);
-        }catch(IOException e) {
-            e.printStackTrace(); // TODO deal with error
-            return null;
-        }
+
         return output;
     }
 }

@@ -1,14 +1,11 @@
 package edu.vanier.Lumina.rendering;
 
-import org.apache.commons.math3.distribution.UniformRealDistribution;
-import org.apache.commons.math3.random.MersenneTwister;
-
 /**
  * Halton sequence for Quasi Monte Carlo integration.
  * Generates Quasi-random sequence to use a base for the Monte Carlo integration 
  * Halton sequence is generated using a sequence of prime numbers as a base
  * 
- * TODO add credit for Halton algorithm
+ * (Zsolnai-Feh’er, 2018)
  * 
  * @author William Carbonneau <2265724 at edu.vaniercollege.ca>
  */

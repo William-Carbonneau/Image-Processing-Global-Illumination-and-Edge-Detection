@@ -25,6 +25,12 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
+/**
+ * This class is the controller for the database viewer popup window
+ * It can modify and read the database
+ * 
+ * @author Looovdrish Sujore
+ */
 public class FXMLDatabaseViewer {
     /**
      * This refers to the image that was being displayed on the main image view of the main window, before that window was opened.
@@ -107,7 +113,7 @@ public class FXMLDatabaseViewer {
     }
 
     /**
-     * TODO
+     * Return the image passed into the class
      * @return 
      */
     public byte[] getPassedImage() {

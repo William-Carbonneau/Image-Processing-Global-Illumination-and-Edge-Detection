@@ -4,7 +4,7 @@ package edu.vanier.Lumina.rendering;
  * Superclass for all objects in the 3D scene.
  * Objects in the scene have properties such as color, emission, and type (diffuse, specular, refractive).
  * All objects should be intersectable and able to compute their surface normals.
- * TODO docs
+ *
  * @author William Carbonneau
  */
 public abstract class SceneObject {
@@ -19,7 +19,7 @@ public abstract class SceneObject {
     public int type;
     
     /** The refractive index for Snell's law, for refractive objects (type 3)*/
-    public double refractiveIndex; // TODO modify for refractive index per object likely this line: double rIndex = parameterList.get("refractiveIndex");
+    public double refractiveIndex;
 
     /** Distance to origin used by Plane */
     public double distanceOrigin = 0;

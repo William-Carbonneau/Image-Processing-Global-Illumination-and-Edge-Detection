@@ -4,6 +4,7 @@ package edu.vanier.Lumina.rendering;
  * Represents the color of a diffuse material.
  * This class stores the red, green, and blue components of the color.
  * These components should be 0-255
+ * 
  * @author William Carbonneau
  */
 public class DiffuseColor {
