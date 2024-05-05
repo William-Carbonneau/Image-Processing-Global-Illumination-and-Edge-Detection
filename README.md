@@ -1,4 +1,4 @@
-# Image Processing Global Illumination and Edge Detection
+# Lumina - Image Processing, Global Illumination, and Edge Detection
 
 ## Description:  
 A project for "Integrative Project in Computer Science", focusing in 3D rendering using global illumination and image processing by convolutions and edge detection.
