@@ -1,6 +1,7 @@
 package edu.vanier.Lumina.models;
 
 import edu.vanier.Lumina.rendering.Intersection;
+
 import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -14,6 +15,12 @@ import javax.imageio.ImageIO;
  * This source was used to understand what is a convolution, what is a kernel, and how do they go hand in hand: https://youtu.be/C_zFhWdM4ic?si=nDnBCiZYqUB04SMO (Pound, 2015)
  */
 public class Convolution {
+    public static int partialHeight = Integer.MAX_VALUE;
+    
+    public static int partialWidth = Integer.MAX_VALUE;
+    
+    
+    
     /**
      * This method finds the biggest value in an array
      * @param array
@@ -124,23 +131,42 @@ public class Convolution {
      * https://web.stanford.edu/class/cs101/image-6-grayscale-adva.html (Standor.edu, Image-6 grayscale)
      */
     public static void performGrayscale(String filePathIn, String filePathOut) throws IOException {
-        BufferedImage BI = createBI(filePathIn);
-        BufferedImage finalImage = new BufferedImage(BI.getWidth(), BI.getHeight(), BufferedImage.TYPE_BYTE_GRAY);
+        BufferedImage original = createBI(filePathIn);
+        BufferedImage finalImage = new BufferedImage(original.getWidth(), original.getHeight(), BufferedImage.TYPE_INT_RGB);
         //Initialize the values of r, g, and b
         float r;
         float g;
         float b;
         float avg;
+        //int maxWidth = partialWidth;
+        //int maxHeight = partialHeight;
+        
         Color color;
-        for (int w = 0; w < BI.getWidth(); w++) {
-            for (int h = 0; h < BI.getHeight(); h++) {
-                color = new Color(BI.getRGB(w, h));
+//        if (partialWidth > original.getWidth()) {
+//            maxWidth = original.getWidth();
+//        }
+//        if (partialHeight > original.getHeight()) {
+//            maxHeight = original.getHeight();
+//        }
+        
+        
+        for (int w = 0; w < original.getWidth(); w++) {
+            for (int h = 0; h < original.getHeight() ; h++) {
+                color = new Color(original.getRGB(w, h));
                 r = color.getRed();
                 g = color.getGreen();
                 b = color.getBlue();
                 avg = (r + g + b) / 3;
                 color = new Color(avg / 255, avg / 255, avg / 255);
-                finalImage.setRGB(w, h, color.getRGB());
+                //Check for partial convolution
+                //Only input convolution on the specfied part of the image
+                if ((partialWidth > w && partialHeight > h)) {
+                    finalImage.setRGB(w, h, color.getRGB());
+                    
+                } else {
+                    finalImage.setRGB(w, h, original.getRGB(w, h));
+                }
+                
             }
         }
         File file = new File(filePathOut);
@@ -172,7 +198,7 @@ public class Convolution {
         float[][] g = new float[BI.getWidth()][BI.getHeight()];
         //Initialize the values of g
         Color color;
-        //The values of a geayscale image are uniform, meaning that the values for red, blue, and green are all the same
+        //The values of a grayscale image are uniform, meaning that the values for red, blue, and green are all the same
         // Therefore, we can take any one of these three to initialize the array g (g)
         for (int w = 0; w < BI.getWidth(); w++) {
             for (int h = 0; h < BI.getHeight(); h++) {
