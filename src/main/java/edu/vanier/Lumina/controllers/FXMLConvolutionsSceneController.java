@@ -435,8 +435,20 @@ public class FXMLConvolutionsSceneController {
                     // Sobel X component grayscaled convolution
                     //With Sobel we need to apply a gaussian filter and grayscale it first, then we can apply Sobel on the image.
                     try {
+                        int tempHeight = 0;
+                        int tempWidth = 0;
+                        //Save value of partial hieght and width
+                        Convolution.partialHeight = tempHeight;
+                        Convolution.partialWidth = tempWidth;
+                        //Change partial value to max to ignore partial convolution in preliminary steps
+                        Convolution.partialHeight = Integer.MAX_VALUE;
+                        Convolution.partialWidth = Integer.MAX_VALUE;
+                        
                         Convolution.performConvolution(this.imageBeingDisplayedOnIV.getAbsolutePath(), this.imageBeingDisplayedOnIV.getAbsolutePath(), rulesGaussian7x7);
                         Convolution.performGrayscale(this.imageBeingDisplayedOnIV.getAbsolutePath(), this.imageBeingDisplayedOnIV.getAbsolutePath());
+                        //change partial height and width back to original values
+                        Convolution.partialHeight = tempHeight;
+                        Convolution.partialWidth = tempWidth;
                         //The for-loop is used to repeat the convolution as many times as the user has specified, given that the number specified is valid.
                         for(int i=0;i<iterations;i++)
                         Convolution.performSobelX(this.imageBeingDisplayedOnIV.getAbsolutePath(), this.imageBeingDisplayedOnIV.getAbsolutePath());
@@ -453,8 +465,20 @@ public class FXMLConvolutionsSceneController {
                     // Sobel Y component grayscaled convolution
                     //With Sobel we need to apply a gaussian filter and grayscale it first, then we can apply Sobel on the image.
                     try {
+                        int tempHeight = 0;
+                        int tempWidth = 0;
+                        //Save value of partial hieght and width
+                        Convolution.partialHeight = tempHeight;
+                        Convolution.partialWidth = tempWidth;
+                        //Change partial value to max to ignore partial convolution in preliminary steps
+                        Convolution.partialHeight = Integer.MAX_VALUE;
+                        Convolution.partialWidth = Integer.MAX_VALUE;
+                        
                         Convolution.performConvolution(this.imageBeingDisplayedOnIV.getAbsolutePath(), this.imageBeingDisplayedOnIV.getAbsolutePath(), rulesGaussian7x7);
                         Convolution.performGrayscale(this.imageBeingDisplayedOnIV.getAbsolutePath(), this.imageBeingDisplayedOnIV.getAbsolutePath());
+                        //change partial height and width back to original values
+                        Convolution.partialHeight = tempHeight;
+                        Convolution.partialWidth = tempWidth;
                         //The for-loop is used to repeat the convolution as many times as the user has specified, given that the number specified is valid.
                         for(int i=0;i<iterations;i++)
                         Convolution.performSobelY(this.imageBeingDisplayedOnIV.getAbsolutePath(), this.imageBeingDisplayedOnIV.getAbsolutePath());
@@ -471,8 +495,21 @@ public class FXMLConvolutionsSceneController {
                     // Sobel X-Y converged grayscaled convolution
                     //With Sobel we need to apply a gaussian filter and grayscale it first, then we can apply Sobel on the image.
                     try {
+                        
+                        int tempHeight = 0;
+                        int tempWidth = 0;
+                        //Save value of partial hieght and width
+                        Convolution.partialHeight = tempHeight;
+                        Convolution.partialWidth = tempWidth;
+                        //Change partial value to max to ignore partial convolution in preliminary steps
+                        Convolution.partialHeight = Integer.MAX_VALUE;
+                        Convolution.partialWidth = Integer.MAX_VALUE;
+                        
                         Convolution.performConvolution(this.imageBeingDisplayedOnIV.getAbsolutePath(), this.imageBeingDisplayedOnIV.getAbsolutePath(), rulesGaussian7x7);
                         Convolution.performGrayscale(this.imageBeingDisplayedOnIV.getAbsolutePath(), this.imageBeingDisplayedOnIV.getAbsolutePath());
+                        //change partial height and width back to original values
+                        Convolution.partialHeight = tempHeight;
+                        Convolution.partialWidth = tempWidth;
                         //The for-loop is used to repeat the convolution as many times as the user has specified, given that the number specified is valid.
                         for(int i=0;i<iterations;i++)
                         Convolution.performSobel(this.imageBeingDisplayedOnIV.getAbsolutePath(), this.imageBeingDisplayedOnIV.getAbsolutePath());
@@ -499,9 +536,21 @@ public class FXMLConvolutionsSceneController {
                                 threshold = defaultThreshold;
                             }
                         }
+                        int tempHeight = 0;
+                        int tempWidth = 0;
+                        //Save value of partial hieght and width
+                        Convolution.partialHeight = tempHeight;
+                        Convolution.partialWidth = tempWidth;
+                        //Change partial value to max to ignore partial convolution in preliminary steps
+                        Convolution.partialHeight = Integer.MAX_VALUE;
+                        Convolution.partialWidth = Integer.MAX_VALUE;
+                        
                         //Like Sobel, the image to be blurred and grayscaled first
                         Convolution.performConvolution(this.imageBeingDisplayedOnIV.getAbsolutePath(), this.imageBeingDisplayedOnIV.getAbsolutePath(), rulesGaussian7x7);
                         Convolution.performGrayscale(this.imageBeingDisplayedOnIV.getAbsolutePath(), this.imageBeingDisplayedOnIV.getAbsolutePath());
+                        //change partial height and width back to original values
+                        Convolution.partialHeight = tempHeight;
+                        Convolution.partialWidth = tempWidth;
                         //The for-loop is used to repeat the convolution as many times as the user has specified, given that the number specified is valid.
                         for(int i=0;i<iterations;i++) {
                             Convolution.performPrewitt(this.imageBeingDisplayedOnIV.getAbsolutePath(), this.imageBeingDisplayedOnIV.getAbsolutePath(), threshold);
@@ -535,8 +584,20 @@ public class FXMLConvolutionsSceneController {
                     else if(choice.equals("Laplacian3x3")){
                         // Laplacian convolution - This is the 3x3 kernel version. It uses, like Sobel, a blur and a grayscale filter before being performed
                     try {
+                        int tempHeight = 0;
+                        int tempWidth = 0;
+                        //Save value of partial hieght and width
+                        Convolution.partialHeight = tempHeight;
+                        Convolution.partialWidth = tempWidth;
+                        //Change partial value to max to ignore partial convolution in preliminary steps
+                        Convolution.partialHeight = Integer.MAX_VALUE;
+                        Convolution.partialWidth = Integer.MAX_VALUE;
+                        
                         Convolution.performConvolution(this.imageBeingDisplayedOnIV.getAbsolutePath(), this.imageBeingDisplayedOnIV.getAbsolutePath(), rulesGaussian7x7);
                         Convolution.performGrayscale(this.imageBeingDisplayedOnIV.getAbsolutePath(), this.imageBeingDisplayedOnIV.getAbsolutePath());
+                        //change partial height and width back to original values
+                        Convolution.partialHeight = tempHeight;
+                        Convolution.partialWidth = tempWidth;
                         //The for-loop is used to repeat the convolution as many times as the user has specified, given that the number specified is valid.
                         for(int i=0;i<iterations;i++)
                         Convolution.performLaplacianOperator3x3(this.imageBeingDisplayedOnIV.getAbsolutePath(), this.imageBeingDisplayedOnIV.getAbsolutePath());
@@ -554,7 +615,19 @@ public class FXMLConvolutionsSceneController {
                     else if (choice.equals("Laplacian9x9")) {
                     //Laplacian convolution - This is the 9x9 kernel version. It uses, like Sobel, a grayscale filter before being performed. However, it does not need a blurring filter first.
                     try {
+                        int tempHeight = 0;
+                        int tempWidth = 0;
+                        //Save value of partial hieght and width
+                        Convolution.partialHeight = tempHeight;
+                        Convolution.partialWidth = tempWidth;
+                        //Change partial value to max to ignore partial convolution in preliminary steps
+                        Convolution.partialHeight = Integer.MAX_VALUE;
+                        Convolution.partialWidth = Integer.MAX_VALUE;
+                        
                         Convolution.performGrayscale(this.imageBeingDisplayedOnIV.getAbsolutePath(), this.imageBeingDisplayedOnIV.getAbsolutePath());
+                        //change partial height and width back to original values
+                        Convolution.partialHeight = tempHeight;
+                        Convolution.partialWidth = tempWidth;
                         //The for-loop is used to repeat the convolution as many times as the user has specified, given that the number specified is valid.
                         for(int i=0;i<iterations;i++)
                         Convolution.performLaplacianOperator9x9(this.imageBeingDisplayedOnIV.getAbsolutePath(), this.imageBeingDisplayedOnIV.getAbsolutePath());
@@ -611,8 +684,20 @@ public class FXMLConvolutionsSceneController {
                     // Do sobel converged with grascale then color the edge angles
                     //With Sobel we need to apply a gaussian filter and grayscale it first, then we can apply Sobel on the image.
                     try {
+                        int tempHeight = 0;
+                        int tempWidth = 0;
+                        //Save value of partial hieght and width
+                        Convolution.partialHeight = tempHeight;
+                        Convolution.partialWidth = tempWidth;
+                        //Change partial value to max to ignore partial convolution in preliminary steps
+                        Convolution.partialHeight = Integer.MAX_VALUE;
+                        Convolution.partialWidth = Integer.MAX_VALUE;
+                        
                         Convolution.performConvolution(this.imageBeingDisplayedOnIV.getAbsolutePath(), this.imageBeingDisplayedOnIV.getAbsolutePath(), rulesGaussian7x7);
                         Convolution.performGrayscale(this.imageBeingDisplayedOnIV.getAbsolutePath(), this.imageBeingDisplayedOnIV.getAbsolutePath());
+                        //change partial height and width back to original values
+                        Convolution.partialHeight = tempHeight;
+                        Convolution.partialWidth = tempWidth;
                         //The for-loop is used to repeat the convolution as many times as the user has specified, given that the number specified is valid.
                         for(int i=0;i<iterations;i++)
                         Convolution.performEdgeAngles(this.imageBeingDisplayedOnIV.getAbsolutePath(), this.imageBeingDisplayedOnIV.getAbsolutePath());
@@ -629,8 +714,20 @@ public class FXMLConvolutionsSceneController {
                 else if (choice.equals("Sobel Colored")){
                     // Sobel converged non-grayscale convolution
                     try {
+                        int tempHeight = 0;
+                        int tempWidth = 0;
+                        //Save value of partial hieght and width
+                        Convolution.partialHeight = tempHeight;
+                        Convolution.partialWidth = tempWidth;
+                        //Change partial value to max to ignore partial convolution in preliminary steps
+                        Convolution.partialHeight = Integer.MAX_VALUE;
+                        Convolution.partialWidth = Integer.MAX_VALUE;
+                        
                         //With Sobel we need to apply a gaussian filter, then we can apply Sobel on the image. We do not grayscale it, because the sobel will be done for all red, green and blue values.
                         Convolution.performConvolution(this.imageBeingDisplayedOnIV.getAbsolutePath(), this.imageBeingDisplayedOnIV.getAbsolutePath(), rulesGaussian7x7);
+                        //change partial height and width back to original values
+                        Convolution.partialHeight = tempHeight;
+                        Convolution.partialWidth = tempWidth;
                         //The for-loop is used to repeat the convolution as many times as the user has specified, given that the number specified is valid.
                         for(int i=0;i<iterations;i++)
                         Convolution.performSobelColored(this.imageBeingDisplayedOnIV.getAbsolutePath(), this.imageBeingDisplayedOnIV.getAbsolutePath());
