@@ -22,9 +22,9 @@ public class Convolution {
     
     
     /**
-     * This method finds the biggest value in an array
+     * This method finds the biggest value (absolute value) in an array
      * @param array
-     * @return 
+     * @return the biggest value
      */
     private static float findBiggestValue(float[][] array) {
         float max = 0;
@@ -38,15 +38,11 @@ public class Convolution {
         return max;
         
     }
-    // Source for the kernel to implement: https://youtu.be/C_zFhWdM4ic?si=CH3JvuO9mSfVmleJ (Pound, 2015)
-    private static final float[][] rulesGaussian = {{1, 2, 1}, {2, 4, 2}, {1, 2, 1}};
-    //Source for the kernel to implement: https://pro.arcgis.com/en/pro-app/latest/help/analysis/raster-functions/convolution-function.htm#:~:text=The%20Convolution%20function%20performs%20filtering,or%20other%20kernel%2Dbased%20enhancements. (Esri)
-    private static final float[][] rulesSharp1 = {{0f, -1f, 0f}, {-1f, 5f, -1f}, {0f, -1f, 0f}};
 
     /**
      * This method prints a 1-D array
      *
-     * @param array
+     * @param array - the array to be printed
      */
     public static void print1DArray(int[] array) {
         System.out.print("[");
@@ -59,7 +55,7 @@ public class Convolution {
     /**
      * This method prints a 2-D array
      *
-     * @param array
+     * @param array - the array to be printed
      */
     public static void print2DArray(float[][] array) {
         for (int i = 0; i < array.length; i++) {
@@ -72,42 +68,15 @@ public class Convolution {
         System.out.println();
     }
 
-    /**
-     * This method prints a 2-d array
-     */
-    public static void print2DArray(byte[][] array) {
-        for (int i = 0; i < array[0].length; i++) {
-            System.out.print("[");
-            for (int j = 0; j < array.length; j++) {
-                System.out.print(array[j][i] + " ");
-            }
-            System.out.println("]");
-        }
-        System.out.println();
-    }
-
-    /**
-     * This method prints a 2-d array
-     */
-    public static void print2DArray(int[][] array) {
-        for (int i = 0; i < array.length; i++) {
-            System.out.print("[");
-            for (int j = 0; j < array[0].length; j++) {
-                System.out.print(array[i][j] + " ");
-            }
-            System.out.println("]");
-        }
-        System.out.println();
-    }
 
     /**
      * This function takes a 1-dimensional array and converts it to a
      * 2-dimensional array
      *
-     * @param arrayIn
-     * @param width
-     * @param height
-     * @return
+     * @param arrayIn - The array input to be converted
+     * @param width - The width of the output array
+     * @param height - The height of the output array
+     * @return The 2-d array
      */
     public static int[][] trans1DTo2D(int[] arrayIn, int width, int height) {
         int[][] arrayOut = new int[height][width];
