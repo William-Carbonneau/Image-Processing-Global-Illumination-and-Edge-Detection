@@ -1,9 +1,5 @@
 package edu.vanier.Lumina.controllers;
 
-
-import edu.vanier.global_illumination_image_processing.MainApp;
-import edu.vanier.global_illumination_image_processing.models.Convolution;
-
 import edu.vanier.Lumina.MainApp;
 
 import javafx.fxml.FXML;

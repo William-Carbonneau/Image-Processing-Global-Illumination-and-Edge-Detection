@@ -1,9 +1,5 @@
 package edu.vanier.Lumina.models;
 
-
-import edu.vanier.global_illumination_image_processing.controllers.FXMLConvolutionsSceneController;
-import edu.vanier.global_illumination_image_processing.rendering.Intersection;
-
 import edu.vanier.Lumina.rendering.Intersection;
 
 import java.awt.Color;
