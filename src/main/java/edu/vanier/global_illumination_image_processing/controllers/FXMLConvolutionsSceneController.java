@@ -133,7 +133,7 @@ public class FXMLConvolutionsSceneController {
     /**
      * FileOutputStream used throughout this controller to write byte[] into an
      * image. This is necessary whenever we use databases, since we are
-     * represinting these images in the form of bytes in the database,
+     * representing these images in the form of bytes in the database,
      */
     FileOutputStream FOS;
     /**
@@ -145,25 +145,47 @@ public class FXMLConvolutionsSceneController {
      * Threshold value when performing certain convolutions.
      */
     float threshold;
-    // Source for the kernel to implement: https://youtu.be/C_zFhWdM4ic?si=CH3JvuO9mSfVmleJ (Pound, 2015)
-    float[][] rulesGaussian3x3 = {{1, 2, 1}, {2, 4, 2}, {1, 2, 1}};
-    //Taken from https://www.researchgate.net/figure/Discrete-approximation-of-the-Gaussian-kernels-3x3-5x5-7x7_fig2_325768087 (Shipitko)
-    float[][] rulesGaussian5x5 = {{1, 4, 7, 4, 1}, {4, 16, 26, 16, 4}, {7, 26, 41, 26, 7}, {4, 16, 26, 16, 4}, {1, 4, 7, 4, 1}};
-    //Taken from https://www.researchgate.net/figure/Discrete-approximation-of-the-Gaussian-kernels-3x3-5x5-7x7_fig2_325768087 (Shipitko)
-    float[][] rulesGaussian7x7 = {{0, 0, 1, 2, 1, 0, 0}, {0, 3, 13, 22, 13, 3, 0}, {1, 13, 59, 97, 59, 13, 1}, {2, 22, 97, 159, 97, 22, 2}, {1, 13, 59, 97, 59, 13, 1}, {0, 3, 13, 22, 13, 3, 0}, {0, 0, 1, 2, 1, 0, 0}};
-    //Source for the kernel to implement: https://pro.arcgis.com/en/pro-app/latest/help/analysis/raster-functions/convolution-function.htm#:~:text=The%20Convolution%20function%20performs%20filtering,or%20other%20kernel%2Dbased%20enhancements. (Esri)
-    float[][] rulesSharp1 = {{0f, -1f, 0f}, {-1f, 5f, -1f}, {0f, -1f, 0f}};
-    //Source for the kernel: https://en.wikipedia.org/wiki/Sobel_operator (Sobel operator, 2024)
-    float[][] rulesSobelY = {{-1, 0, 1},
-    {-2, 0, 2},
-    {-1, 0, 1}};
-    //Source for the kernel: https://en.wikipedia.org/wiki/Sobel_operator (Sobel operator, 2024)
-    float[][] rulesSobelX = {{-1, -2, -1},
-    {0, 0, 0},
-    {1, 2, 1}};
+    /**
+     * Kernel for the 3x3 Gaussian Convolution:
+     * Taken from: https://youtu.be/C_zFhWdM4ic?si=CH3JvuO9mSfVmleJ (Pound, 2015)
+     */
+    float[][] rulesGaussian3x3 = {
+        {1, 2, 1}, 
+        {2, 4, 2}, 
+        {1, 2, 1}};
+    /**
+     * Kernel for the 5x5 Gaussian Convolution:
+     * Taken from: https://www.researchgate.net/figure/Discrete-approximation-of-the-Gaussian-kernels-3x3-5x5-7x7_fig2_325768087 (Shipitko)
+     */
+    float[][] rulesGaussian5x5 = {
+        {1,  4,  7,  4, 1}, 
+        {4, 16, 26, 16, 4}, 
+        {7, 26, 41, 26, 7}, 
+        {4, 16, 26, 16, 4}, 
+        {1,  4,  7,  4, 1}};
+    /**
+     * Kernel for the 7x7 Gaussian Convolution:
+     * Taken from: https://www.researchgate.net/figure/Discrete-approximation-of-the-Gaussian-kernels-3x3-5x5-7x7_fig2_325768087 (Shipitko)
+     */
+    float[][] rulesGaussian7x7 = {
+        {0,  0,  1,   2,  1,  0, 0}, 
+        {0,  3, 13,  22, 13,  3, 0}, 
+        {1, 13, 59,  97, 59, 13, 1}, 
+        {2, 22, 97, 159, 97, 22, 2}, 
+        {1, 13, 59,  97, 59, 13, 1}, 
+        {0,  3, 13,  22, 13,  3, 0}, 
+        {0,  0,  1,   2,  1,  0, 0}};
+    /**
+     * Kernel for the Sharpening Algorithm:
+     * Taken from: https://pro.arcgis.com/en/pro-app/latest/help/analysis/raster-functions/convolution-function.htm#:~:text=The%20Convolution%20function%20performs%20filtering,or%20other%20kernel%2Dbased%20enhancements. (Esri)
+     */
+    float[][] rulesSharp1 = {
+        {-0.25f, -0.25f, -0.25f}, 
+        {-0.25f,  3.00f, -0.25f}, 
+        {-0.25f, -0.25f, -0.25f}};
     
     /**
-     * main window being used to interact with the user. We will need to access
+     * main window being used to interact with the user. We will need to access it
      * when we need to open new windows that will take priority over the primary
      * one.
      */
@@ -177,23 +199,12 @@ public class FXMLConvolutionsSceneController {
      */
     float[][] kernelWithMoreDimensions;
     /**
-     * Image views loaded from the database
+     * default width used with the Zoom functionality
      */
-    ArrayList<ImageView> imvs = new ArrayList<>();
-    /**
-     * Titles of images loaded from the database.
-     */
-    ArrayList<String> titles = new ArrayList<>();
-    /**
-     * byte[] representing the data of each image loaded from the database
-     */
-    ArrayList<byte[]> bs = new ArrayList<>();
-    /**
-     * ImageView that is clicked by the user in the database viewer.
-     */
-    ImageView iv;
-    
     Double defaultWidth = 800.0;
+    /**
+     * default height used with the Zoom functionality
+     */
     Double defaultHeight = 800.0;
 
     /**
@@ -207,10 +218,11 @@ public class FXMLConvolutionsSceneController {
 
     }
     /**
-     * This method verifies if a method is of type .bmp or not
+     * This method verifies if a method is of type .bmp, jpg. or neither.
+     * That is necessary because we are limiting the program's compatibility to only these 2 formats.
      * 
      * @param file - The input file
-     * @return boolean corresponding to whether the file is of type .bmp or not
+     * @return boolean corresponding to whether the file is of type .bmp (true) or .jpg (true), or neither (false)
      */
     public boolean verifyImageFormat(File file){
         String path = file.getAbsolutePath();
@@ -225,26 +237,6 @@ public class FXMLConvolutionsSceneController {
             return false;
         }
     }
-    /**
-     * This method converts an array of textfields into one of float
-     * corresponding to the values that are inserted in the textfields
-     *
-     * @param txtRules - The values of the kernel at each index
-     * @return custom kernel [][] in the type of float[][]
-     */
-    public float[][] getCustomKernelFloat(TextField[][] txtRules) {
-        float[][] rulesCustom = new float[3][3];
-        for (int i = 0; i < txtRules.length; i++) {
-            for (int j = 0; j < txtRules[0].length; j++) {
-                try {
-                    rulesCustom[i][j] = Float.valueOf(txtRules[i][j].getText());
-                } catch (Exception e) {
-                    rulesCustom[i][j] = 0f;
-                }
-            }
-        }
-        return rulesCustom;
-    }
 
     /**
      * initialization method of the FXML
@@ -255,9 +247,10 @@ public class FXMLConvolutionsSceneController {
     public void initialize() throws IOException {
         //Need to erase the content in the temp file, if content is present.
         initializeTempFile();
+        //When a user will use the Iterations function to specify the number of times he wants to convolve an image, the text formatter will make sure that only valid numerical input are written
         txtIterations.setTextFormatter(new TextFormatter <> (input -> input.getControlNewText().matches(textFormatterIntegerRegex) ? input : null));
         //Initialize the choices in the choice box
-        choiceBoxConvolution.getItems().addAll("Custom Kernel", "Gaussian Blur 3x3", "Gaussian Blur 5x5", "Gaussian Blur 7x7", "Sharpening", "Grayscale", "Sobel X", "Sobel Y", "Sobel Classic","Sobel Colored", "Prewitt","Prewitt - Pure", "Laplacian", "Colored Edge Angles");
+        choiceBoxConvolution.getItems().addAll("Custom Kernel", "Gaussian Blur 3x3", "Gaussian Blur 5x5", "Gaussian Blur 7x7", "Sharpening", "Grayscale", "Sobel X", "Sobel Y", "Sobel Classic","Sobel Colored", "Prewitt","Prewitt - Pure", "Laplacian3x3","Laplacian9x9", "Colored Edge Angles");
         
         // bind image holder to center it using double binding to get value of viewport dimensions as function of viewport modified
         stackImageHolder.minHeightProperty().bind(Bindings.createDoubleBinding(() -> 
@@ -274,18 +267,16 @@ public class FXMLConvolutionsSceneController {
             //Set the variable to true if a selection has been made
             if (choiceBoxConvolution.getValue() != null) {
                 choice = choiceBoxConvolution.getValue().toString();
-                System.out.println(choice + " selected");
                 convolutionIsSelected = true;
             } //If not, show an alert to the user
             else {
-                System.out.println("No choice selected");
                 //Show message to user to choose a convolution
                 primaryStage.setAlwaysOnTop(false);
                 showAlertWarning("Please choose a convolution from the choice box");
                 primaryStage.setAlwaysOnTop(true);
                 return;
             }
-            //Image: Check if a choice has been made
+            //Image: Check if an image has been selected. If selected, it will be displayed on the main image view.
             boolean imageIsSelected = false;
             Image image = imageImgView.getImage();
             if (image != null) {
@@ -303,10 +294,13 @@ public class FXMLConvolutionsSceneController {
                 //Verify the iterationsTxtField to see of the user wants to repeat a convolution multiple times in a row
                 int iterations = 1;
                 try{
+                    //Get the integer from the textfield
                     iterations = Integer.parseInt(txtIterations.getText());
+                    //If the number is equal to or smaller than 0, set to 1
                     if(iterations<=0) iterations=1;
                 }
                 catch(Exception notAnInt){
+                    //If the number is invalid, simply set to 1
                     iterations=  1;
                 }
                 //Set the choice value from the choicebox
@@ -316,101 +310,137 @@ public class FXMLConvolutionsSceneController {
                 if (choice.equals("Gaussian Blur 3x3")) {
                     // 3x3 gausian convolution
                     try {
+                        //The for-loop is used to repeat the convolution as many times as the user has specified, given that the number specified is valid.
                         for(int i=0;i<iterations;i++)
                         Convolution.performConvolution(this.imageBeingDisplayedOnIV.getAbsolutePath(), this.imageBeingDisplayedOnIV.getAbsolutePath(), rulesGaussian3x3);
+                        //Display the image on the Image View after it is completed
                         displayImage(this.imageBeingDisplayedOnIV.getAbsolutePath());
                         
                     } catch (IOException | NullPointerException ex) {
+                        //If the convolution did not work, inform the user with an alert
                         primaryStage.setAlwaysOnTop(false);
                         showAlertWarning("The " + choice + " convolution did not work. Please try again.");
                         primaryStage.setAlwaysOnTop(true);
+                        return;
                     }
                 } else if (choice.equals("Gaussian Blur 5x5")) {
                     // 5x5 gausian convolution
                     try {
+                        //The for-loop is used to repeat the convolution as many times as the user has specified, given that the number specified is valid.
                         for(int i=0;i<iterations;i++)
                         Convolution.performConvolution(this.imageBeingDisplayedOnIV.getAbsolutePath(), this.imageBeingDisplayedOnIV.getAbsolutePath(), rulesGaussian5x5);
+                        //Display the image on the Image View after it is completed
                         displayImage(this.imageBeingDisplayedOnIV.getAbsolutePath());
                         
                     } catch (IOException | NullPointerException ex) {
+                        //If the convolution did not work, inform the user with an alert
                         primaryStage.setAlwaysOnTop(false);
                         showAlertWarning("The " + choice + " convolution did not work. Please try again.");
                         primaryStage.setAlwaysOnTop(true);
+                        return;
                     }
                 } else if (choice.equals("Gaussian Blur 7x7")) {
                     // 7x7 gausian convolution
                     try {
+                        //The for-loop is used to repeat the convolution as many times as the user has specified, given that the number specified is valid.
                         for(int i=0;i<iterations;i++)
                         Convolution.performConvolution(this.imageBeingDisplayedOnIV.getAbsolutePath(), this.imageBeingDisplayedOnIV.getAbsolutePath(), rulesGaussian7x7);
+                        //Display the image on the Image View after it is completed
                         displayImage(this.imageBeingDisplayedOnIV.getAbsolutePath());
                     } catch (IOException | NullPointerException ex) {
+                        //If the convolution did not work, inform the user with an alert
                         primaryStage.setAlwaysOnTop(false);
                         showAlertWarning("The " + choice + " convolution did not work. Please try again.");
                         primaryStage.setAlwaysOnTop(true);
+                        return;
                     }
                 } else if (choice.equals("Sharpening")) {
                     // Sharpening convolution
                     try {
+                        //The for-loop is used to repeat the convolution as many times as the user has specified, given that the number specified is valid.
                         for(int i=0;i<iterations;i++)
                         Convolution.performConvolution(this.imageBeingDisplayedOnIV.getAbsolutePath(), this.imageBeingDisplayedOnIV.getAbsolutePath(), rulesSharp1);
+                        //Display the image on the Image View after it is completed
                         displayImage(this.imageBeingDisplayedOnIV.getAbsolutePath());
                     } catch (IOException | NullPointerException ex) {
+                        //If the convolution did not work, inform the user with an alert
                         primaryStage.setAlwaysOnTop(false);
                         showAlertWarning("The " + choice + " convolution did not work. Please try again.");
                         primaryStage.setAlwaysOnTop(true);
+                        return;
                     }
                 } else if (choice.equals("Grayscale")) {
                     // Grayscale convolution convolution
                     try {
+                        //The for-loop is used to repeat the convolution as many times as the user has specified, given that the number specified is valid.
                         for(int i=0;i<iterations;i++)
                         Convolution.performGrayscale(this.imageBeingDisplayedOnIV.getAbsolutePath(), this.imageBeingDisplayedOnIV.getAbsolutePath());
+                        //Display the image on the Image View after it is completed
                         displayImage(this.imageBeingDisplayedOnIV.getAbsolutePath());
                     } catch (IOException | NullPointerException ex) {
+                        //If the convolution did not work, inform the user with an alert
                         primaryStage.setAlwaysOnTop(false);
                         showAlertWarning("The " + choice + " convolution did not work. Please try again.");
                         primaryStage.setAlwaysOnTop(true);
+                        return;
                     }
                 } else if (choice.equals("Sobel X")) {
                     // Sobel X component grayscaled convolution
+                    //With Sobel we need to apply a gaussian filter and grayscale it first, then we can apply Sobel on the image.
                     try {
                         Convolution.performConvolution(this.imageBeingDisplayedOnIV.getAbsolutePath(), this.imageBeingDisplayedOnIV.getAbsolutePath(), rulesGaussian7x7);
                         Convolution.performGrayscale(this.imageBeingDisplayedOnIV.getAbsolutePath(), this.imageBeingDisplayedOnIV.getAbsolutePath());
+                        //The for-loop is used to repeat the convolution as many times as the user has specified, given that the number specified is valid.
                         for(int i=0;i<iterations;i++)
                         Convolution.performSobelX(this.imageBeingDisplayedOnIV.getAbsolutePath(), this.imageBeingDisplayedOnIV.getAbsolutePath());
+                        //Display the image on the Image View after it is completed
                         displayImage(this.imageBeingDisplayedOnIV.getAbsolutePath());
                     } catch (IOException | NullPointerException ex) {
+                        //If the convolution did not work, inform the user with an alert
                         primaryStage.setAlwaysOnTop(false);
                         showAlertWarning("The " + choice + " convolution did not work. Please try again.");
                         primaryStage.setAlwaysOnTop(true);
+                        return;
                     }
                 } else if (choice.equals("Sobel Y")) {
                     // Sobel Y component grayscaled convolution
+                    //With Sobel we need to apply a gaussian filter and grayscale it first, then we can apply Sobel on the image.
                     try {
                         Convolution.performConvolution(this.imageBeingDisplayedOnIV.getAbsolutePath(), this.imageBeingDisplayedOnIV.getAbsolutePath(), rulesGaussian7x7);
                         Convolution.performGrayscale(this.imageBeingDisplayedOnIV.getAbsolutePath(), this.imageBeingDisplayedOnIV.getAbsolutePath());
+                        //The for-loop is used to repeat the convolution as many times as the user has specified, given that the number specified is valid.
                         for(int i=0;i<iterations;i++)
                         Convolution.performSobelY(this.imageBeingDisplayedOnIV.getAbsolutePath(), this.imageBeingDisplayedOnIV.getAbsolutePath());
+                        //Display the image on the Image View after it is completed
                         displayImage(this.imageBeingDisplayedOnIV.getAbsolutePath());
                     } catch (IOException | NullPointerException ex) {
+                        //If the convolution did not work, inform the user with an alert
                         primaryStage.setAlwaysOnTop(false);
                         showAlertWarning("The " + choice + " convolution did not work. Please try again.");
                         primaryStage.setAlwaysOnTop(true);
+                        return;
                     }
                 } else if (choice.equals("Sobel Classic")) {
                     // Sobel X-Y converged grayscaled convolution
+                    //With Sobel we need to apply a gaussian filter and grayscale it first, then we can apply Sobel on the image.
                     try {
                         Convolution.performConvolution(this.imageBeingDisplayedOnIV.getAbsolutePath(), this.imageBeingDisplayedOnIV.getAbsolutePath(), rulesGaussian7x7);
                         Convolution.performGrayscale(this.imageBeingDisplayedOnIV.getAbsolutePath(), this.imageBeingDisplayedOnIV.getAbsolutePath());
+                        //The for-loop is used to repeat the convolution as many times as the user has specified, given that the number specified is valid.
                         for(int i=0;i<iterations;i++)
                         Convolution.performSobel(this.imageBeingDisplayedOnIV.getAbsolutePath(), this.imageBeingDisplayedOnIV.getAbsolutePath());
+                        //Display the image on the Image View after it is completed
                         displayImage(this.imageBeingDisplayedOnIV.getAbsolutePath());
                     } catch (IOException | NullPointerException ex) {
+                        //If the convolution did not work, inform the user with an alert
                         primaryStage.setAlwaysOnTop(false);
                         showAlertWarning("The " + choice + " convolution did not work. Please try again.");
                         primaryStage.setAlwaysOnTop(true);
+                        return;
                     }
                 } else if (choice.equals("Prewitt")) {
                     // Prewitt convolution
+                    //Try to get the threshold specified by the user. If the process does not work, simply set it to the default threshold
                     try {
                         float threshold = 100;
                         if (txtThreshold.getText() == null) {
@@ -422,56 +452,80 @@ public class FXMLConvolutionsSceneController {
                                 threshold = defaultThreshold;
                             }
                         }
+                        //Like Sobel, the image to be blurred and grayscaled first
                         Convolution.performConvolution(this.imageBeingDisplayedOnIV.getAbsolutePath(), this.imageBeingDisplayedOnIV.getAbsolutePath(), rulesGaussian7x7);
                         Convolution.performGrayscale(this.imageBeingDisplayedOnIV.getAbsolutePath(), this.imageBeingDisplayedOnIV.getAbsolutePath());
+                        //The for-loop is used to repeat the convolution as many times as the user has specified, given that the number specified is valid.
                         for(int i=0;i<iterations;i++) {
                             Convolution.performPrewitt(this.imageBeingDisplayedOnIV.getAbsolutePath(), this.imageBeingDisplayedOnIV.getAbsolutePath(), threshold);
                         }
+                        //Display the image on the Image View after it is completed
                         displayImage(this.imageBeingDisplayedOnIV.getAbsolutePath());
                     } catch (IOException | NullPointerException ex) {
+                        //If the convolution did not work, inform the user with an alert
                         primaryStage.setAlwaysOnTop(false);
                         showAlertWarning("The " + choice + " convolution did not work. Please try again.");
                         primaryStage.setAlwaysOnTop(true);
+                        return;
                     }
                     } else if (choice.equals("Prewitt - Pure")) {
                     // Prewitt convolution - pure no threshold
+                    //The for-loop is used to repeat the convolution as many times as the user has specified, given that the number specified is valid.
                     try {
                         for(int i=0;i<iterations;i++) {
                             Convolution.performPrewittPure(this.imageBeingDisplayedOnIV.getAbsolutePath(), this.imageBeingDisplayedOnIV.getAbsolutePath());
                         }
+                        //Display the image on the Image View after it is completed
                         displayImage(this.imageBeingDisplayedOnIV.getAbsolutePath());
                     } catch (IOException | NullPointerException ex) {
+                        //If the convolution did not work, inform the user with an alert
                         primaryStage.setAlwaysOnTop(false);
                         showAlertWarning("The " + choice + " convolution did not work. Please try again.");
                         primaryStage.setAlwaysOnTop(true);
+                        return;
                     }
-                } else if (choice.equals("Laplacian")) {
-                    // Laplacian convolution
+                } 
+                    else if(choice.equals("Laplacian3x3")){
+                        // Laplacian convolution - This is the 3x3 kernel version. It uses, like Sobel, a blur and a grayscale filter before being performed
                     try {
-                        if (txtThreshold.getText() == null) {
-                            threshold = defaultThreshold;
-                        } else {
-                            try {
-                                threshold = Float.parseFloat(txtThreshold.getText());
-                            } catch (Exception e) {
-                                threshold = defaultThreshold;
-                            }
-                        }
                         Convolution.performConvolution(this.imageBeingDisplayedOnIV.getAbsolutePath(), this.imageBeingDisplayedOnIV.getAbsolutePath(), rulesGaussian7x7);
                         Convolution.performGrayscale(this.imageBeingDisplayedOnIV.getAbsolutePath(), this.imageBeingDisplayedOnIV.getAbsolutePath());
+                        //The for-loop is used to repeat the convolution as many times as the user has specified, given that the number specified is valid.
                         for(int i=0;i<iterations;i++)
-                        Convolution.performLaplacianOperator(this.imageBeingDisplayedOnIV.getAbsolutePath(), this.imageBeingDisplayedOnIV.getAbsolutePath());
+                        Convolution.performLaplacianOperator3x3(this.imageBeingDisplayedOnIV.getAbsolutePath(), this.imageBeingDisplayedOnIV.getAbsolutePath());
+                        //Display the image on the Image View after it is completed
                         displayImage(this.imageBeingDisplayedOnIV.getAbsolutePath());
                     } catch (IOException | NullPointerException ex) {
+                        //If the convolution did not work, inform the user with an alert
                         primaryStage.setAlwaysOnTop(false);
                         showAlertWarning("The " + choice + " convolution did not work. Please try again.");
                         primaryStage.setAlwaysOnTop(true);
+                        return;
+                    }
+                        
+                    }
+                    else if (choice.equals("Laplacian9x9")) {
+                    //Laplacian convolution - This is the 9x9 kernel version. It uses, like Sobel, a grayscale filter before being performed. However, it does not need a blurring filter first.
+                    try {
+                        Convolution.performGrayscale(this.imageBeingDisplayedOnIV.getAbsolutePath(), this.imageBeingDisplayedOnIV.getAbsolutePath());
+                        //The for-loop is used to repeat the convolution as many times as the user has specified, given that the number specified is valid.
+                        for(int i=0;i<iterations;i++)
+                        Convolution.performLaplacianOperator9x9(this.imageBeingDisplayedOnIV.getAbsolutePath(), this.imageBeingDisplayedOnIV.getAbsolutePath());
+                        //Display the image on the Image View after it is completed
+                        displayImage(this.imageBeingDisplayedOnIV.getAbsolutePath());
+                    } catch (IOException | NullPointerException ex) {
+                        //If the convolution did not work, inform the user with an alert
+                        primaryStage.setAlwaysOnTop(false);
+                        showAlertWarning("The " + choice + " convolution did not work. Please try again.");
+                        primaryStage.setAlwaysOnTop(true);
+                        return;
                     }
                 } else if (choice.equals("Custom Kernel")) {
                     // Let the user create a custom kernel with the popup then convolve
                     primaryStage.setAlwaysOnTop(false);
                     Stage stage = new Stage();
                     FXMLLoader loaderCK = new FXMLLoader(getClass().getResource("/fxml/FXMLCustomKernel.fxml"));
+                    //Controller class. Will initialize the kernel that will be used.
                     FXMLCustomKernelController controllerCK = new FXMLCustomKernelController(stage);
                     loaderCK.setController(controllerCK);
                     try {
@@ -480,17 +534,22 @@ public class FXMLConvolutionsSceneController {
                         stage.setScene(scene);
                         stage.setAlwaysOnTop(true);
                         stage.showAndWait();
+                        //If the kernel is invalid, let the user know that the kernel has beeen dropped.
                         if(controllerCK.valid==false){ 
                             showAlertInfo("The kernel has been dropped.");
                             return;
                         }
+                        //The controller has a kernel as attribute. We get it and we perform the convolution.
                         kernelWithMoreDimensions = controllerCK.getKernelFloat();
                         try {
+                            //The for-loop is used to repeat the convolution as many times as the user has specified, given that the number specified is valid.
                             for(int i=0;i<iterations;i++)
                             Convolution.performConvolution(this.imageBeingDisplayedOnIV.getAbsolutePath(), this.imageBeingDisplayedOnIV.getAbsolutePath(), kernelWithMoreDimensions);
+                            //Display the image on the Image View after it is completed
                             displayImage(this.imageBeingDisplayedOnIV.getAbsolutePath());
                             
                         } catch (IOException | NullPointerException ex) {
+                            //If the convolution did not work, inform the user with an alert
                             primaryStage.setAlwaysOnTop(false);
                             showAlertWarning("The " + choice + " convolution did not work. Please try again.");
                         }
@@ -499,42 +558,55 @@ public class FXMLConvolutionsSceneController {
                         Logger.getLogger("Could not load FXML");
                     }
                     primaryStage.setAlwaysOnTop(true);
+                    return;
 
                 } else if (choice.equals("Colored Edge Angles")) {
-                    // Do sobel comverged with grascale then color the edge angles
+                    // Do sobel converged with grascale then color the edge angles
+                    //With Sobel we need to apply a gaussian filter and grayscale it first, then we can apply Sobel on the image.
                     try {
-
                         Convolution.performConvolution(this.imageBeingDisplayedOnIV.getAbsolutePath(), this.imageBeingDisplayedOnIV.getAbsolutePath(), rulesGaussian7x7);
                         Convolution.performGrayscale(this.imageBeingDisplayedOnIV.getAbsolutePath(), this.imageBeingDisplayedOnIV.getAbsolutePath());
+                        //The for-loop is used to repeat the convolution as many times as the user has specified, given that the number specified is valid.
                         for(int i=0;i<iterations;i++)
                         Convolution.performEdgeAngles(this.imageBeingDisplayedOnIV.getAbsolutePath(), this.imageBeingDisplayedOnIV.getAbsolutePath());
+                        //Display the image on the Image View after it is completed
                         displayImage(this.imageBeingDisplayedOnIV.getAbsolutePath());
-                        
                     } catch (IOException ex) {
-                        Logger.getLogger(FXMLConvolutionsSceneController.class.getName()).log(Level.SEVERE, null, ex);
+                        //If the convolution did not work, inform the user with an alert
+                        primaryStage.setAlwaysOnTop(false);
+                        showAlertWarning("The " + choice + " convolution did not work. Please try again.");
+                        primaryStage.setAlwaysOnTop(true);
+                        return;
                     }
                 }
                 else if (choice.equals("Sobel Colored")){
                     // Sobel converged non-grayscale convolution
                     try {
+                        //With Sobel we need to apply a gaussian filter, then we can apply Sobel on the image. We do not grayscale it, because the sobel will be done for all red, green and blue values.
                         Convolution.performConvolution(this.imageBeingDisplayedOnIV.getAbsolutePath(), this.imageBeingDisplayedOnIV.getAbsolutePath(), rulesGaussian7x7);
+                        //The for-loop is used to repeat the convolution as many times as the user has specified, given that the number specified is valid.
                         for(int i=0;i<iterations;i++)
                         Convolution.performSobelColored(this.imageBeingDisplayedOnIV.getAbsolutePath(), this.imageBeingDisplayedOnIV.getAbsolutePath());
+                        //Display the image on the Image View after it is completed
                         displayImage(this.imageBeingDisplayedOnIV.getAbsolutePath());
-                        
                     } catch (IOException | NullPointerException ex) {
+                        //If the convolution did not work, inform the user with an alert
                         primaryStage.setAlwaysOnTop(false);
                         showAlertWarning("The " + choice + " convolution did not work. Please try again.");
                         primaryStage.setAlwaysOnTop(true);
+                        return;
                     }
                     
                 }else {
-                    System.out.println("Else");
+                    //This case will never happen, because everything is perfectly controlled. But in case it does, we simply do nothing.
+                    return;
                 }
+                //After the convolution is completed, show to the user that the convolution is completed.
                 primaryStage.setAlwaysOnTop(false);
                 showAlertInfo("The " + choice + " convolution is completed");
                 primaryStage.setAlwaysOnTop(true);
             } else {
+                //This case should never happen, but in case it does, simply do nothing.
                 return;
             }
             
@@ -548,6 +620,7 @@ public class FXMLConvolutionsSceneController {
             temp = new File("src\\main\\resources\\Images\\Convolutions\\temp.bmp");
             //File chosen by the user through the file chooser.
             File chosen=null;
+            //If a mistake occurs during the selection of the file, stop the process. No message shown, because it is very natural for users to simply close the file chooser
             boolean needToReturn = true;
             try{
                 chosen = getFileFromFChooser();
@@ -555,8 +628,10 @@ public class FXMLConvolutionsSceneController {
             }catch(Exception NoFileSelected){
                 needToReturn =  true;
             }
+            if(needToReturn==true) return;
             if(chosen==null)
                 return;
+            //If the file is in a format other than bmp or jpg, stop the process.
             if(verifyImageFormat(chosen)==false) 
                 return;
             /*
@@ -569,6 +644,7 @@ public class FXMLConvolutionsSceneController {
                 FOS = new FileOutputStream(temp);
                 FOS.write(FIS.readAllBytes());
             } catch (Exception e) {
+                //If a mistake occurs, let the user know and drop the process.
                 primaryStage.setAlwaysOnTop(false);
                 showAlertWarning("The system could not get the file from the file chooser");
                 primaryStage.setAlwaysOnTop(true);
@@ -581,6 +657,7 @@ public class FXMLConvolutionsSceneController {
                 displayImage(imageBeingDisplayedOnIV.getAbsolutePath());
                 
             } catch (Exception e) {
+                //If a mistake occurs when trying to display that image, let the user know with an alert and drop the process.
                 primaryStage.setAlwaysOnTop(false);
                 showAlertWarning("The image has not been processed correctly. Please try again.");
                 primaryStage.setAlwaysOnTop(true);
@@ -642,6 +719,7 @@ public class FXMLConvolutionsSceneController {
                 //close the stage if it is not already done
                 stage.close();
             } catch (Exception e) {
+                //If a mistake occurs, let the user know with an alert and drop the process.
                 primaryStage.setAlwaysOnTop(false);
                 showAlertWarning("We could not load the file from the database. Please try again.");
                 primaryStage.setAlwaysOnTop(true);
@@ -656,6 +734,7 @@ public class FXMLConvolutionsSceneController {
          * the file. Finally, the image is saved.
          */
         btnSaveToFile.setOnAction((event) -> {
+            //We need the image to be initialized
             if(imageImgView.getImage()==null){
                 primaryStage.setAlwaysOnTop(false);
                 showAlertWarning("Please choose an image before saving.");
@@ -664,15 +743,19 @@ public class FXMLConvolutionsSceneController {
             }
             //To save the file, we need a directory and a name for the file
             String name = chooseNameFileDialog(primaryStage);
+            //If no name have been written, do not do anything.
             if(name==null){
                 return;
             }
+            //Get the directory of the file
             DirectoryChooser dc;
             File file;
             try{
                 dc = getDirectoryChooser(primaryStage);
+                //Create the file at that directory
                 file = new File(dc.getInitialDirectory().getAbsolutePath() + "//" + name + ".bmp");
             }catch(Exception NoLocationSelectedException){
+                //If an error occurs, let the user know with an alert and drop the process.
                 primaryStage.setAlwaysOnTop(false);
                 showAlertWarning("No location has been selected to save the image.");
                 primaryStage.setAlwaysOnTop(true);
@@ -685,11 +768,13 @@ public class FXMLConvolutionsSceneController {
                 FOS = new FileOutputStream(file);
                 FOS.write(FIS.readAllBytes());
             } catch (FileNotFoundException ex) {
+                //If no file is being displayed, let the user know with an alert and drop the process.
                 primaryStage.setAlwaysOnTop(false);
                 showAlertWarning("No file is being displayed. Please choose a file.");
                 primaryStage.setAlwaysOnTop(true);
                 return;
             } catch (IOException ex) {
+                //If an error occurs, let the user know with an alert and drop the process.
                 primaryStage.setAlwaysOnTop(false);
                 showAlertWarning("Could not write in the file. Please try again.");
                 primaryStage.setAlwaysOnTop(true);
@@ -713,11 +798,23 @@ public class FXMLConvolutionsSceneController {
                     Database.insertRow("Images", "ImagesConvolutions", chooseNameFileDialog(primaryStage), temp);
                     
                 } catch (FileNotFoundException ex) {
-                    Logger.getLogger(FXMLConvolutionsSceneController.class.getName()).log(Level.SEVERE, null, ex);
+                    //If the file is not found, let the user know with an alert and drop the process.
+                    primaryStage.setAlwaysOnTop(false);
+                    showAlertWarning("Could not write in the file because it was not found. Please try again.");
+                    primaryStage.setAlwaysOnTop(true);
+                    return;
                 } catch (IOException ex) {
-                    Logger.getLogger(FXMLConvolutionsSceneController.class.getName()).log(Level.SEVERE, null, ex);
+                    //If an IO Exception occurs, let the user know with an alert and drop the process.
+                    primaryStage.setAlwaysOnTop(false);
+                    showAlertWarning("An error occured. Please try again.");
+                    primaryStage.setAlwaysOnTop(true);
+                    return;
                 } catch (SQLException ex) {
-                    Logger.getLogger(FXMLConvolutionsSceneController.class.getName()).log(Level.SEVERE, null, ex);
+                    //If an error with the database occurs, let the user know with an alert and drop the process.
+                    primaryStage.setAlwaysOnTop(false);
+                    showAlertWarning("An error occured with our database. Please try again.");
+                    primaryStage.setAlwaysOnTop(true);
+                    return;
                 }
             } //If the image is null, ask the user to choose an image.
             else {
@@ -745,7 +842,22 @@ public class FXMLConvolutionsSceneController {
             openAboutDialog();
         });
     }
-
+    /**
+     * This method deletes everything that is in the temporary file. It is
+     * crucial, because a user may run the program multiple times. Every time
+     * the program closes, assuming the user has chosen some image to convolve,
+     * temp will not be null, which can lead to problems in the logic of the
+     * program.
+     *
+     * @throws FileNotFoundException
+     * @throws IOException
+     */
+    private void initializeTempFile() throws FileNotFoundException, IOException {
+        //Delete all the data
+        FileOutputStream FOS = new FileOutputStream(temp);
+        FOS.flush();
+        FOS.close();
+    }
     /**
      * This method opens a file chooser and returns the file chosen by the user
      * This is a method that Loovdrish has implemented last semester for the
@@ -770,7 +882,7 @@ public class FXMLConvolutionsSceneController {
      * the text field used to write the name of the file. This is a method that
      * Loovdrish has implemented last semester for the project on wave
      * simulation
-     *
+     *@param primaryStage- The primary stage of the application
      * @return nameFile, String which corresponds to the name of the file
      */
     public static String chooseNameFileDialog(Stage primaryStage){
@@ -798,65 +910,29 @@ public class FXMLConvolutionsSceneController {
     }
 
     /**
-     * This method creates a dialog that is responsible of letting the user
-     * anticipate that a File Chooser is about to appear. It creates a new stage
-     * which will be used as a window to contain the message.
-     */
-    public void chooseFileDialog() {
-        Stage stage = new Stage();
-        VBox root = new VBox();
-        Label nameLbl = new Label("Please choose the file you want to convolve");
-        TextField nameTxtFld = new TextField("Name");
-        nameTxtFld.setLayoutX(0);
-        Button GotItBtn = new Button("Got it!");
-        GotItBtn.setOnAction((event) -> {
-            stage.close();
-        });
-        root.getChildren().addAll(nameLbl, GotItBtn);
-        stage.setAlwaysOnTop(true);
-        Scene scene = new Scene(root, 300, 200);
-        stage.setScene(scene);
-        stage.showAndWait();
-    }
-
-    /**
-     * This method creates a dialog that is responsible of letting the user
-     * anticipate that a Directory Chooser is about to appear. It creates a new
-     * stage which will be used as a window to contain the message. This is a
-     * method that Loovdrish has implemented last semester for the project on
-     * wave simulation
-     */
-    public void chooseDirectoryDialog() {
-        Stage stage = new Stage();
-        VBox root = new VBox();
-        Label nameLbl = new Label("Please choose a direcotry in which to save your output file");
-        Button GotItBtn = new Button("Got it!");
-        GotItBtn.setOnAction((event) -> {
-            stage.close();
-        });
-        root.getChildren().addAll(nameLbl, GotItBtn);
-        stage.setAlwaysOnTop(true);
-        Scene scene = new Scene(root, 300, 200);
-        stage.setScene(scene);
-        stage.showAndWait();
-    }
-
-    /**
      * This method displays an image file onto the image view imageImgView
      *
-     * @param filePath Source:
+     * @param filePath 
+     * Source:
      * https://docs.oracle.com/javase/8/javafx/api/javafx/scene/image/ImageView.html (Oracle, 2015)
      */
     public void displayImage(String filePath) {
         Image img = new Image(filePath);
         imageImgView.setImage(img);
-        
+        //Set the default width and height
         defaultWidth = img.getWidth();
         defaultHeight = img.getHeight();
-        
+        //Set the fit width and heigh
         imageImgView.setFitWidth(defaultWidth*sliderZoom.getValue());
         imageImgView.setFitHeight(defaultHeight*sliderZoom.getValue());
     }
+    /**
+     * This method created a directory chooser for the user to select a location in his computer to save an image.
+     * This is a method that Loovdrish had implemented last semester for the project on wave simulation.
+     * Source to use directory chooser: https://docs.oracle.com/javase/8/javafx/api/javafx/stage/DirectoryChooser.html (Oracle, n.d.)
+     * @param primaryStage
+     * @return the directory chooser
+     */
     public static DirectoryChooser getDirectoryChooser(Stage primaryStage){
         Stage stage = new Stage();
         stage.initModality(Modality.APPLICATION_MODAL);
@@ -871,21 +947,7 @@ public class FXMLConvolutionsSceneController {
     }
 
 
-    /**
-     * This method deletes everything that is in the temporary file. It is
-     * crucial, because a user may run the program multiple times. Every time
-     * the program closes, assuming the user has chosen some image to convolve,
-     * temp will not be null, which can lead to problems in the logic of the
-     * program.
-     *
-     * @throws FileNotFoundException
-     * @throws IOException
-     */
-    private void initializeTempFile() throws FileNotFoundException, IOException {
-        FileOutputStream FOS = new FileOutputStream(temp);
-        FOS.flush();
-        FOS.close();
-    }
+    
     /**
      * This method displays an alert with a message
      * @param message - String - The message being shown to the user
@@ -930,8 +992,9 @@ public class FXMLConvolutionsSceneController {
         return alert;
     }
     /**
+     * Thsi method shows a confirmation alert to the user.
      * If the user returns true, then the user wants to continue. If not, stop all operations.
-     * @param message
+     * @param message - The message being shown to the user.
      * @return  Boolean  - Confirmation of the user.
      */
     public static boolean showAlertConfirmation(String message) {

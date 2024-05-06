@@ -16,6 +16,9 @@ import java.util.ArrayList;
 /**
  *
  * @author Loovdrish Sujore
+ * Learned the syntax and familiarized himself through:
+ * https://www.youtube.com/watch?v=0beocykXUag (Logic Lamda, 2021)
+ * https://github.com/frostybee/fx-gallery/tree/main/src/main/java/org/bee/fxgallery/db (Frostybee, 2024)
  */
 public class Database {
     

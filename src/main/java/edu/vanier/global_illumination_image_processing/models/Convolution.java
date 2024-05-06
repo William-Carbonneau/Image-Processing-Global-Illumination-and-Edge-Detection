@@ -23,8 +23,8 @@ public class Convolution {
         float max = 0;
         for (float[] array1 : array) {
             for (int j = 0; j<array[0].length; j++) {
-                if (max < array1[j]) {
-                    max = array1[j];
+                if (max < Math.abs(array1[j])) {
+                    max = Math.abs(array1[j]);
                 }
             }
         }
@@ -219,9 +219,10 @@ public class Convolution {
     public static void performSobelX(String filePathIn, String filePathOut) throws IOException {
         float threshold = 100;
         //Source for the kernel: https://en.wikipedia.org/wiki/Sobel_operator (Sobel operator, 2024)
-        float[][] rulesSobelX = {{-1, -2, -1},
-        {0, 0, 0},
-        {1, 2, 1}};
+        float[][] rulesSobelX = {
+            {-1, -2, -1},
+            { 0,  0,  0},
+            { 1,  2,  1}};
         BufferedImage BI = createBI(filePathIn);
         // Create the array gray corresponding to the average values of the pixels
         float[][] g = new float[BI.getWidth()][BI.getHeight()];
@@ -273,8 +274,8 @@ public class Convolution {
 
         //Source for the kernel: https://en.wikipedia.org/wiki/Sobel_operator (Sobel operator, 2024)
         float[][] rulesSobelX = {{-1, -2, -1},
-                                 {0, 0, 0},
-                                 {1, 2, 1}};
+                                 { 0,  0,  0},
+                                 { 1,  2,  1}};
         //Source for the kernel: https://en.wikipedia.org/wiki/Sobel_operator (Sobel operator, 2024)
         float[][] rulesSobelY = {{-1, 0, 1},
                                  {-2, 0, 2},
@@ -316,7 +317,7 @@ public class Convolution {
             for (int h = 0; h < BI.getHeight(); h++) {
                 //If the difference is bigger than the threshold, color that spot white
                 ratioGradient = sobel[w][h]/maxGradient;
-                colorFloat = (int)((int) 255*ratioGradient);
+                colorFloat = Math.abs((int)((int) 255*ratioGradient));
                 try{
                     color = new Color(colorFloat, colorFloat, colorFloat);
                 }catch(Exception e){
@@ -497,18 +498,25 @@ public class Convolution {
         ImageIO.write(finalImage, "bmp", file);
     }
     /**
-     * This method applies the laplacian operator kernel on an image
+     * This method applies the laplacian operator kernel on an image. This is the 7x7 version that does not require blurring.
      * @param filePathIn
      * @param filePathOut
      * @throws IOException 
      * This source was used as a reference to use ImageIO in the context of performing a convolution:
      * https://ramok.tech/2018/09/27/convolution-in-java/ (Ramo, 2018)
      */
-    public static void performLaplacianOperator(String filePathIn, String filePathOut) throws IOException {
-        //Source for the kernel: https://youtu.be/uNP6ZwQ3r6A?si=Lg2Q0SyxrTAA6Qcw (Nayar, 2021)
-        float[][] laplacianKernel = {{0, 1, 0},
-        {1, -4, 1},
-        {0, 1, 0}};
+    public static void performLaplacianOperator9x9(String filePathIn, String filePathOut) throws IOException {
+        //Source for the kernel: https://homepages.inf.ed.ac.uk/rbf/HIPR2/log.htm (Fisher et al., 2003)
+        float[][] laplacianKernel = {
+        {0,1,1,  2,  2,  2,1,1,0},
+        {1,2,4,  5,  5,  5,4,2,1},
+        {1,4,5,  3,  0,  3,5,4,1},
+        {2,5,3,-12,-24,-12,3,5,2},
+        {2,5,0,-24,-40,-24,0,5,2},
+        {2,5,3,-12,-24,-12,3,5,2},
+        {1,4,5,  3,  0,  3,5,4,1},
+        {1,2,4,  5,  5,  5,4,2,1},
+        {0,1,1,  2,  2,  2,1,1,0}};
         BufferedImage BI = createBI(filePathIn);
         // Create the array gray corresponding to the average values of the pixels
         float[][] g = new float[BI.getWidth()][BI.getHeight()];
@@ -522,21 +530,84 @@ public class Convolution {
                 g[w][h] = color.getGreen();
             }
         }
+        
+        
         //Perform the convolution on the gray array, in order to get the final one
         // gFinal contains the floating numbers describing how much the colour values change up to down. (It does not represent the grayscale value, but the difference in the grayscale)
         float[][] laplacianResult = performConvolutionOnArray(laplacianKernel, g);
-        
+        float biggestResult = findBiggestValue(laplacianResult);
+        float finalColor;
         //Make a new image
         BufferedImage finalImage = new BufferedImage(g.length, g[0].length, BufferedImage.TYPE_INT_RGB);
         for (int w = 0; w < BI.getWidth(); w++) {
             for (int h = 0; h < BI.getHeight(); h++) {
-                if (laplacianResult[w][h] != 0) {
-                    color = new Color(255, 255, 255);
-                } else {
+                try{
+                    finalColor = laplacianResult[w][h]/biggestResult;
+                    finalColor=Math.abs(finalColor);
+                    color = new Color(finalColor, finalColor, finalColor);
+                    finalImage.setRGB(w, h, color.getRGB());
+                }catch(Exception e){
+                    System.out.println(e.getMessage());
                     color = new Color(0, 0, 0);
+                    finalImage.setRGB(w, h, color.getRGB());
                 }
 
-                finalImage.setRGB(w, h, color.getRGB());
+            }
+        }
+        // Create and write the output file
+        File file = new File(filePathOut);
+        ImageIO.write(finalImage, "bmp", file);
+    }
+    /**
+     * This method applies the laplacian operator kernel on an image
+     * @param filePathIn
+     * @param filePathOut
+     * @throws IOException 
+     * This source was used as a reference to use ImageIO in the context of performing a convolution:
+     * https://ramok.tech/2018/09/27/convolution-in-java/ (Ramo, 2018)
+     */
+    public static void performLaplacianOperator3x3(String filePathIn, String filePathOut) throws IOException {
+        //Source for the kernel: https://youtu.be/uNP6ZwQ3r6A?si=Lg2Q0SyxrTAA6Qcw (Nayar, 2021)
+        float[][] laplacianKernel = {
+            {0,-1,0},
+            {-1,4,-1},
+            {0,-1,0}
+        };
+        BufferedImage BI = createBI(filePathIn);
+        // Create the array gray corresponding to the average values of the pixels
+        float[][] g = new float[BI.getWidth()][BI.getHeight()];
+        //Initialize the values of g
+        Color color;
+        //The values of a geayscale image are uniform, meaning that the values for red, blue, and green are all the same
+        // Therefore, we can take any one of these three to initialize the array g (g)
+        for (int w = 0; w < BI.getWidth(); w++) {
+            for (int h = 0; h < BI.getHeight(); h++) {
+                color = new Color(BI.getRGB(w, h));
+                g[w][h] = color.getGreen();
+            }
+        }
+        
+        //Perform the convolution on the gray array, in order to get the final one
+        // gFinal contains the floating numbers describing how much the colour values change up to down. (It does not represent the grayscale value, but the difference in the grayscale)
+        float[][] laplacianResult = performConvolutionOnArray(laplacianKernel, g);
+        float biggestResult = findBiggestValue(laplacianResult);
+        float finalColor;
+        //Make a new image
+        BufferedImage finalImage = new BufferedImage(g.length, g[0].length, BufferedImage.TYPE_INT_RGB);
+        for (int w = 0; w < BI.getWidth(); w++) {
+            for (int h = 0; h < BI.getHeight(); h++) {
+                try{
+                    finalColor = laplacianResult[w][h]/biggestResult;
+                    finalColor=Math.abs(finalColor);
+                    color = new Color(finalColor, finalColor, finalColor);
+                    finalImage.setRGB(w, h, color.getRGB());
+                }catch(Exception e){
+                    System.out.println(e.getMessage());
+                    color = new Color(0, 0, 0);
+                    finalImage.setRGB(w, h, color.getRGB());
+                    
+                }
+
             }
         }
         // Create and write the output file

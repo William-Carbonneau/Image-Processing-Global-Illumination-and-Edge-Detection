@@ -86,7 +86,7 @@ public class FXMLCustomKernelController {
         /**
          * Add the options of dimensions in the choicebox
          */
-        choiceBoxCK.getItems().addAll("1x1","3x3","5x5","7x7","9x9");
+        choiceBoxCK.getItems().addAll("3x3","5x5","7x7","9x9");
         /**
          * Assuming a choice from the choicebox has been selected, we need to generate textfields in rows and columns, representing the kernel, so that the user can enter the values for each index
          */
