@@ -55,7 +55,7 @@
 <?import javafx.scene.shape.Line?>
 <?import javafx.scene.text.Font?>
 
-<VBox fx:id="RootVBox" prefHeight="600.0" prefWidth="905.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1">
+<VBox fx:id="RootVBox" prefHeight="600.0" prefWidth="905.0" xmlns="http://javafx.com/javafx/20.0.1" xmlns:fx="http://javafx.com/fxml/1">
   <children>
     <MenuBar VBox.vgrow="NEVER">
       <menus>
@@ -243,7 +243,7 @@
                                     <Font size="16.0" />
                                  </font>
                               </Label>
-                              <HBox alignment="TOP_CENTER" prefHeight="100.0" prefWidth="200.0" spacing="30.0">
+                              <HBox alignment="TOP_CENTER" prefHeight="57.0" prefWidth="268.0" spacing="30.0">
                                  <children>
                                     <Label text="# of Iterations:">
                                        <font>
@@ -251,6 +251,53 @@
                                        </font>
                                     </Label>
                                     <TextField fx:id="txtIterations" prefHeight="25.0" prefWidth="85.0" />
+                                 </children>
+                              </HBox>
+                              <Label layoutX="102.0" layoutY="345.0" text="Partial Convolutions" underline="true">
+                                 <font>
+                                    <Font size="16.0" />
+                                 </font>
+                              </Label>
+                              <HBox alignment="TOP_CENTER" layoutX="10.0" layoutY="406.0" prefHeight="100.0" prefWidth="200.0" spacing="30.0">
+                                 <children>
+                                    <GridPane alignment="CENTER">
+                                      <columnConstraints>
+                                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="144.4" minWidth="10.0" prefWidth="116.5999755859375" />
+                                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="84.199951171875" minWidth="10.0" prefWidth="76.60002441406249" />
+                                          <ColumnConstraints hgrow="SOMETIMES" maxWidth="92.199951171875" minWidth="10.0" prefWidth="75.39990234375" />
+                                      </columnConstraints>
+                                      <rowConstraints>
+                                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                      </rowConstraints>
+                                       <children>
+                                          <Label alignment="CENTER" prefHeight="18.0" prefWidth="96.0" text="Height:" textAlignment="CENTER" GridPane.columnIndex="1">
+                                             <font>
+                                                <Font name="System Bold" size="12.0" />
+                                             </font>
+                                          </Label>
+                                          <Label alignment="CENTER" layoutX="99.0" layoutY="16.0" prefHeight="18.0" prefWidth="96.0" text="Width:" textAlignment="CENTER" GridPane.columnIndex="2">
+                                             <font>
+                                                <Font name="System Bold" size="12.0" />
+                                             </font>
+                                          </Label>
+                                          <Label alignment="CENTER_RIGHT" layoutX="99.0" layoutY="16.0" prefHeight="18.0" prefWidth="116.0" text="Default Image:" textAlignment="CENTER" GridPane.rowIndex="1">
+                                             <font>
+                                                <Font name="System Bold" size="12.0" />
+                                             </font>
+                                          </Label>
+                                          <Label alignment="CENTER_RIGHT" layoutX="10.0" layoutY="45.0" prefHeight="18.0" prefWidth="133.0" text="Partial Convolution:" textAlignment="CENTER" GridPane.rowIndex="2">
+                                             <font>
+                                                <Font name="System Bold" size="12.0" />
+                                             </font>
+                                          </Label>
+                                          <Label fx:id="lblDefaultHeight" alignment="CENTER_RIGHT" prefHeight="18.0" prefWidth="70.0" text="0" textAlignment="CENTER" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                                          <Label fx:id="lblDefaultWidth" alignment="CENTER_RIGHT" layoutX="126.0" layoutY="45.0" prefHeight="18.0" prefWidth="70.0" text="0" textAlignment="CENTER" GridPane.columnIndex="2" GridPane.rowIndex="1" />
+                                          <TextField fx:id="txtPartialHeight" alignment="CENTER_RIGHT" prefHeight="26.0" prefWidth="61.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                                          <TextField fx:id="txtPartialWidth" alignment="CENTER_RIGHT" layoutX="126.0" layoutY="71.0" GridPane.columnIndex="2" GridPane.rowIndex="2" />
+                                       </children>
+                                    </GridPane>
                                  </children>
                               </HBox>
                            </children>

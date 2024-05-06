@@ -120,6 +120,26 @@ public class FXMLConvolutionsSceneController {
     @FXML 
     Slider sliderZoom;
     /**
+     *  label displaying the default height of the loaded image
+     */
+    @FXML
+    Label lblDefaultHeight;
+    /**
+     *  label displaying the default width of the loaded image
+     */
+    @FXML
+    Label lblDefaultWidth;
+    /**
+     *  TextField to specify the height of the partial convolution
+     */
+    @FXML
+    TextField txtPartialHeight;
+    /**
+     *  TextField to specify the width of the partial convolution
+     */
+    @FXML
+    TextField txtPartialWidth;
+    /**
      * bytes corresponding to the data of an image
      */
     byte[] b;
@@ -193,8 +213,9 @@ public class FXMLConvolutionsSceneController {
      */
     ImageView iv;
     
-    Double defaultWidth = 800.0;
-    Double defaultHeight = 800.0;
+    private Double defaultWidth = 800.0;
+    private Double defaultHeight = 800.0;
+    
 
     /**
      * Parameterized constructor
@@ -256,6 +277,33 @@ public class FXMLConvolutionsSceneController {
         //Need to erase the content in the temp file, if content is present.
         initializeTempFile();
         txtIterations.setTextFormatter(new TextFormatter <> (input -> input.getControlNewText().matches(textFormatterIntegerRegex) ? input : null));
+        
+        /**
+         * Update the current partial Height - only integers allowed by textFormatter
+         */
+        txtPartialHeight.setOnKeyTyped((event) -> {
+            int temp;
+            try {
+                temp = Integer.parseInt((txtPartialHeight.getText()));
+            }catch (NumberFormatException e) {
+                temp = Integer.MAX_VALUE;
+            }
+            Convolution.partialHeight = temp;
+        });
+        txtPartialHeight.setTextFormatter(new TextFormatter <> (input -> input.getControlNewText().matches(textFormatterIntegerRegex) ? input : null));
+        /**
+         * Update the current partial Width - only integers allowed by textFormatter
+         */
+        txtPartialWidth.setOnKeyTyped((event) -> {
+            int temp;
+            try {
+                temp = Integer.parseInt((txtPartialWidth.getText()));
+            }catch (NumberFormatException e) {
+                temp = Integer.MAX_VALUE;
+            }
+            Convolution.partialWidth = temp;
+        });
+        txtPartialWidth.setTextFormatter(new TextFormatter <> (input -> input.getControlNewText().matches(textFormatterIntegerRegex) ? input : null));
         //Initialize the choices in the choice box
         choiceBoxConvolution.getItems().addAll("Custom Kernel", "Gaussian Blur 3x3", "Gaussian Blur 5x5", "Gaussian Blur 7x7", "Sharpening", "Grayscale", "Sobel X", "Sobel Y", "Sobel Classic","Sobel Colored", "Prewitt","Prewitt - Pure", "Laplacian", "Colored Edge Angles");
         
@@ -580,6 +628,7 @@ public class FXMLConvolutionsSceneController {
                 //Display the image on the main image view
                 displayImage(imageBeingDisplayedOnIV.getAbsolutePath());
                 
+                
             } catch (Exception e) {
                 primaryStage.setAlwaysOnTop(false);
                 showAlertWarning("The image has not been processed correctly. Please try again.");
@@ -842,7 +891,7 @@ public class FXMLConvolutionsSceneController {
     }
 
     /**
-     * This method displays an image file onto the image view imageImgView
+     * This method displays an image file onto the image view imageImgView and displays its size in the specified labels
      *
      * @param filePath Source:
      * https://docs.oracle.com/javase/8/javafx/api/javafx/scene/image/ImageView.html (Oracle, 2015)
@@ -853,6 +902,8 @@ public class FXMLConvolutionsSceneController {
         
         defaultWidth = img.getWidth();
         defaultHeight = img.getHeight();
+        lblDefaultWidth.setText(Double.toString(img.getWidth()));
+        lblDefaultHeight.setText(Double.toString(img.getHeight()));
         
         imageImgView.setFitWidth(defaultWidth*sliderZoom.getValue());
         imageImgView.setFitHeight(defaultHeight*sliderZoom.getValue());
@@ -948,4 +999,5 @@ public class FXMLConvolutionsSceneController {
         }
         else return false;
     }
+    
 }

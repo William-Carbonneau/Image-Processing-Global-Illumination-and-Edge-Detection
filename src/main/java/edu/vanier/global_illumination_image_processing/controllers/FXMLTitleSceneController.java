@@ -5,6 +5,7 @@
 package edu.vanier.global_illumination_image_processing.controllers;
 
 import edu.vanier.global_illumination_image_processing.MainApp;
+import edu.vanier.global_illumination_image_processing.models.Convolution;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.layout.VBox;
@@ -50,14 +51,16 @@ public class FXMLTitleSceneController {
     @FXML
     public void initialize() {
         System.out.println("Title Scene being loaded");
+        FXMLConvolutionsSceneController convolutions = new FXMLConvolutionsSceneController(primaryStage);
+        FXMLRenderSceneController render = new FXMLRenderSceneController(primaryStage);
         btnImageProcessing.setOnAction((event) -> {
-            MainApp.switchScene(MainApp.FXMLConvolutionsScene, new FXMLConvolutionsSceneController(primaryStage));
+            MainApp.switchScene(MainApp.FXMLConvolutionsScene, convolutions);
             
             
         });
-
+        
         btnGlobalIllumination.setOnAction((event) -> {
-            MainApp.switchScene(MainApp.FXMLRenderScene, new FXMLRenderSceneController(primaryStage));
+            MainApp.switchScene(MainApp.FXMLRenderScene, render);
             
         });
     }
