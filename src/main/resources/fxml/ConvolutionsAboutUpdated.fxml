@@ -197,6 +197,22 @@ However to avoid noises on the image, we blur and grayscale that image prior to 
                   </ScrollPane>
                </content>
           </TitledPane>
+          <TitledPane animated="false" text="Custom Kernel">
+               <content>
+                  <ScrollPane prefHeight="200.0" prefWidth="200.0">
+                     <content>
+                        <TextFlow prefHeight="200.0" prefWidth="598.0">
+                           <children>
+                              <Text strokeType="OUTSIDE" strokeWidth="0.0" text=
+"The program also allows the creation of custom kernels, offered in multiple dimensions. To create and apply a custom kernel, choose an image and select Custom Kernel from the choice box. Click on convolve and a window will appear. 
+Select the dimensions of your custom kernel using the choice box to the left side of the window. Click on Generate and text fields will appear for you to enter the values of the kernel at each index.
+Enter the values, and click on Set Kernel. Close the window, and the convolution will be performed." wrappingWidth="372.5367240905762" />
+                           </children>
+                        </TextFlow>
+                     </content>
+                  </ScrollPane>
+               </content>
+          </TitledPane>
         </panes>
       </Accordion>
    </children>

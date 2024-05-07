@@ -678,7 +678,6 @@ public class FXMLConvolutionsSceneController {
                         Logger.getLogger("Could not load FXML");
                     }
                     primaryStage.setAlwaysOnTop(true);
-                    return;
 
                 } else if (choice.equals("Colored Edge Angles")) {
                     // Do sobel converged with grascale then color the edge angles
