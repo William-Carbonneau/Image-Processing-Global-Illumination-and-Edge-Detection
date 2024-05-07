@@ -435,11 +435,11 @@ public class FXMLConvolutionsSceneController {
                     // Sobel X component grayscaled convolution
                     //With Sobel we need to apply a gaussian filter and grayscale it first, then we can apply Sobel on the image.
                     try {
-                        int tempHeight = 0;
-                        int tempWidth = 0;
+                        int tempHeight;
+                        int tempWidth;
                         //Save value of partial hieght and width
-                        Convolution.partialHeight = tempHeight;
-                        Convolution.partialWidth = tempWidth;
+                        tempHeight = Convolution.partialHeight;
+                        tempWidth = Convolution.partialWidth;
                         //Change partial value to max to ignore partial convolution in preliminary steps
                         Convolution.partialHeight = Integer.MAX_VALUE;
                         Convolution.partialWidth = Integer.MAX_VALUE;
@@ -465,11 +465,11 @@ public class FXMLConvolutionsSceneController {
                     // Sobel Y component grayscaled convolution
                     //With Sobel we need to apply a gaussian filter and grayscale it first, then we can apply Sobel on the image.
                     try {
-                        int tempHeight = 0;
-                        int tempWidth = 0;
+                        int tempHeight;
+                        int tempWidth;
                         //Save value of partial hieght and width
-                        Convolution.partialHeight = tempHeight;
-                        Convolution.partialWidth = tempWidth;
+                        tempHeight = Convolution.partialHeight;
+                        tempWidth = Convolution.partialWidth;
                         //Change partial value to max to ignore partial convolution in preliminary steps
                         Convolution.partialHeight = Integer.MAX_VALUE;
                         Convolution.partialWidth = Integer.MAX_VALUE;
@@ -496,11 +496,11 @@ public class FXMLConvolutionsSceneController {
                     //With Sobel we need to apply a gaussian filter and grayscale it first, then we can apply Sobel on the image.
                     try {
                         
-                        int tempHeight = 0;
-                        int tempWidth = 0;
+                        int tempHeight;
+                        int tempWidth;
                         //Save value of partial hieght and width
-                        Convolution.partialHeight = tempHeight;
-                        Convolution.partialWidth = tempWidth;
+                        tempHeight = Convolution.partialHeight;
+                        tempWidth = Convolution.partialWidth;
                         //Change partial value to max to ignore partial convolution in preliminary steps
                         Convolution.partialHeight = Integer.MAX_VALUE;
                         Convolution.partialWidth = Integer.MAX_VALUE;
@@ -536,11 +536,11 @@ public class FXMLConvolutionsSceneController {
                                 threshold = defaultThreshold;
                             }
                         }
-                        int tempHeight = 0;
-                        int tempWidth = 0;
+                        int tempHeight;
+                        int tempWidth;
                         //Save value of partial hieght and width
-                        Convolution.partialHeight = tempHeight;
-                        Convolution.partialWidth = tempWidth;
+                        tempHeight = Convolution.partialHeight;
+                        tempWidth = Convolution.partialWidth;
                         //Change partial value to max to ignore partial convolution in preliminary steps
                         Convolution.partialHeight = Integer.MAX_VALUE;
                         Convolution.partialWidth = Integer.MAX_VALUE;
@@ -584,11 +584,11 @@ public class FXMLConvolutionsSceneController {
                     else if(choice.equals("Laplacian3x3")){
                         // Laplacian convolution - This is the 3x3 kernel version. It uses, like Sobel, a blur and a grayscale filter before being performed
                     try {
-                        int tempHeight = 0;
-                        int tempWidth = 0;
+                        int tempHeight;
+                        int tempWidth;
                         //Save value of partial hieght and width
-                        Convolution.partialHeight = tempHeight;
-                        Convolution.partialWidth = tempWidth;
+                        tempHeight = Convolution.partialHeight;
+                        tempWidth = Convolution.partialWidth;
                         //Change partial value to max to ignore partial convolution in preliminary steps
                         Convolution.partialHeight = Integer.MAX_VALUE;
                         Convolution.partialWidth = Integer.MAX_VALUE;
@@ -615,11 +615,11 @@ public class FXMLConvolutionsSceneController {
                     else if (choice.equals("Laplacian9x9")) {
                     //Laplacian convolution - This is the 9x9 kernel version. It uses, like Sobel, a grayscale filter before being performed. However, it does not need a blurring filter first.
                     try {
-                        int tempHeight = 0;
-                        int tempWidth = 0;
+                        int tempHeight;
+                        int tempWidth;
                         //Save value of partial hieght and width
-                        Convolution.partialHeight = tempHeight;
-                        Convolution.partialWidth = tempWidth;
+                        tempHeight = Convolution.partialHeight;
+                        tempWidth = Convolution.partialWidth;
                         //Change partial value to max to ignore partial convolution in preliminary steps
                         Convolution.partialHeight = Integer.MAX_VALUE;
                         Convolution.partialWidth = Integer.MAX_VALUE;
@@ -684,11 +684,11 @@ public class FXMLConvolutionsSceneController {
                     // Do sobel converged with grascale then color the edge angles
                     //With Sobel we need to apply a gaussian filter and grayscale it first, then we can apply Sobel on the image.
                     try {
-                        int tempHeight = 0;
-                        int tempWidth = 0;
+                        int tempHeight;
+                        int tempWidth;
                         //Save value of partial hieght and width
-                        Convolution.partialHeight = tempHeight;
-                        Convolution.partialWidth = tempWidth;
+                        tempHeight = Convolution.partialHeight;
+                        tempWidth = Convolution.partialWidth;
                         //Change partial value to max to ignore partial convolution in preliminary steps
                         Convolution.partialHeight = Integer.MAX_VALUE;
                         Convolution.partialWidth = Integer.MAX_VALUE;
@@ -714,11 +714,11 @@ public class FXMLConvolutionsSceneController {
                 else if (choice.equals("Sobel Colored")){
                     // Sobel converged non-grayscale convolution
                     try {
-                        int tempHeight = 0;
-                        int tempWidth = 0;
+                        int tempHeight;
+                        int tempWidth;
                         //Save value of partial hieght and width
-                        Convolution.partialHeight = tempHeight;
-                        Convolution.partialWidth = tempWidth;
+                        tempHeight = Convolution.partialHeight;
+                        tempWidth = Convolution.partialWidth;
                         //Change partial value to max to ignore partial convolution in preliminary steps
                         Convolution.partialHeight = Integer.MAX_VALUE;
                         Convolution.partialWidth = Integer.MAX_VALUE;
