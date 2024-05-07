@@ -29,6 +29,13 @@ public class RenderScene {
     }
     
     /**
+     * Clear the scene of objects
+     */
+    public void clear() {
+        objects.clear();
+    }
+    
+    /**
      * Removes an object (shape) from the scene's list of objects
      * @param objName object name: String
      * @return return 1 if the key exists and no object was added, else 0 for success
@@ -63,6 +70,14 @@ public class RenderScene {
      */
     public SceneObject getObjectByName(String objName) {
         return objects.get(objName);
+    }
+    
+    /**
+     * Check if the scene is empty true/false
+     * @return boolean
+     */
+    public boolean isEmpty() {
+        return objects.isEmpty();
     }
     
     /**

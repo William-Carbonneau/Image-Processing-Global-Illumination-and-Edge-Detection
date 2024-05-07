@@ -72,6 +72,9 @@
                   <MenuItem fx:id="menuItemSaveToDatabase" mnemonicParsing="false" text="Save to database" />
             <SeparatorMenuItem mnemonicParsing="false" />
                   <MenuItem fx:id="menuItemSaveToFile" mnemonicParsing="false" text="Save to file" />
+                  <SeparatorMenuItem mnemonicParsing="false" />
+                  <MenuItem fx:id="menuItemSaveScene" mnemonicParsing="false" text="Save scene to file" />
+                  <MenuItem fx:id="menuItemLoadScene" mnemonicParsing="false" text="Load scene from file" />
           </items>
         </Menu>
             <Menu mnemonicParsing="false" text="Object">

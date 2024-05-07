@@ -14,8 +14,10 @@ import edu.vanier.Lumina.rendering.objects.Sphere;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.beans.binding.Bindings;
@@ -45,6 +47,7 @@ import javafx.scene.control.Slider;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.stage.DirectoryChooser;
+import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javax.imageio.ImageIO;
 
@@ -67,6 +70,8 @@ public class FXMLRenderSceneController {
     @FXML MenuItem menuItemAboutRendering;
     @FXML MenuItem menuItemSaveToDatabase;
     @FXML MenuItem menuItemSaveToFile;
+    @FXML MenuItem menuItemLoadScene;
+    @FXML MenuItem menuItemSaveScene;
     @FXML ListView listObjectList;
     @FXML Label lblObjectType;
     @FXML Label lblRightStatus;
@@ -228,6 +233,9 @@ public class FXMLRenderSceneController {
             mainScene.addObj(obj.getName(), obj.getObj());
             if (autoRender) render();
         });
+        /**
+         * Save the image to the database
+         */
         menuItemSaveToDatabase.setOnAction((event)->{
             if(image!=null){
                 String name = FXMLConvolutionsSceneController.chooseNameFileDialog(primaryStage);
@@ -245,7 +253,104 @@ public class FXMLRenderSceneController {
                 
             }
         });
-        
+        /**
+         * Save the scene to a file
+         */
+        menuItemSaveScene.setOnAction((event)->{
+            if(!mainScene.isEmpty()){
+                
+                //To save the file, we need a directory and a name for the file
+                String name = chooseNameFileDialog(primaryStage);
+                DirectoryChooser dc = FXMLConvolutionsSceneController.getDirectoryChooser(primaryStage);
+                //Create the file at the location with the name chosen by the user
+                if (dc.getInitialDirectory() == null) return;
+                String directory = dc.getInitialDirectory().getAbsolutePath()+"//"+name+".csv";
+                
+                try {
+                    FileWriter csv = new FileWriter(directory);
+                    for (ObjWrapper object:objectList) {
+                        csv.write(object.getName()+","+object.getObj().color.getR()+","+object.getObj().color.getG()+","+object.getObj().color.getB()+","+object.getObj().distanceOrigin+","+object.getObj().emission+","+object.getObj().normal.getX()+","+object.getObj().normal.getY()+","+object.getObj().normal.getZ()+","+object.getObj().radius+","+object.getObj().refractiveIndex+","+object.getObj().type+","+object.getObj().getClass().getSimpleName()+"\n");
+                    }
+                    csv.close();
+                    } catch (IOException ex) {
+                        Logger.getLogger(FXMLRenderSceneController.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                }
+        });
+        /**
+         * Load the scene from a file
+         */
+        menuItemLoadScene.setOnAction((event)->{
+            try {
+                // use file chooser logic from convolution scene controller
+                    Stage stage = new Stage();
+                    FileChooser f = new FileChooser();
+                    stage.setAlwaysOnTop(true);
+                    this.primaryStage.setAlwaysOnTop(false);
+                    File csv = f.showOpenDialog(stage);
+                    stage.close();
+                    
+                    // if it is a readable csv that exists
+                    if (csv != null && csv.exists() && csv.canRead() && csv.getAbsolutePath().substring(csv.getAbsolutePath().length()-4).equals(".csv")) {
+                        objectList.clear();
+                        mainScene.clear();
+                        Scanner reader = new Scanner(csv);
+                        while (reader.hasNextLine()) {
+                            String[] temp = reader.nextLine().split(",");
+                            try {
+                                String name = temp[0];
+                                double R = Double.parseDouble(temp[1]);
+                                double G = Double.parseDouble(temp[2]);
+                                double B = Double.parseDouble(temp[3]);
+                                double DTO = Double.parseDouble(temp[4]);
+                                double Emis = Double.parseDouble(temp[5]);
+                                double X = Double.parseDouble(temp[6]);
+                                double Y = Double.parseDouble(temp[7]);
+                                double Z = Double.parseDouble(temp[8]);
+                                double Rad = Double.parseDouble(temp[9]);
+                                double IOR = Double.parseDouble(temp[10]);
+                                int type = Integer.parseInt(temp[11]);
+                                String objType = temp[12];
+                                if (objType.equals("Plane")) {
+                                    Plane plane = new Plane(new Vec3D(X,Y,Z),DTO,new DiffuseColor(R,G,B),Emis,type);
+                                    plane.setRefractiveIndex(IOR);
+                                    objectList.add(new ObjWrapper(name, plane));
+                                    mainScene.addObj(name, plane);
+                                }else if (objType.equals("Sphere")) {
+                                    Sphere sphere = new Sphere(new Vec3D(X,Y,Z), Rad, new DiffuseColor(R,G,B), Emis,type);
+                                    sphere.setRefractiveIndex(IOR);
+                                    objectList.add(new ObjWrapper(name, sphere));
+                                    mainScene.addObj(name, sphere);
+                                }else{
+                                    primaryStage.setAlwaysOnTop(false);
+                                    Alert alert = new Alert(Alert.AlertType.ERROR);
+                                    alert.setTitle("Alert");
+                                    alert.setHeaderText("Wrong CSV file");
+                                    alert.showAndWait();
+                                    primaryStage.setAlwaysOnTop(true);
+                                    return;
+                                }
+                                
+                            }catch (NumberFormatException | IndexOutOfBoundsException e) {
+                                primaryStage.setAlwaysOnTop(false);
+                                Alert alert = new Alert(Alert.AlertType.ERROR);
+                                alert.setTitle("Alert");
+                                alert.setHeaderText("Wrong CSV file");
+                                alert.showAndWait();
+                                primaryStage.setAlwaysOnTop(true);
+                                return;
+                            }
+                        }  
+                    }else return;
+                } catch (IOException ex) {
+                    Logger.getLogger(FXMLRenderSceneController.class.getName()).log(Level.SEVERE, null, ex);
+                    return;
+                }
+            if (autoRender) render();
+        });
+        /**
+         * Save the image to a file
+         */
         menuItemSaveToFile.setOnAction((event) -> {
             if(image!=null){
                 
