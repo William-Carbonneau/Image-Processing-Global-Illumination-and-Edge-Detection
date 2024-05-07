@@ -130,7 +130,7 @@ All four of them uses the same 2 kernels:
 &#13;The Sobel X convolution detects the edges along the X axis.
 &#13;The Sobel Y convolution detects the edges along the Y axis.
 &#13;For both of these convolution, a threshold can be specified, which corresponds to the minimum difference required for a difference to be considered as an edge.
-&#13;The Sobel Classic is the regular Sobel Edge Detection algorithm: It goes through every pixel, performs Sobel X and Y, calculates a general difference using Pythagora, and associates a gradient value to thispixel.
+&#13;The Sobel Classic is the regular Sobel Edge Detection algorithm: It goes through every pixel, performs Sobel X and Y, calculates a general difference using Pythagora, and associates a gradient value to this pixel.
 &#13;The Sobel Coloured performs the Sobel Classic algorithm on the Red, Green and Blue values.
 &#13;The Prewitt is very similar to the Sobel: The algorithm is exactly the same. The only difference is that it uses different kernels:
 &#13;Kernel 1:
@@ -141,6 +141,8 @@ All four of them uses the same 2 kernels:
 &#13;[1,0,-1]
 &#13;[1,0,-1]
 &#13;[1,0,-1]
+&#13;The colored edge angles also depends on edge detection convolutions. The one we implemented uses the Sobel X and Sobel Y values.
+ Then, using an arctan function, it is possible to calculate the angle of each pixel based on the X and Y values. Finally, each pixel gets assigned a color based on its angle.
 " wrappingWidth="372.5367240905762" />
                            </children>
                         </TextFlow>
