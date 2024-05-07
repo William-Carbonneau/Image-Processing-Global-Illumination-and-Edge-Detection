@@ -167,6 +167,22 @@ All four of them uses the same 2 kernels:
                   </ScrollPane>
                </content>
             </TitledPane>
+            <TitledPane animated="false" text="Partial Convolutions">
+               <content>
+                  <ScrollPane prefHeight="200.0" prefWidth="200.0">
+                     <content>
+                        <TextFlow prefHeight="200.0" prefWidth="598.0">
+                           <children>
+                              <Text strokeType="OUTSIDE" strokeWidth="0.0" text=
+"This part of the application lets you choose a specific width and height from the top-left corner of the image and performs simple convolutions on only the specified part of the image.
+ The part of the image that is not in the specified region is kept the same as the original image.
+ This function is only possible with simple convolutions with only one step, such as Gaussian blurs, sharpening, grayscale, and custum kernel convolutions." wrappingWidth="372.5367240905762" />
+                           </children>
+                        </TextFlow>
+                     </content>
+                  </ScrollPane>
+               </content>
+          </TitledPane>
         </panes>
       </Accordion>
    </children>
