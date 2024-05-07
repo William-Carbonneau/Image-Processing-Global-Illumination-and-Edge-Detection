@@ -9,7 +9,7 @@
 
 <SplitPane fx:id="SPane" dividerPositions="0.8341708542713567" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" orientation="VERTICAL" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1">
   <items>
-      <ScrollPane fx:id="ScrollPaneItems" prefHeight="200.0" prefWidth="200.0">
+      <ScrollPane fx:id="ScrollPaneItems" fitToHeight="true" fitToWidth="true" prefHeight="200.0" prefWidth="200.0">
          <content>
             <TilePane fx:id="tilePane" prefHeight="327.0" prefWidth="592.0" />
          </content>
