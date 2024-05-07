@@ -155,11 +155,23 @@ All four of them uses the same 2 kernels:
                         <TextFlow prefHeight="200.0" prefWidth="598.0">
                            <children>
                               <Text strokeType="OUTSIDE" strokeWidth="0.0" text = 
-"The Laplacian filter follows uses this kernel:
+"The Laplacian Operator calculates the second derivative of an image. That is the reason wy, when applied on an image, it will seem like the lines/edges of th eimage are doubled. 
+The Laplacian operator has a kernel which approximates its result:
 &#13;[0,  1, 0]
 &#13;[1, -4, 1]
 &#13;[0,  1, 0]
 &#13;The idea is similar to the Edge Detection algorithms. The difference is that it only uses one single kernel, which calculates the difference between the centered pixel and those around it. 
+However to avoid noises on the image, we blur and grayscale that image prior to performing the operation on the image.
+&#13;The filter can also be done without a Gaussian blur. Its operator is then a 9x9 approximation kernel:
+&#13;[0, 1, 1,   2,   2,   2, 1, 1, 0]
+&#13;[1, 2, 4,   5,   5,   5, 4, 2, 1]
+&#13;[1, 4, 5,   3,   0,   3, 5, 4, 1]
+&#13;[2, 5, 3, -12, -24, -12, 3, 5, 2]
+&#13;[2, 5, 0, -24, -40, -24, 0, 5, 2]
+&#13;[2, 5, 3, -12, -24, -12, 3, 5, 2]
+&#13;[1, 4, 5,   3,   0,   3, 5, 4, 1]
+&#13;[1, 2, 4,   5,   5,   5, 4, 2, 1]
+&#13;[0, 1, 1,   2,   2,   2, 1, 1, 0]
 " wrappingWidth="372.5367240905762" />
                            </children>
                         </TextFlow>
