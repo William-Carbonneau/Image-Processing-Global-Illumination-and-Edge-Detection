@@ -421,6 +421,9 @@ public class Convolution {
      * @param filePathIn- The path of the file to be convolved
      * @param filePathOut - The path in which we save the output image
      * @throws IOException
+     * This source was used as a reference to use ImageIO in
+     * the context of performing a convolution:
+     * https://ramok.tech/2018/09/27/convolution-in-java/ (Ramo, 2018)
      */
     public static void performSobelColored(String filePathIn, String filePathOut) throws IOException {
 
