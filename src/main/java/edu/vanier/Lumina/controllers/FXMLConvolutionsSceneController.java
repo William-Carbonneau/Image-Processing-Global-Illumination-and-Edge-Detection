@@ -1056,7 +1056,7 @@ public class FXMLConvolutionsSceneController {
     /**
      * This method displays an image file onto the image view imageImgView
      *
-     * @param filePath 
+     * @param filePath - the path of the image to be displayed
      * Source:
      * https://docs.oracle.com/javase/8/javafx/api/javafx/scene/image/ImageView.html (Oracle, 2015)
      */
