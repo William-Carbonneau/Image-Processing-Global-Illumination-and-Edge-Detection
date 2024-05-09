@@ -744,59 +744,6 @@ public class Convolution {
         ImageIO.write(finalImage, "bmp", file);
     }
 
-    /**
-     * This method detects all edges of an input image, and outputs the result
-     * outlining the edges of the image. However, the edges are here defined only if the pythagora of the gradients x and y is bigger than a threshold
-     *
-     * @param filePathIn - The path of the path input
-     * @param filePathOut - The path of the file output
-     * @param threshold- The minimum value defining an edge
-     * @throws IOException This source was used as a reference to use ImageIO in
-     * the context of performing a convolution:
-     * https://ramok.tech/2018/09/27/convolution-in-java/ (Ramo, 2018)
-     */
-    public static void SobelThresholdComplete(String filePathIn, String filePathOut, float threshold) throws IOException {
-        //Source for the kernel: https://en.wikipedia.org/wiki/Sobel_operator (Sobel operator, 2024)
-        float[][] rulesSobelY = {{-1, 0, 1},
-        {-2, 0, 2},
-        {-1, 0, 1}};
-        //Source for the kernel: https://en.wikipedia.org/wiki/Sobel_operator (Sobel operator, 2024)
-        float[][] rulesSobelX = {{-1, -2, -1},
-        {0, 0, 0},
-        {1, 2, 1}};
-        BufferedImage BI = createBI(filePathIn);
-        //Create the array corresponding to the differences around the central pixel for the grayscale
-        float[][] g = new float[BI.getWidth()][BI.getHeight()];
-        //Initialize the values of g
-        Color color;
-        for (int w = 0; w < BI.getWidth(); w++) {
-            for (int h = 0; h < BI.getHeight(); h++) {
-                color = new Color(BI.getRGB(w, h));
-                g[w][h] = color.getGreen();
-            }
-        }
-        //Perform the convolution on the colours array individually
-        float[][] gFinalX = performConvolutionOnArray(rulesSobelX, g);
-        float[][] gFinalY = performConvolutionOnArray(rulesSobelY, g);
-        //Combine the sobels to make a new image
-        BufferedImage finalImage = new BufferedImage(g.length, g[0].length, BufferedImage.TYPE_INT_RGB);
-        for (int w = 0; w < BI.getWidth(); w++) {
-            for (int h = 0; h < BI.getHeight(); h++) {
-                //The edge is defined only of the pythagora of the gradients exceeds the threshold value
-                if (gFinalX[w][h] > threshold) {
-                    color = new Color(255, 255, 255);
-                } else if (gFinalY[w][h] > threshold) {
-                    color = new Color(255, 255, 255);
-                } else {
-                    color = new Color(0, 0, 0);
-                }
-                finalImage.setRGB(w, h, color.getRGB());
-            }
-        }
-        //Create and write the final image
-        File file = new File(filePathOut);
-        ImageIO.write(finalImage, "bmp", file);
-    }
 
     /**
      * This method takes an image input, performs a
