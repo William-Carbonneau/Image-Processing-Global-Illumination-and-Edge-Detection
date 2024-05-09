@@ -17,15 +17,20 @@ import javax.imageio.ImageIO;
  * https://youtu.be/C_zFhWdM4ic?si=nDnBCiZYqUB04SMO (Pound, 2015)
  */
 public class Convolution {
-
+    /**
+     * Value of the height of the image when using the partial convolution
+     */
     public static int partialHeight = Integer.MAX_VALUE;
-
+    /**
+     * Value of the width of the image when using the partial convolution
+     */
     public static int partialWidth = Integer.MAX_VALUE;
 
     /**
      * This method finds the biggest value (absolute value) in an array
-     *
-     * @param array
+     * This method is useful in convolutions such as Sobel, where the color of the pixel is a gradient relative to the maximum difference captured by the kernel:
+     * A negative difference is as important as a positive one.
+     * @param array - The input float array
      * @return the biggest value
      */
     private static float findBiggestValue(float[][] array) {
@@ -43,7 +48,7 @@ public class Convolution {
 
     /**
      * This method prints a 1-D array
-     *
+     * Used in the developping stage of the application. 
      * @param array - the array to be printed
      */
     public static void print1DArray(int[] array) {
@@ -56,7 +61,7 @@ public class Convolution {
 
     /**
      * This method prints a 2-D array
-     *
+     * Used in the developping stage of the application.
      * @param array - the array to be printed
      */
     public static void print2DArray(float[][] array) {
@@ -73,7 +78,7 @@ public class Convolution {
     /**
      * This function takes a 1-dimensional array and converts it to a
      * 2-dimensional array
-     *
+     * Used in the developping stage of the application.
      * @param arrayIn - The array input to be converted
      * @param width - The width of the output array
      * @param height - The height of the output array
@@ -94,9 +99,10 @@ public class Convolution {
      *
      * @param filePathIn - The path of the file input
      * @param filePathOut - The path of the file output
-     * @throws IOException Source used as a reference to use ImageIO:
-     * https://ramok.tech/2018/09/27/convolution-in-java/ (Ramo, 2018) A
-     * grayscale pixel is obtained by averaging the r, g, and b values:
+     * @throws IOException 
+     * Source used as a reference to use ImageIO:
+     * https://ramok.tech/2018/09/27/convolution-in-java/ (Ramo, 2018) 
+     * A grayscale pixel is obtained by averaging the r, g, and b values:
      * https://web.stanford.edu/class/cs101/image-6-grayscale-adva.html
      * (Standor.edu, Image-6 grayscale)
      */
@@ -107,25 +113,22 @@ public class Convolution {
         float r;
         float g;
         float b;
+        //Average of the r,g and b values
         float avg;
-        //int maxWidth = partialWidth;
-        //int maxHeight = partialHeight;
 
         Color color;
-//        if (partialWidth > original.getWidth()) {
-//            maxWidth = original.getWidth();
-//        }
-//        if (partialHeight > original.getHeight()) {
-//            maxHeight = original.getHeight();
-//        }
-
+        //Loop through all the pixels of the image
         for (int w = 0; w < original.getWidth(); w++) {
             for (int h = 0; h < original.getHeight(); h++) {
+                //Get the color of the pixel
                 color = new Color(original.getRGB(w, h));
+                //Get the r,g,b values
                 r = color.getRed();
                 g = color.getGreen();
                 b = color.getBlue();
+                //average the values
                 avg = (r + g + b) / 3;
+                //set the values of the rgb
                 color = new Color(avg / 255, avg / 255, avg / 255);
                 //Check for partial convolution
                 //Only input convolution on the specfied part of the image
@@ -138,6 +141,7 @@ public class Convolution {
 
             }
         }
+        //Create the file and write it
         File file = new File(filePathOut);
         ImageIO.write(finalImage, "bmp", file);
 
@@ -147,9 +151,11 @@ public class Convolution {
      * This method finds the angles of the edges created by Sobel edge detection
      * and colors them.
      *
-     * @param filePathIn
-     * @param filePathOut
-     * @throws IOException This source was used as a reference to use ImageIO in
+     * @param filePathIn - Path of the input image
+     * @param filePathOut - Path of the output image
+     * @throws IOException 
+     * 
+     * This source was used as a reference to use ImageIO in
      * the context of performing a convolution:
      * https://ramok.tech/2018/09/27/convolution-in-java/ (Ramo, 2018)
      */
@@ -176,7 +182,8 @@ public class Convolution {
             }
         }
         //Perform the convolution on the gray array, in order to get the final one
-        // gFinal contains the floating numbers describing how much the colour values change up to down. (It does not represent the grayscale value, but the difference in the grayscale)
+        // gFinal contains the floating numbers describing how much the colour values change up to down. 
+        // (It does not represent the grayscale value, but the difference in the grayscale)
         float[][] gradientX = performConvolutionOnArray(rulesSobelX, g);
         float[][] gradientY = performConvolutionOnArray(rulesSobelY, g);
         //Find the angles of the edges with gradient X and gradient Y
@@ -191,7 +198,6 @@ public class Convolution {
                 } else {
                     finalImage.setRGB(w, h, Color.HSBtoRGB((float) Math.toDegrees(Math.atan(gradientY[w][h] / gradientX[w][h])), 1, 1));
                 }
-                //finalImage.setRGB((int) Math.abs((Math.atan(gradientY[w][h]/gradientX[w][h])/(2*Math.PI)*255)),0, 0);
 
             }
         }
@@ -205,13 +211,14 @@ public class Convolution {
     /**
      * This method performs Sobel edge detection along the x axis for an image.
      *
-     * @param filePathIn
-     * @param filePathOut
+     * @param filePathIn- The path of the input file
+     * @param filePathOut - The path of the output file
      * @throws IOException This source was used as a reference to use ImageIO in
      * the context of performing a convolution:
      * https://ramok.tech/2018/09/27/convolution-in-java/ (Ramo, 2018)
      */
     public static void performSobelX(String filePathIn, String filePathOut) throws IOException {
+        //Instead of using a gradient, we thought that using a threshold would be more effective
         float threshold = 100;
         //Source for the kernel: https://en.wikipedia.org/wiki/Sobel_operator (Sobel operator, 2024)
         float[][] rulesSobelX = {
@@ -255,12 +262,12 @@ public class Convolution {
     }
 
     /**
+     * This method performs Sobel Edge detection on an image and saves the output image in the output path.
      * Reference to understand the algorithm:
      * https://youtu.be/uihBwtPIBxM?si=W3KaT-ADPo2NBvcW (Pound, 2015)
      *
-     * @param filePathIn
-     * @param filePathOut
-     * @param threshold
+     * @param filePathIn- The file of the input image
+     * @param filePathOut - The file of the output image
      * @throws IOException This source was used as a reference to use ImageIO in
      * the context of performing a convolution:
      * https://ramok.tech/2018/09/27/convolution-in-java/ (Ramo, 2018)
@@ -331,12 +338,13 @@ public class Convolution {
     }
 
     /**
+     * This method performs the Prewitt image convolution on an input file and saves it in the output file path
      * Reference to understand the algorithm:
      * https://youtu.be/uihBwtPIBxM?si=W3KaT-ADPo2NBvcW (Pound, 2015)
      *
      * @param filePathIn
      * @param filePathOut
-     * @param threshold
+     * 
      * @throws IOException This source was used as a reference to use ImageIO in
      * the context of performing a convolution:
      * https://ramok.tech/2018/09/27/convolution-in-java/ (Ramo, 2018)
@@ -406,10 +414,10 @@ public class Convolution {
     }
 
     /**
-     * Colored Sobel convolution
+     * Performs Colored Sobel convolution, meaning that it is the same as Sobel, just applied with all of the r,g,b values instead of only their average.
      *
-     * @param filePathIn
-     * @param filePathOut
+     * @param filePathIn- The path of the file to be convolved
+     * @param filePathOut - The path in which we save the output image
      * @throws IOException
      */
     public static void performSobelColored(String filePathIn, String filePathOut) throws IOException {
@@ -499,8 +507,8 @@ public class Convolution {
      * This method applies the laplacian operator kernel on an image. This is
      * the 7x7 version that does not require blurring.
      *
-     * @param filePathIn
-     * @param filePathOut
+     * @param filePathIn - The path of the input image
+     * @param filePathOut - The path in which we want the output image to be saved
      * @throws IOException This source was used as a reference to use ImageIO in
      * the context of performing a convolution:
      * https://ramok.tech/2018/09/27/convolution-in-java/ (Ramo, 2018)
@@ -559,10 +567,10 @@ public class Convolution {
     }
 
     /**
-     * This method applies the laplacian operator kernel on an image
+     * This method applies the Laplacian operator kernel on an image
      *
-     * @param filePathIn
-     * @param filePathOut
+     * @param filePathIn - the file of the input image
+     * @param filePathOut - The path in which we want the output image to be saved
      * @throws IOException This source was used as a reference to use ImageIO in
      * the context of performing a convolution:
      * https://ramok.tech/2018/09/27/convolution-in-java/ (Ramo, 2018)
