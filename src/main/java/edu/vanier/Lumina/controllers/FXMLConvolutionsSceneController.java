@@ -1138,7 +1138,7 @@ public class FXMLConvolutionsSceneController {
         return alert;
     }
     /**
-     * Thsi method shows a confirmation alert to the user.
+     * This method shows a confirmation alert to the user.
      * If the user returns true, then the user wants to continue. If not, stop all operations.
      * @param message - The message being shown to the user.
      * @return  Boolean  - Confirmation of the user.
