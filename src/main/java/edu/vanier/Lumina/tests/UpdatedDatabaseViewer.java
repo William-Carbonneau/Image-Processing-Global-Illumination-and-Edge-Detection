@@ -24,22 +24,14 @@ public class UpdatedDatabaseViewer extends Application{
     public void start(Stage primaryStage) throws Exception {
         try{
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/FXMLUpdatedDatabaseViewer.fxml"));
-            // Create the controller by calling the constructor of FXMLMainAppController
-            // Since the game has just begun, the level is 1, and the initial score of the player is 0
             FXMLControllerViewerDatabase controller = new FXMLControllerViewerDatabase();
-            // Set the controller of the loader
             loader.setController(controller);
-            // Load the pane from the fxml
             SplitPane root = loader.load();
-            //-- 2) Create and set the scene to the stage.
             Scene scene = new Scene(root, 800, 800);
-            // Set the scene of the primary stage
             primaryStage.setScene(scene);
-            // Set the title of the application
             primaryStage.setTitle("Database Viewer");
             primaryStage.sizeToScene();
             primaryStage.setAlwaysOnTop(true);
-            // Show the primary stage
             primaryStage.show();
         }
         catch(Exception e){System.out.println("Error Caught");}
