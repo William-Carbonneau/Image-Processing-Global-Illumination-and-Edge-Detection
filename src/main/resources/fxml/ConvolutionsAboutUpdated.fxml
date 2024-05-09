@@ -28,9 +28,9 @@
                               <Text strokeType="OUTSIDE" strokeWidth="0.0" text=
 "This part of the application performs a convolution on an image. Start by choosing a convolution type from the choicebox by clicking on it. 
 Then, choose an image. To choose an image, you have access to a database. Click on the database icon, and a database viewer will appear. 
-Click on the image you want to convolve. Then, close the window, and the image should appear on the main window. An image can also be chosen 
+Click on the image you want to convolve, and click on the Choose button. Then, the image should appear on the main window. An image can also be chosen 
 from a File Chooser. To use this functionality, click on the Files Icon. A File Chooser should appear. Then, choose the image. Make sure 
-that the image chosen is of type .bmp. If an image of this type is selected, it should appear on the main screen. Then, click on convolve 
+that the image chosen is of type .bmp or .jpg. If an image of this type is selected, it should appear on the main screen. Then, click on convolve 
 to convolve the image. Certain convolutions will have a threshold. You can specify the threshold in the text field. You can also perform 
 the same convolution multiple times. To use this option, enter the number of iterations in the text field # of Iterations." wrappingWidth="372.5367240905762" />
                            </children>
@@ -141,6 +141,8 @@ All four of them uses the same 2 kernels:
 &#13;[1,0,-1]
 &#13;[1,0,-1]
 &#13;[1,0,-1]
+&#13; The program offers two versions of the algorithm. The first one, called Prewitt, uses a threshold to define an edge. The second uses, called Prewitt-Pure, 
+associates the edges to a grayscale value. Hence, no threshold is needed.
 &#13;The colored edge angles also depends on edge detection convolutions. The one we implemented uses the Sobel X and Sobel Y values.
  Then, using an arctan function, it is possible to calculate the angle of each pixel based on the X and Y values. Finally, each pixel gets assigned a color based on its angle.
 " wrappingWidth="372.5367240905762" />
@@ -207,6 +209,21 @@ However to avoid noises on the image, we blur and grayscale that image prior to 
 "The program also allows the creation of custom kernels, offered in multiple dimensions. To create and apply a custom kernel, choose an image and select Custom Kernel from the choice box. Click on convolve and a window will appear. 
 Select the dimensions of your custom kernel using the choice box to the left side of the window. Click on Generate and text fields will appear for you to enter the values of the kernel at each index.
 Enter the values, and click on Set Kernel. Close the window, and the convolution will be performed." wrappingWidth="372.5367240905762" />
+                           </children>
+                        </TextFlow>
+                     </content>
+                  </ScrollPane>
+               </content>
+          </TitledPane>
+          <TitledPane animated="false" text="Save Image">
+               <content>
+                  <ScrollPane prefHeight="200.0" prefWidth="200.0">
+                     <content>
+                        <TextFlow prefHeight="200.0" prefWidth="598.0">
+                           <children>
+                              <Text strokeType="OUTSIDE" strokeWidth="0.0" text=
+"To save an image, you can use the database. Simply click on the Save to database icon, and a popup will appear. Simply enter the name of the image. The name should be unique, and click on the button Ok. Then, the image will be saved.
+&#13;You can also save the image on your computer. To do so, simply click on Save image to files icon. A popup will appear. Enter the name of your image, and click on the button Ok. Then, a directory chooser will appear. Choose where you want to save the image on your computer, and the image will be saved." wrappingWidth="372.5367240905762" />
                            </children>
                         </TextFlow>
                      </content>

@@ -19,6 +19,7 @@ import java.util.ArrayList;
  * Learned the syntax and familiarized himself through:
  * https://www.youtube.com/watch?v=0beocykXUag (Logic Lamda, 2021)
  * https://github.com/frostybee/fx-gallery/tree/main/src/main/java/org/bee/fxgallery/db (Frostybee, 2024)
+ * //Source: https://www.tutorialspoint.com/what-is-jdbc-blob-data-type-how-to-store-and-read-data-from-it  (Thomas)
  */
 public class Database {
     /**
