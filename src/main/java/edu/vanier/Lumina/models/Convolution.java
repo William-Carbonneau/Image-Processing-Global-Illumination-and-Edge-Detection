@@ -268,7 +268,8 @@ public class Convolution {
      *
      * @param filePathIn- The file of the input image
      * @param filePathOut - The file of the output image
-     * @throws IOException This source was used as a reference to use ImageIO in
+     * @throws IOException 
+     * This source was used as a reference to use ImageIO in
      * the context of performing a convolution:
      * https://ramok.tech/2018/09/27/convolution-in-java/ (Ramo, 2018)
      */
@@ -317,7 +318,7 @@ public class Convolution {
         System.out.println(maxGradient);
         for (int w = 0; w < BI.getWidth(); w++) {
             for (int h = 0; h < BI.getHeight(); h++) {
-                //If the difference is bigger than the threshold, color that spot white
+                //Color this spot with a shade that is proportional to the max gradient
                 ratioGradient = sobel[w][h] / maxGradient;
                 colorFloat = Math.abs((int) ((int) 255 * ratioGradient));
                 try {
@@ -342,10 +343,11 @@ public class Convolution {
      * Reference to understand the algorithm:
      * https://youtu.be/uihBwtPIBxM?si=W3KaT-ADPo2NBvcW (Pound, 2015)
      *
-     * @param filePathIn
-     * @param filePathOut
+     * @param filePathIn - Path of the input image
+     * @param filePathOut - Path of the output image
      * 
-     * @throws IOException This source was used as a reference to use ImageIO in
+     * @throws IOException 
+     * This source was used as a reference to use ImageIO in
      * the context of performing a convolution:
      * https://ramok.tech/2018/09/27/convolution-in-java/ (Ramo, 2018)
      */
@@ -377,7 +379,7 @@ public class Convolution {
         // gFinal contains the floating numbers describing how much the colour values change up to down. (It does not represent the grayscale value, but the difference in the grayscale)
         float[][] gradientX = performConvolutionOnArray(rulesprewittX, g);
         float[][] gradientY = performConvolutionOnArray(rulesprewittY, g);
-        float[][] sobel = new float[BI.getWidth()][BI.getHeight()];
+        float[][] prewitt = new float[BI.getWidth()][BI.getHeight()];
         //Make a new image
         BufferedImage finalImage = new BufferedImage(g.length, g[0].length, BufferedImage.TYPE_INT_RGB);
         float maxGradient;//Maximum value that a pixel can return
@@ -386,16 +388,16 @@ public class Convolution {
         for (int w = 0; w < BI.getWidth(); w++) {
             for (int h = 0; h < BI.getHeight(); h++) {
                 //Calculate the final gradient using Pythagora
-                sobel[w][h] = (float) Math.sqrt(gradientX[w][h] * gradientX[w][h] + gradientY[w][h] * gradientY[w][h]);
+                prewitt[w][h] = (float) Math.sqrt(gradientX[w][h] * gradientX[w][h] + gradientY[w][h] * gradientY[w][h]);
             }
         }
         //We can now find the maximum gradient detected
-        maxGradient = findBiggestValue(sobel);
+        maxGradient = findBiggestValue(prewitt);
 
         for (int w = 0; w < BI.getWidth(); w++) {
             for (int h = 0; h < BI.getHeight(); h++) {
-                //If the difference is bigger than the threshold, color that spot white
-                ratioGradient = sobel[w][h] / maxGradient;
+                //color that spot proportionally to the max gradient
+                ratioGradient = prewitt[w][h] / maxGradient;
                 colorFloat = (int) ((int) 255 * ratioGradient);
                 try {
                     color = new Color(colorFloat, colorFloat, colorFloat);
@@ -437,8 +439,7 @@ public class Convolution {
         float[][] b = new float[BI.getWidth()][BI.getHeight()];
         //Initialize the values of g
         Color color;
-        //The values of a geayscale image are uniform, meaning that the values for red, blue, and green are all the same
-        // Therefore, we can take any one of these three to initialize the array g (g)
+        //Get the r,g,b values
         for (int w = 0; w < BI.getWidth(); w++) {
             for (int h = 0; h < BI.getHeight(); h++) {
                 color = new Color(BI.getRGB(w, h));
@@ -447,8 +448,7 @@ public class Convolution {
                 b[w][h] = color.getBlue();
             }
         }
-        //Perform the convolution on the gray array, in order to get the final one
-        // gFinal contains the floating numbers describing how much the colour values change up to down. (It does not represent the grayscale value, but the difference in the grayscale)
+        //Perform the convolution on the all three r,g,b arrays to get the gradients for each color
         float[][] gradientXGreen = performConvolutionOnArray(rulesSobelX, g);
         float[][] gradientYGreen = performConvolutionOnArray(rulesSobelY, g);
         float[][] sobelGreen = new float[BI.getWidth()][BI.getHeight()];
@@ -477,18 +477,20 @@ public class Convolution {
                 sobelRed[w][h] = (float) Math.sqrt(gradientXRed[w][h] * gradientXRed[w][h] + gradientYRed[w][h] * gradientYRed[w][h]);
             }
         }
-        //We can now find the maximum gradient detected
+        //We can now find the maximum gradients detected
         maxGradientGreen = findBiggestValue(sobelGreen);
         maxGradientRed = findBiggestValue(sobelRed);
         maxGradientBlue = findBiggestValue(sobelBlue);
         for (int w = 0; w < BI.getWidth(); w++) {
             for (int h = 0; h < BI.getHeight(); h++) {
+                //Get the r,g,b values in proprotion ot the gradients
                 ratioGradientGreen = sobelGreen[w][h] / maxGradientGreen;
                 ratioGradientRed = sobelRed[w][h] / maxGradientRed;
                 ratioGradientBlue = sobelBlue[w][h] / maxGradientBlue;
                 colorFloatGreen = (int) ((int) 255 * ratioGradientGreen);
                 colorFloatRed = (int) ((int) 255 * ratioGradientRed);
                 colorFloatBlue = (int) ((int) 255 * ratioGradientBlue);
+                //set the color
                 try {
                     color = new Color(colorFloatRed, colorFloatGreen, colorFloatBlue);
                 } catch (Exception e) {
@@ -525,6 +527,7 @@ public class Convolution {
             {1, 4, 5, 3, 0, 3, 5, 4, 1},
             {1, 2, 4, 5, 5, 5, 4, 2, 1},
             {0, 1, 1, 2, 2, 2, 1, 1, 0}};
+        //Create the image
         BufferedImage BI = createBI(filePathIn);
         // Create the array gray corresponding to the average values of the pixels
         float[][] g = new float[BI.getWidth()][BI.getHeight()];
@@ -548,6 +551,7 @@ public class Convolution {
         BufferedImage finalImage = new BufferedImage(g.length, g[0].length, BufferedImage.TYPE_INT_RGB);
         for (int w = 0; w < BI.getWidth(); w++) {
             for (int h = 0; h < BI.getHeight(); h++) {
+                //Set the laplacian as the ratio of the laplacian over the biggest result
                 try {
                     finalColor = laplacianResult[w][h] / biggestResult;
                     finalColor = Math.abs(finalColor);
@@ -567,11 +571,12 @@ public class Convolution {
     }
 
     /**
-     * This method applies the Laplacian operator kernel on an image
+     * This method applies the Laplacian operator kernel on an image. It uses a smaller kernel meaning that we need to blue the image first.
      *
      * @param filePathIn - the file of the input image
      * @param filePathOut - The path in which we want the output image to be saved
-     * @throws IOException This source was used as a reference to use ImageIO in
+     * @throws IOException 
+     * This source was used as a reference to use ImageIO in
      * the context of performing a convolution:
      * https://ramok.tech/2018/09/27/convolution-in-java/ (Ramo, 2018)
      */
@@ -582,6 +587,7 @@ public class Convolution {
             {-1, 4, -1},
             {0, -1, 0}
         };
+        //Create the image
         BufferedImage BI = createBI(filePathIn);
         // Create the array gray corresponding to the average values of the pixels
         float[][] g = new float[BI.getWidth()][BI.getHeight()];
@@ -605,6 +611,7 @@ public class Convolution {
         BufferedImage finalImage = new BufferedImage(g.length, g[0].length, BufferedImage.TYPE_INT_RGB);
         for (int w = 0; w < BI.getWidth(); w++) {
             for (int h = 0; h < BI.getHeight(); h++) {
+                //Set the laplacian as the ratio of the laplacian over the biggest result
                 try {
                     finalColor = laplacianResult[w][h] / biggestResult;
                     finalColor = Math.abs(finalColor);
@@ -628,10 +635,11 @@ public class Convolution {
      * This method applies the Prewitt operator kernel on an image. This
      * operator is very similar to Sobel, with the exception of the corners.
      *
-     * @param filePathIn
-     * @param filePathOut
-     * @param threshold
-     * @throws IOException This source was used as a reference to use ImageIO in
+     * @param filePathIn - The path of the input image
+     * @param filePathOut - The path in which we want the output image to be saved
+     * @param threshold - The threshold - The minimum value for which a difference needs to equal or exceed in order to be considered an edge.
+     * @throws IOException 
+     * This source was used as a reference to use ImageIO in
      * the context of performing a convolution:
      * https://ramok.tech/2018/09/27/convolution-in-java/ (Ramo, 2018)
      */
@@ -644,6 +652,7 @@ public class Convolution {
         float[][] rulesPrewittY = {{-1, 0, 1},
         {-1, 0, 1},
         {-1, 0, 1}};
+        //Create the image
         BufferedImage BI = createBI(filePathIn);
         // Create the array gray corresponding to the average values of the pixels
         float[][] g = new float[BI.getWidth()][BI.getHeight()];
@@ -686,9 +695,10 @@ public class Convolution {
     /**
      * This method performs Sobel edge detection along the y axis for an image.
      *
-     * @param filePathIn
-     * @param filePathOut
-     * @throws IOException This source was used as a reference to use ImageIO in
+     * @param filePathIn - The path of the input image
+     * @param filePathOut - The path in which we want the output image to be saved
+     * @throws IOException 
+     * This source was used as a reference to use ImageIO in
      * the context of performing a convolution:
      * https://ramok.tech/2018/09/27/convolution-in-java/ (Ramo, 2018)
      */
@@ -736,16 +746,16 @@ public class Convolution {
 
     /**
      * This method detects all edges of an input image, and outputs the result
-     * outlining the edges of the image
+     * outlining the edges of the image. However, the edges are here defined only if the pythagora of the gradients x and y is bigger than a threshold
      *
      * @param filePathIn - The path of the path input
      * @param filePathOut - The path of the file output
+     * @param threshold- The minimum value defining an edge
      * @throws IOException This source was used as a reference to use ImageIO in
      * the context of performing a convolution:
      * https://ramok.tech/2018/09/27/convolution-in-java/ (Ramo, 2018)
      */
-    public static void mergeSobels(String filePathIn, String filePathOut) throws IOException {
-        float threshold = 100;
+    public static void SobelThresholdComplete(String filePathIn, String filePathOut, float threshold) throws IOException {
         //Source for the kernel: https://en.wikipedia.org/wiki/Sobel_operator (Sobel operator, 2024)
         float[][] rulesSobelY = {{-1, 0, 1},
         {-2, 0, 2},
@@ -772,6 +782,7 @@ public class Convolution {
         BufferedImage finalImage = new BufferedImage(g.length, g[0].length, BufferedImage.TYPE_INT_RGB);
         for (int w = 0; w < BI.getWidth(); w++) {
             for (int h = 0; h < BI.getHeight(); h++) {
+                //The edge is defined only of the pythagora of the gradients exceeds the threshold value
                 if (gFinalX[w][h] > threshold) {
                     color = new Color(255, 255, 255);
                 } else if (gFinalY[w][h] > threshold) {
@@ -788,24 +799,25 @@ public class Convolution {
     }
 
     /**
-     * @param fileNameIn
-     * @param fileNameOut
-     * @param rulesModel This method takes an image input, performs a
-     * convolution to it, and outputs the image output This source was used as a
-     * reference to use ImageIO in the context of performing a convolution
+     * This method takes an image input, performs a
+     * convolution to it, based on a predefined kernel, and saves the resulting image in the output path. 
+     * This source was used as a reference to use ImageIO in the context of performing a convolution
      * (However, the entire algorithm for performing a given convolution on an
      * array was created separately by Loovdrish):
      * https://ramok.tech/2018/09/27/convolution-in-java/ (Ramo, 2018)
+     * @param pathNameIn - The path of the input image
+     * @param pathNameOut - The path in which we want the output image to be saved
+     * @param rulesModel  - The array representing the kernel
      * @throws IOException
      */
-    public static void performConvolution(String fileNameIn, String fileNameOut, float[][] rulesModel) throws IOException {
+    public static void performConvolution(String pathNameIn, String pathNameOut, float[][] rulesModel) throws IOException {
         //Takes the file and creates a BufferedImage
-        BufferedImage BI = createBI(fileNameIn);
+        BufferedImage BI = createBI(pathNameIn);
         //Creates 3 arrays containing the value of green, red and blue for each pixel
         float[][] r = new float[BI.getWidth()][BI.getHeight()];
         float[][] g = new float[BI.getWidth()][BI.getHeight()];
         float[][] b = new float[BI.getWidth()][BI.getHeight()];
-        //Initialize the values of r, g, and b
+        //Initialize the values of r, g, and b (red, green, and blue component of the pixels)
         Color color;
         for (int w = 0; w < BI.getWidth(); w++) {
             for (int h = 0; h < BI.getHeight(); h++) {
@@ -839,7 +851,7 @@ public class Convolution {
             }
         }
         //Creates the output file
-        File file = new File(fileNameOut);
+        File file = new File(pathNameOut);
         //Writes the output file with the data of the BufferedImage
         ImageIO.write(finalImage, "bmp", file);
     }
@@ -878,7 +890,7 @@ public class Convolution {
      * at x,y coordinates that the final array should have based on a rules
      * array, an input array, and the location of the value of interest.
      *
-     * @param rulesModel - The array that described the kernel to be applied
+     * @param rulesModel - The array that describes the kernel to be applied
      * @param weightRules - The sum of all the values in the kernel
      * @param in - The input array, which contains the central and neighbouring
      * values on the array
@@ -909,6 +921,7 @@ public class Convolution {
         if (weightRules != 0) {
             result = result / weightRules;
         }
+        //Return the result
         return result;
     }
 
@@ -918,7 +931,8 @@ public class Convolution {
      *
      * @param filePath - The path to the image file
      * @return BufferedImage - The corresponding BufferedImage
-     * @throws IOException Source:
+     * @throws IOException 
+     * Source:
      * https://ramok.tech/2018/09/27/convolution-in-java/ (Ramo, 2018)
      */
     public static BufferedImage createBI(String filePath) throws IOException {
