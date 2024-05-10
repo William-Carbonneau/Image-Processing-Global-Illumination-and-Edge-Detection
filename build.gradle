@@ -50,7 +50,7 @@ application {
    //       that contains the main method to be executed.
 
     mainClass = 'edu.vanier.Lumina.MainApp'
-   //mainClass = 'edu.vanier.Lumina.tests.RenderTest'
+   //mainClass = 'edu.vanier.Lumina.tests.ConvolutionAlgorithmTest'
 
    //mainClass = 'edu.vanier.Lumina.tests.UpdatedDatabaseViewer'
 
