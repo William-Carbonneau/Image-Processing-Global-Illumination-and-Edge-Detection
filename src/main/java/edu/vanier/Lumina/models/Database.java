@@ -14,7 +14,7 @@ import java.sql.Statement;
 import java.util.ArrayList;
 
 /**
- *
+ * This class is a base class for the Database. It is a collection of static methods that handle the database.
  * @author Loovdrish Sujore
  * Learned the syntax and familiarized himself through:
  * https://www.youtube.com/watch?v=0beocykXUag (Logic Lamda, 2021)
